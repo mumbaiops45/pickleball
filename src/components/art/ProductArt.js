@@ -1,51 +1,36 @@
-import PaddleArt from "@/components/art/PaddleArt";
-import BallArt from "@/components/art/BallArt";
-import {
-  BagArt,
-  CapArt,
-  GripArt,
-  ShoeArt,
-  ShortsArt,
-  TeeArt,
-} from "@/components/art/GearArt";
+import Image from "next/image";
+
+const PRODUCT_PHOTOS = {
+  paddle: "/photos/paddle-product.png",
+  ball: "/photos/pickleball-balls.png",
+  tee: "/photos/court-apparel.png",
+  shorts: "/photos/court-apparel.png",
+  cap: "/photos/court-apparel.png",
+  grip: "/photos/paddle-product.png",
+  bag: "/photos/pickleball-gear.png",
+  shoe: "/photos/pickleball-gear.png",
+};
 
 /**
- * Renders whichever silhouette a product uses. `color` overrides the catalogue
- * colour, which is how selecting a colourway on the product page repaints the
- * art without needing a second asset.
+ * Renders real catalogue photography. Its dimensions deliberately remain
+ * controlled by the parent, so existing hover and page animations are intact.
  */
-export default function ProductArt({ product, color, id, className = "" }) {
+export default function ProductArt({ product, className = "" }) {
   const { art } = product;
-  const tint = color ?? art.color ?? art.face;
-  const key = id ?? product.id;
+  const src = PRODUCT_PHOTOS[art.kind];
 
-  switch (art.kind) {
-    case "paddle":
-      return (
-        <PaddleArt
-          id={`art-${key}`}
-          face={tint}
-          texture={art.texture}
-          className={className}
-        />
-      );
-    case "ball":
-      return <BallArt id={`art-${key}`} color={tint} className={className} />;
-    case "tee":
-      return <TeeArt color={tint} accent={art.accent} className={className} />;
-    case "shorts":
-      return <ShortsArt color={tint} accent={art.accent} className={className} />;
-    case "cap":
-      return <CapArt color={tint} className={className} />;
-    case "grip":
-      return <GripArt color={tint} accent={art.accent} className={className} />;
-    case "bag":
-      return <BagArt color={tint} accent={art.accent} className={className} />;
-    case "shoe":
-      return <ShoeArt color={tint} className={className} />;
-    default:
-      return null;
-  }
+  if (!src) return null;
+
+  return (
+    <Image
+      src={src}
+      alt={product.name}
+      width={800}
+      height={1000}
+      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+      className={`${className} object-contain`}
+    />
+  );
 }
 
 /**

@@ -1,10 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
-import PaddleArt from "@/components/art/PaddleArt";
-import BallArt from "@/components/art/BallArt";
-import { CourtArt } from "@/components/art/GearArt";
 import { ArrowIcon, StarIcon } from "@/components/ui/Icons";
-import Logo from "@/components/ui/Logo";
 import { stats } from "@/lib/data";
 
 export default function Hero() {
@@ -18,6 +15,18 @@ export default function Hero() {
       {/* ---------------------------------------------------------- layer 0 */}
       <div className="absolute inset-0 -z-30 bg-[radial-gradient(125%_95%_at_50%_-15%,#f4ffd6_0%,#fbfaf6_45%,#ffffff_75%)]" />
 
+      {/* Real campaign photography sits beneath the existing animated art. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 -z-20 hidden w-[58%] overflow-hidden lg:block">
+        <Image
+          src="/photos/hero-pickleball-player.png"
+          alt="Pickleball player preparing to return a shot on an outdoor court"
+          fill
+          priority
+          sizes="58vw"
+          className="object-cover object-[72%_center] opacity-55 [mask-image:linear-gradient(to_right,transparent,black_35%)]"
+        />
+      </div>
+
       <div
         data-speed="-0.9"
         className="absolute -left-[18%] top-[-10%] -z-30 h-[70vh] w-[70vh] rounded-full bg-volt/45 blur-[120px]"
@@ -27,15 +36,6 @@ export default function Hero() {
         data-speed-x="0.6"
         className="absolute -right-[14%] bottom-[-18%] -z-30 h-[62vh] w-[62vh] rounded-full bg-clay/10 blur-[130px]"
       />
-
-      {/* court diagram, drifting slowly behind everything */}
-      <div
-        data-speed="-2.2"
-        data-mouse="-14"
-        className="pointer-events-none absolute -right-[6%] top-[-14%] -z-20 hidden h-[130%] opacity-[0.14] md:block"
-      >
-        <CourtArt className="h-full w-auto" stroke="#4e6b00" />
-      </div>
 
       {/* ---------------------------------------------------------- layer 1 */}
       {/* Oversized wordmark, anchored to the bottom edge and clipped by the
@@ -51,25 +51,32 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* ---------------------------------------------------------- layer 2 */}
-      {/* solid lime stage so the paddle has something to sit against instead
-          of floating on bare white */}
+      {/* Real ball photography retains the gentle floating motion in the hero. */}
       <div
-        data-speed="1.9"
-        data-mouse="22"
-        className="pointer-events-none absolute right-[2%] top-[12%] -z-20 hidden h-[34vw] max-h-125 w-[34vw] max-w-125 rounded-full bg-volt md:right-[7%] md:block"
-      />
-      <div
-        data-speed="2.6"
-        data-rotate="-10"
-        data-mouse="46"
-        className="pointer-events-none absolute right-[3%] top-[16%] -z-10 w-[38vw] max-w-105 min-w-55 md:right-[8%]"
+        data-speed="3.4"
+        data-mouse="70"
+        className="pointer-events-none absolute right-[5%] top-[12%] z-10 w-18 sm:right-[9%] sm:w-24 lg:right-[43%] lg:top-[21%]"
       >
-        <div className="rotate-[14deg] drop-shadow-[0_50px_90px_rgba(15,17,21,.12)]">
-          <PaddleArt id="hero-paddle" face="#d4ff3f" texture="carbon" className="w-full" />
+        <div className="float-slow">
+          <Image
+            src="/photos/pickleball-balls.png"
+            alt="Optic yellow pickleball balls"
+            width={800}
+            height={1000}
+            sizes="96px"
+            className="h-auto w-full rounded-full mix-blend-multiply drop-shadow-[0_16px_22px_rgba(15,17,21,.16)]"
+          />
         </div>
       </div>
 
+      {/* ---------------------------------------------------------- layer 2 */}
+      {/* solid lime stage so the paddle has something to sit against instead
+          of floating on bare white */}
+      {/* <div
+        data-speed="1.9"
+        data-mouse="22"
+        className="pointer-events-none absolute right-[2%] top-[12%] -z-20 hidden h-[34vw] max-h-125 w-[34vw] max-w-125 rounded-full bg-volt md:right-[7%] md:block"
+      /> */}
       <div
         data-speed="1.7"
         data-rotate="14"
@@ -78,14 +85,15 @@ export default function Hero() {
       >
         {/* a pale second paddle for depth — light enough to stay behind the copy */}
         <div className="-rotate-[26deg] blur-[2px]">
-          <PaddleArt
+          {/* Decorative vector artwork removed in favour of hero photography. */}
+          {/* <PaddleArt
             id="hero-paddle-2"
             face="#e7e6de"
             edge="#c9c8bf"
             grip="#b6b5ab"
             texture="honeycomb"
             className="w-full"
-          />
+          /> */}
         </div>
       </div>
 
@@ -96,7 +104,6 @@ export default function Hero() {
         className="pointer-events-none absolute left-[6%] top-[24%] w-16 sm:w-24"
       >
         <div className="float-slow">
-          <BallArt id="hero-ball-1" color="#d4ff3f" className="w-full drop-shadow-[0_20px_40px_rgba(15,17,21,.1)]" />
         </div>
       </div>
       <div
@@ -105,7 +112,6 @@ export default function Hero() {
         className="pointer-events-none absolute bottom-[16%] left-[38%] w-10 opacity-90 sm:w-14"
       >
         <div className="float-slower">
-          <BallArt id="hero-ball-2" color="#ff5c2b" className="w-full" />
         </div>
       </div>
       <div
@@ -114,7 +120,6 @@ export default function Hero() {
         className="pointer-events-none absolute right-[12%] bottom-[10%] hidden w-12 opacity-70 md:block"
       >
         <div className="float-slow">
-          <BallArt id="hero-ball-3" color="#f5f3ed" className="w-full" />
         </div>
       </div>
 
@@ -133,7 +138,7 @@ export default function Hero() {
             Own the
             <span className="relative ml-4 inline-block text-volt-deep">
               kitchen
-              <svg
+              {/* <svg
                 viewBox="0 0 300 14"
                 className="absolute -bottom-2 left-0 w-full text-volt-deep/50"
                 aria-hidden="true"
@@ -145,7 +150,7 @@ export default function Hero() {
                   strokeLinecap="round"
                   fill="none"
                 />
-              </svg>
+              </svg> */}
             </span>
             <br />
             line.
