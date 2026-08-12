@@ -6,6 +6,10 @@ import Image from "next/image";
  * Fills its parent, so the parent must be positioned and have a definite size.
  * `sizes` is required for fill images or Next serves the largest candidate to
  * every viewport.
+ *
+ * The wrapper owns its own `position`, so `className` must not pass a competing
+ * position utility — Tailwind emits them in one layer at equal specificity, so
+ * the stylesheet order decides the winner, not the order you list the classes.
  */
 export default function Photo({
   src,
@@ -16,7 +20,7 @@ export default function Photo({
   imgClassName = "object-cover",
 }) {
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`absolute inset-0 overflow-hidden ${className}`}>
       <Image
         src={src}
         alt={alt}

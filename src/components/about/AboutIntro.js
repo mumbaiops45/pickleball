@@ -61,7 +61,6 @@ export default function AboutIntro() {
               src={photos.courtStill.src}
               alt={photos.courtStill.alt}
               sizes="(max-width: 1024px) 100vw, 45vw"
-              className="absolute inset-0"
             />
 
             {/* scrim so the caption stays legible over any crop */}
