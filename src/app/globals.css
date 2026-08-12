@@ -1,26 +1,240 @@
 @import "tailwindcss";
 
+@theme {
+  /* Surfaces — light, warm-neutral so product art sits on paper, not glare */
+  --color-paper: #ffffff;
+  /* far enough from paper that a banded section actually reads as a band */
+  --color-surface: #f4f3ec;
+  --color-surface-2: #e9e8df;
+
+  /* Text — ink is the primary reading colour (18.9:1 on paper) */
+  --color-ink: #0f1115;
+  --color-mist: #5f6672;
+
+  /* decorative dividers and card edges */
+  --color-line: #d9d8cf;
+  /* clears 3:1 on paper, surface AND surface-2 — the visible edge of
+     interactive controls per WCAG 1.4.11 */
+  --color-line-strong: #7e8379;
+
+  /* Brand — volt is a FILL colour (16.4:1 with ink on top).
+     volt-deep is the readable version for accent text, icons and borders. */
+  --color-volt: #d4ff3f;
+  --color-volt-deep: #4e6b00;
+  /* commerce urgency: sale prices, low stock. 5.6:1 both as text and as a fill */
+  --color-clay: #c2320f;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  /* parallax layers overflow their sections horizontally */
+  overflow-x: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-volt);
+  color: var(--color-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-2);
+}
+::-webkit-scrollbar-thumb {
+  background: #c9cbc2;
+  border-radius: 999px;
+  border: 3px solid var(--color-surface-2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-line-strong);
+}
+
+/* ---------------------------------------------------------------- parallax */
+
+[data-speed],
+[data-speed-x],
+[data-rotate],
+[data-zoom],
+[data-mouse] {
+  will-change: transform;
+}
+
+/* ------------------------------------------------------------ scroll reveal */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo),
+    filter 0.9s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal="left"] {
+  transform: translate3d(-40px, 0, 0);
+}
+[data-reveal="right"] {
+  transform: translate3d(40px, 0, 0);
+}
+[data-reveal="zoom"] {
+  transform: scale(0.94);
+}
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ------------------------------------------------------------------- focus */
+
+:focus-visible {
+  outline: 2px solid var(--color-volt-deep);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------- utilities */
+
+/* hide the number-input spinners on the quantity steppers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* swipeable rails read cleaner without a visible scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.text-stroke {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--color-ink) 14%, transparent);
+}
+
+.text-stroke-volt {
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in oklab, var(--color-volt-deep) 30%, transparent);
+}
+
+/* Fine paper grain so the large flat areas do not look like dead white */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 34s) linear infinite;
+}
+.marquee-track[data-direction="reverse"] {
+  animation-direction: reverse;
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.float-slow {
+  animation: float 7s ease-in-out infinite;
+}
+.float-slower {
+  animation: float 11s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, -10px, 0) rotate(-4deg);
+  }
+  50% {
+    transform: translate3d(0, 12px, 0) rotate(5deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 26s linear infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scroll-hint {
+  animation: scroll-hint 2.2s ease-in-out infinite;
+}
+
+@keyframes scroll-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(9px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .marquee-track,
+  .float-slow,
+  .float-slower,
+  .spin-slow,
+  .scroll-hint {
+    animation: none;
+  }
 }
