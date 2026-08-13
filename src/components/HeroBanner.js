@@ -9,7 +9,7 @@ import {
   ChevronRightIcon,
 } from "@/components/ui/Icons";
 
-const INTERVAL = 6500;
+const INTERVAL = 5000;
 
 export default function HeroBanner({ slides }) {
   const [index, setIndex] = useState(0);
