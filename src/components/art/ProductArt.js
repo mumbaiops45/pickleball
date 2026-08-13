@@ -24,7 +24,11 @@ export function productPhoto(product) {
  * Renders real catalogue photography. Its dimensions deliberately remain
  * controlled by the parent, so existing hover and page animations are intact.
  */
-export default function ProductArt({ product, className = "" }) {
+export default function ProductArt({
+  product,
+  className = "",
+  sizes = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw",
+}) {
   const src = productPhoto(product);
 
   if (!src) return null;
@@ -35,7 +39,7 @@ export default function ProductArt({ product, className = "" }) {
       alt={product.name}
       width={800}
       height={1000}
-      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+      sizes={sizes}
       className={`${className} object-contain`}
     />
   );
