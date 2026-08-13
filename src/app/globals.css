@@ -221,6 +221,19 @@ input[type="number"] {
   }
 }
 
+/* One step of the paddle finder sliding into place. Keyed on the step index, so
+   re-mounting the panel replays it — the panel never silently swaps content. */
+.step-in {
+  animation: step-in 0.5s var(--ease-out-expo) both;
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -234,7 +247,8 @@ input[type="number"] {
   .float-slow,
   .float-slower,
   .spin-slow,
-  .scroll-hint {
+  .scroll-hint,
+  .step-in {
     animation: none;
   }
 }

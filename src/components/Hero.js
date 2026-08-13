@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
+import BallArt from "@/components/art/BallArt";
 import { ArrowIcon, StarIcon } from "@/components/ui/Icons";
 import { stats } from "@/lib/data";
 
@@ -51,24 +52,6 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* Real ball photography retains the gentle floating motion in the hero. */}
-      <div
-        data-speed="3.4"
-        data-mouse="70"
-        className="pointer-events-none absolute right-[5%] top-[12%] z-10 w-18 sm:right-[9%] sm:w-24 lg:right-[43%] lg:top-[21%]"
-      >
-        <div className="float-slow">
-          <Image
-            src="/photos/pickleball-balls.png"
-            alt="Optic yellow pickleball balls"
-            width={800}
-            height={1000}
-            sizes="96px"
-            className="h-auto w-full rounded-full mix-blend-multiply drop-shadow-[0_16px_22px_rgba(15,17,21,.16)]"
-          />
-        </div>
-      </div>
-
       {/* ---------------------------------------------------------- layer 2 */}
       {/* solid lime stage so the paddle has something to sit against instead
           of floating on bare white */}
@@ -104,6 +87,11 @@ export default function Hero() {
         className="pointer-events-none absolute left-[6%] top-[24%] w-16 sm:w-24"
       >
         <div className="float-slow">
+          <BallArt
+            id="hero-ball-1"
+            color="#d4ff3f"
+            className="w-full drop-shadow-[0_20px_40px_rgba(15,17,21,.1)]"
+          />
         </div>
       </div>
       <div
@@ -112,6 +100,7 @@ export default function Hero() {
         className="pointer-events-none absolute bottom-[16%] left-[38%] w-10 opacity-90 sm:w-14"
       >
         <div className="float-slower">
+          <BallArt id="hero-ball-2" color="#ff5c2b" className="w-full" />
         </div>
       </div>
       <div
@@ -120,6 +109,7 @@ export default function Hero() {
         className="pointer-events-none absolute right-[12%] bottom-[10%] hidden w-12 opacity-70 md:block"
       >
         <div className="float-slow">
+          <BallArt id="hero-ball-3" color="#f5f3ed" className="w-full" />
         </div>
       </div>
 

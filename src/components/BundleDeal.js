@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
-import ProductArt from "@/components/art/ProductArt";
 import { LogoMark } from "@/components/ui/Logo";
 import { TwoTone } from "@/components/ui/Heading";
 import { ArrowIcon, PlusIcon } from "@/components/ui/Icons";
@@ -125,29 +125,36 @@ export default function BundleDeal() {
           </Reveal>
 
           {/* stacked art */}
-          <div className="relative flex min-h-60 items-center justify-center lg:min-h-75">
-            {items.map((item, index) => (
-              <div
-                key={item.id}
-                data-speed={String(1.4 + index * 0.9)}
-                data-rotate={String(-6 + index * 6)}
-                data-mouse={String(24 + index * 18)}
-                className="absolute"
-                style={{
-                  left: `${14 + index * 26}%`,
-                  top: `${18 + (index % 2) * 16}%`,
-                  zIndex: 10 - index,
-                }}
-              >
-                <div className="drop-shadow-[0_30px_50px_rgba(0,0,0,.45)]">
-                  <ProductArt
-                    product={item}
-                    id={`bundle-${item.id}`}
-                    className={index === 0 ? "h-56 w-auto" : "h-32 w-auto"}
-                  />
+          <div className="flex items-center justify-center gap-8 lg:gap-12">
+            {items.map((item, index) => {
+              const imageMap = {
+                Paddles: "/photos/paddle-product.png",
+                Balls: "/photos/pickleball-balls.png",
+                Apparel: "/photos/court-apparel.png",
+                Gear: "/photos/pickleball-gear.png",
+                Shoes: "/photos/court-apparel.png",
+              };
+              const imageSrc = imageMap[item.category] || "/photos/paddle-product.png";
+              return (
+                <div
+                  key={item.id}
+                  data-speed={String(2.2 + index * 0.7)}
+                  data-mouse={String(30 + index * 15)}
+                  className="flex-shrink-0 flex items-center justify-center"
+                >
+                  <div className="drop-shadow-[0_30px_50px_rgba(0,0,0,.45)]">
+                    <Image
+                      src={imageSrc}
+                      alt={item.name}
+                      width={180}
+                      height={180}
+                      className="h-auto w-auto object-contain"
+                      priority={index === 0}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </ParallaxScene>

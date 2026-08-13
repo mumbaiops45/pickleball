@@ -8,6 +8,7 @@ import Logo from "@/components/ui/Logo";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import {
   BagIcon,
+  ChevronDownIcon,
   CloseIcon,
   MenuIcon,
   SearchIcon,
@@ -16,9 +17,82 @@ import {
 import { useCart } from "@/store/CartProvider";
 import { useAuth } from "@/store/AuthProvider";
 
+/**
+ * Desktop mega-menu for a nav entry that carries `columns`.
+ *
+ * Opens on hover and on keyboard focus; the wrapping `li` owns both, so the
+ * panel closes as soon as focus or the pointer leaves the whole item rather
+ * than the instant it leaves the trigger link.
+ */
+function MegaMenu({ link, open, onOpen, onClose }) {
+  return (
+    <li
+      className="relative"
+      onMouseEnter={onOpen}
+      onMouseLeave={onClose}
+      onFocus={onOpen}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) onClose();
+      }}
+    >
+      <Link
+        href={link.href}
+        aria-expanded={open}
+        className={`group relative flex items-center gap-1.5 px-4 py-2 text-sm transition-colors ${
+          open ? "bg-volt text-ink" : "text-mist hover:text-ink"
+        }`}
+      >
+        {link.label}
+        <ChevronDownIcon
+          className={`size-3.5 transition-transform duration-300 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </Link>
+
+      <div
+        // kept mounted so the fade runs both ways; pointer events follow `open`
+        className={`absolute left-0 top-full flex min-w-95 border border-line bg-paper shadow-[0_28px_60px_-30px_rgba(15,17,21,.45)] transition-all duration-300 ease-[cubic-bezier(.16,1,.3,1)] ${
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-1 opacity-0"
+        }`}
+      >
+        {link.columns.map((column, index) => (
+          <div
+            key={column.title}
+            className={`min-w-45 flex-1 px-7 py-6 ${
+              index === 0 ? "bg-paper" : "bg-surface-2"
+            }`}
+          >
+            <p className="text-sm font-semibold tracking-tight text-ink">
+              {column.title}
+            </p>
+            <ul className="mt-5 flex flex-col gap-3.5">
+              {column.links.map((entry) => (
+                <li key={entry.label}>
+                  <Link
+                    href={entry.href}
+                    tabIndex={open ? 0 : -1}
+                    onClick={onClose}
+                    className="text-sm text-mist transition-colors hover:text-volt-deep"
+                  >
+                    {entry.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </li>
+  );
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
   const pathname = usePathname();
   const { count, openDrawer, hydrated } = useCart();
   const { user, openAuth } = useAuth();
@@ -54,18 +128,34 @@ export default function Navbar() {
         <nav className="mx-auto flex h-18 max-w-350 items-center justify-between gap-8 px-5 sm:px-8">
           <Logo />
 
-          <ul className="hidden items-center gap-1 lg:flex">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <Link
-                  href={link.href}
-                  className="group relative block px-4 py-2 text-sm text-mist transition-colors hover:text-ink"
-                >
-                  {link.label}
-                  <span className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 bg-volt transition-transform duration-400 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100" />
-                </Link>
-              </li>
-            ))}
+          <ul
+            className="hidden items-center gap-1 lg:flex"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") setOpenMenu(null);
+            }}
+          >
+            {navLinks.map((link) =>
+              link.columns ? (
+                <MegaMenu
+                  key={link.label}
+                  link={link}
+                  open={openMenu === link.label}
+                  onOpen={() => setOpenMenu(link.label)}
+                  onClose={() => setOpenMenu(null)}
+                />
+              ) : (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    onMouseEnter={() => setOpenMenu(null)}
+                    className="group relative block px-4 py-2 text-sm text-mist transition-colors hover:text-ink"
+                  >
+                    {link.label}
+                    <span className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 bg-volt transition-transform duration-400 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100" />
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
 
           <div className="flex items-center gap-1.5">
@@ -159,7 +249,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          <ul className="mt-10 flex flex-col">
+          <ul className="mt-10 flex flex-col overflow-y-auto">
             {navLinks.map((link, index) => (
               <li key={link.label} className="border-b border-line">
                 <Link
@@ -173,6 +263,30 @@ export default function Navbar() {
                   </span>
                   {link.label}
                 </Link>
+
+                {/* the mega-menu columns flatten into chips on mobile */}
+                {link.columns ? (
+                  <div className="flex flex-col gap-3 pb-5 pl-9">
+                    {link.columns.map((column) => (
+                      <div key={column.title} className="flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] uppercase tracking-[0.16em] text-mist">
+                          {column.title}
+                        </span>
+                        {column.links.map((entry) => (
+                          <Link
+                            key={entry.label}
+                            href={entry.href}
+                            tabIndex={menuOpen ? 0 : -1}
+                            onClick={() => setMenuOpen(false)}
+                            className="rounded-full border border-line-strong px-3 py-1 text-xs text-mist transition-colors hover:border-volt-deep hover:text-volt-deep"
+                          >
+                            {entry.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>

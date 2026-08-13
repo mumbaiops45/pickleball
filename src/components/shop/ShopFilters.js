@@ -1,6 +1,12 @@
 "use client";
 
-import { PRICE_BANDS, SKILL_LEVELS, productFilters } from "@/lib/data";
+import {
+  PRICE_BANDS,
+  SHOE_BRANDS,
+  SHOE_TYPES,
+  SKILL_LEVELS,
+  productFilters,
+} from "@/lib/data";
 import { CloseIcon } from "@/components/ui/Icons";
 
 function Group({ title, children }) {
@@ -62,6 +68,8 @@ export default function ShopFilters({
     (filters.category === "All" ? 0 : 1) +
     filters.skills.length +
     filters.priceBands.length +
+    filters.brands.length +
+    filters.types.length +
     (filters.onSale ? 1 : 0);
 
   return (
@@ -115,6 +123,30 @@ export default function ShopFilters({
             hint={counts.skill[skill] ?? 0}
             checked={filters.skills.includes(skill)}
             onChange={() => onToggle("skill", skill)}
+          />
+        ))}
+      </Group>
+
+      <Group title="Shoe brand">
+        {SHOE_BRANDS.map((brand) => (
+          <Check
+            key={brand}
+            label={brand}
+            hint={counts.brand[brand] ?? 0}
+            checked={filters.brands.includes(brand)}
+            onChange={() => onToggle("brand", brand)}
+          />
+        ))}
+      </Group>
+
+      <Group title="Shoe type">
+        {SHOE_TYPES.map((type) => (
+          <Check
+            key={type}
+            label={type}
+            hint={counts.type[type] ?? 0}
+            checked={filters.types.includes(type)}
+            onChange={() => onToggle("type", type)}
           />
         ))}
       </Group>

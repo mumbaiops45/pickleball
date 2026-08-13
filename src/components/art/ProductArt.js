@@ -1,23 +1,31 @@
 import Image from "next/image";
 
-const PRODUCT_PHOTOS = {
+/**
+ * Fallback shots, used only when an entry has no photography of its own — a
+ * generic image of the right kind beats an empty tile.
+ */
+const KIND_PHOTOS = {
   paddle: "/photos/paddle-product.png",
   ball: "/photos/pickleball-balls.png",
   tee: "/photos/court-apparel.png",
   shorts: "/photos/court-apparel.png",
   cap: "/photos/court-apparel.png",
   grip: "/photos/paddle-product.png",
-  bag: "/photos/pickleball-gear.png",
-  shoe: "/photos/pickleball-gear.png",
+  bag: "/photos/bags.jpg",
+  shoe: "/photos/shoes.jpg",
 };
+
+/** Resolves the single shot that represents a product across the site. */
+export function productPhoto(product) {
+  return product.image ?? KIND_PHOTOS[product.art?.kind] ?? null;
+}
 
 /**
  * Renders real catalogue photography. Its dimensions deliberately remain
  * controlled by the parent, so existing hover and page animations are intact.
  */
 export default function ProductArt({ product, className = "" }) {
-  const { art } = product;
-  const src = PRODUCT_PHOTOS[art.kind];
+  const src = productPhoto(product);
 
   if (!src) return null;
 

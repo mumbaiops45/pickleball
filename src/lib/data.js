@@ -3,10 +3,39 @@ export const brand = {
   tagline: "Performance pickleball, engineered in Bengaluru.",
 };
 
+/**
+ * Shoe taxonomy. Declared up here because both the navigation mega-menu and the
+ * shop sidebar are built from it — the product entries below reference the same
+ * strings, so a brand only ever exists in one place.
+ */
+export const SHOE_BRANDS = ["Asics", "Babolat", "Mizuno", "PADDLEHAUS"];
+export const SHOE_TYPES = ["Men's", "Kid's"];
+
 export const navLinks = [
   { label: "Shop all", href: "/shop" },
   { label: "Paddles", href: "/shop?category=Paddles" },
   { label: "Balls", href: "/shop?category=Balls" },
+  {
+    label: "Shoes",
+    href: "/shop?category=Shoes",
+    // rendered as a two-column mega-menu on desktop, nested links on mobile
+    columns: [
+      {
+        title: "Brands",
+        links: SHOE_BRANDS.map((brand) => ({
+          label: brand,
+          href: `/shop?category=Shoes&brand=${encodeURIComponent(brand)}`,
+        })),
+      },
+      {
+        title: "Type",
+        links: SHOE_TYPES.map((type) => ({
+          label: type,
+          href: `/shop?category=Shoes&type=${encodeURIComponent(type)}`,
+        })),
+      },
+    ],
+  },
   { label: "Apparel", href: "/shop?category=Apparel" },
   { label: "Gear", href: "/shop?category=Gear" },
   { label: "About", href: "/about" },
@@ -20,70 +49,21 @@ export const announcements = [
   "Lifetime edge-guard warranty",
 ];
 
-export const categories = [
-  {
-    id: "paddles",
-    index: "01",
-    name: "Paddles",
-    filter: "Paddles",
-    count: 6,
-    blurb: "Raw carbon, thermoformed cores, tuned by pros.",
-    kind: "paddle",
-    accent: "#d4ff3f",
-    tint: "#eefcc4",
-  },
-  {
-    id: "balls",
-    index: "02",
-    name: "Balls",
-    filter: "Balls",
-    count: 2,
-    blurb: "Indoor and outdoor, true-flight moulded.",
-    kind: "ball",
-    accent: "#ff5c2b",
-    tint: "#ffe6d5",
-  },
-  {
-    id: "apparel",
-    index: "03",
-    name: "Apparel",
-    filter: "Apparel",
-    count: 4,
-    blurb: "Court-ready fits that breathe in August.",
-    kind: "tee",
-    accent: "#d4ff3f",
-    tint: "#e2eeff",
-  },
-  {
-    id: "bags",
-    index: "04",
-    name: "Bags",
-    filter: "Gear",
-    count: 2,
-    blurb: "Six-paddle capacity with vented shoe wells.",
-    kind: "bag",
-    accent: "#d4ff3f",
-    tint: "#ece8dc",
-  },
-  {
-    id: "footwear",
-    index: "05",
-    name: "Footwear",
-    filter: "Gear",
-    count: 2,
-    blurb: "Lateral lockdown for the split-step.",
-    kind: "shoe",
-    accent: "#ff5c2b",
-    tint: "#dcf2e4",
-  },
+export const productFilters = [
+  "All",
+  "Paddles",
+  "Balls",
+  "Apparel",
+  "Gear",
+  "Shoes",
 ];
-
-export const productFilters = ["All", "Paddles", "Balls", "Apparel", "Gear"];
 
 const GRIP_SIZES = ["4in", "4 1/8in", "4 1/4in"];
 const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+const MENS_SHOE_SIZES = ["7", "8", "9", "10", "11", "12", "13"];
+const KIDS_SHOE_SIZES = ["3", "4", "5", "6"];
 
-export const products = [
+const catalogue = [
   {
     id: "apex-carbon-16",
     name: "Apex Carbon 16",
@@ -580,7 +560,9 @@ export const products = [
     blurb: "Lateral cage · non-marking gum sole",
     description:
       "A lateral cage that holds your foot through the split-step and a gum outsole that will not mark an indoor floor.",
-    category: "Gear",
+    category: "Shoes",
+    brand: "PADDLEHAUS",
+    type: "Men's",
     skill: "All levels",
     price: 5999,
     rating: 4.7,
@@ -593,7 +575,7 @@ export const products = [
       { name: "Clay", hex: "#ff5c2b" },
     ],
     optionLabel: "US size",
-    options: ["7", "8", "9", "10", "11", "12", "13"],
+    options: MENS_SHOE_SIZES,
     highlights: [
       "TPU lateral cage for hard direction changes",
       "Non-marking gum outsole",
@@ -642,6 +624,693 @@ export const products = [
     ],
     art: { kind: "grip", color: "#2a2f38" },
   },
+
+  /* ------------------------------------------------------------------ shoes */
+
+  {
+    id: "asics-solution-speed-ff3",
+    name: "Asics Solution Speed FF 3",
+    blurb: "FF Blast Plus cushioning · all-court outsole",
+    description:
+      "The lightest Solution in the line. FF Blast Plus foam keeps the ride quick under the split-step, and the DYNAWALL midsole stops the foot rolling over the edge when you push wide for a backhand dink.",
+    category: "Shoes",
+    brand: "Asics",
+    type: "Men's",
+    skill: "Advanced",
+    price: 12999,
+    compareAt: 14999,
+    rating: 4.8,
+    reviews: 486,
+    badge: "Best seller",
+    sku: "AS-SSF-03",
+    stock: 24,
+    swatches: ["#2f6b66", "#e0218a"],
+    colorways: [
+      { name: "Rich Teal", hex: "#2f6b66" },
+      { name: "Pink Rave", hex: "#e0218a" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "FF Blast Plus foam for a light, fast ride",
+      "DYNAWALL midsole resists roll on hard lateral pushes",
+      "Six-month outsole durability guarantee",
+    ],
+    specs: [
+      { label: "Brand", value: "Asics" },
+      { label: "Fit", value: "Men's · standard" },
+      { label: "Outsole", value: "AHAR all-court" },
+      { label: "Surface", value: "Indoor + outdoor" },
+      { label: "Weight", value: "10.6 oz" },
+    ],
+    art: { kind: "shoe", color: "#2f6b66" },
+    image: "/photos/products/asicsproduct1.png",
+  },
+  {
+    id: "asics-solution-speed-ff3-black",
+    name: "Asics Solution Speed FF 3 Blackout",
+    blurb: "Blacked-out upper · mint green sole unit",
+    description:
+      "Same Solution Speed platform in a blacked-out mesh upper. The mint outsole is non-marking, so it is the pair we hand to players who split their week between a gym floor and an outdoor court.",
+    category: "Shoes",
+    brand: "Asics",
+    type: "Men's",
+    skill: "Advanced",
+    price: 12499,
+    rating: 4.7,
+    reviews: 312,
+    sku: "AS-SSF-03B",
+    stock: 19,
+    swatches: ["#14171d", "#3fd4a2"],
+    colorways: [
+      { name: "Black", hex: "#14171d" },
+      { name: "Mint", hex: "#3fd4a2" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "Non-marking outsole approved for indoor courts",
+      "Engineered mesh upper that dries overnight",
+      "Reinforced toe drag pad",
+    ],
+    specs: [
+      { label: "Brand", value: "Asics" },
+      { label: "Fit", value: "Men's · standard" },
+      { label: "Outsole", value: "AHAR non-marking" },
+      { label: "Surface", value: "Indoor + outdoor" },
+      { label: "Weight", value: "10.6 oz" },
+    ],
+    art: { kind: "shoe", color: "#14171d" },
+    image: "/photos/products/asicsproduct2.png",
+  },
+  {
+    id: "asics-gel-dedicate-8",
+    name: "Asics Gel-Dedicate 8",
+    blurb: "GEL forefoot · the club-night workhorse",
+    description:
+      "The pair most of our league players actually buy. GEL cushioning under the forefoot, a wide flat last for stability, and a price that survives being replaced every season.",
+    category: "Shoes",
+    brand: "Asics",
+    type: "Men's",
+    skill: "Intermediate",
+    price: 6499,
+    compareAt: 7499,
+    rating: 4.6,
+    reviews: 874,
+    badge: "Best value",
+    sku: "AS-GDD-08",
+    stock: 46,
+    swatches: ["#8fb8cf", "#f5f3ed"],
+    colorways: [
+      { name: "Gris Blue", hex: "#8fb8cf" },
+      { name: "White", hex: "#f5f3ed" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "GEL cushioning under the forefoot",
+      "Wide flat last for players who want stability first",
+      "Synthetic overlays hold the midfoot on a hard cut",
+    ],
+    specs: [
+      { label: "Brand", value: "Asics" },
+      { label: "Fit", value: "Men's · wide" },
+      { label: "Outsole", value: "All-court" },
+      { label: "Surface", value: "Indoor + outdoor" },
+      { label: "Weight", value: "11.4 oz" },
+    ],
+    art: { kind: "shoe", color: "#8fb8cf" },
+    image: "/photos/products/asicsproduct3.png",
+  },
+  {
+    id: "asics-gel-dedicate-8-gs",
+    name: "Asics Gel-Dedicate 8 GS",
+    blurb: "Junior grade-school build · US 3 – 6",
+    description:
+      "The Gel-Dedicate scaled for junior feet. Lighter throughout, with a softer heel counter so a growing foot is not fighting the shoe through a two-hour coaching session.",
+    category: "Shoes",
+    brand: "Asics",
+    type: "Kid's",
+    skill: "Beginner",
+    price: 4999,
+    rating: 4.7,
+    reviews: 218,
+    badge: "Junior",
+    sku: "AS-GDD-08GS",
+    stock: 33,
+    swatches: ["#8fb8cf", "#f5f3ed"],
+    colorways: [
+      { name: "Gris Blue", hex: "#8fb8cf" },
+      { name: "White", hex: "#f5f3ed" },
+    ],
+    optionLabel: "US size",
+    options: KIDS_SHOE_SIZES,
+    highlights: [
+      "Junior last, 30% lighter than the adult build",
+      "Softer heel counter for a growing foot",
+      "Same non-marking all-court outsole",
+    ],
+    specs: [
+      { label: "Brand", value: "Asics" },
+      { label: "Fit", value: "Kid's · grade school" },
+      { label: "Outsole", value: "All-court non-marking" },
+      { label: "Surface", value: "Indoor + outdoor" },
+      { label: "Weight", value: "7.8 oz" },
+    ],
+    art: { kind: "shoe", color: "#8fb8cf" },
+    image: "/photos/products/asicsproduct4.png",
+  },
+  {
+    id: "babolat-jet-tere-2",
+    name: "Babolat Jet Tere 2 All Court",
+    blurb: "Matryx upper · Michelin rubber outsole",
+    description:
+      "The fastest-feeling shoe we stock. The Matryx woven upper wraps the foot without break-in, and the Michelin compound holds grip on a dusty outdoor court long after a stock outsole has gone slick.",
+    category: "Shoes",
+    brand: "Babolat",
+    type: "Men's",
+    skill: "Advanced",
+    price: 13499,
+    rating: 4.8,
+    reviews: 391,
+    badge: "Pro pick",
+    sku: "BB-JTR-02",
+    stock: 21,
+    swatches: ["#f5f3ed", "#1f3f8f", "#ff5c2b"],
+    colorways: [
+      { name: "White", hex: "#f5f3ed" },
+      { name: "Estate Blue", hex: "#1f3f8f" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "Matryx woven upper needs no break-in",
+      "Michelin rubber outsole for dusty outdoor courts",
+      "Lowest stack height in the shoe line",
+    ],
+    specs: [
+      { label: "Brand", value: "Babolat" },
+      { label: "Fit", value: "Men's · narrow" },
+      { label: "Outsole", value: "Michelin rubber" },
+      { label: "Surface", value: "All court" },
+      { label: "Weight", value: "10.2 oz" },
+    ],
+    art: { kind: "shoe", color: "#1f3f8f" },
+    image: "/photos/products/babolatproduct1.png",
+  },
+  {
+    id: "babolat-jet-tere-2-junior",
+    name: "Babolat Jet Tere 2 Junior",
+    blurb: "Junior last · plum accents · US 3 – 6",
+    description:
+      "A junior cut of the Jet Tere with the same wrap-around upper. Light enough that a ten-year-old keeps moving their feet in the third game.",
+    category: "Shoes",
+    brand: "Babolat",
+    type: "Kid's",
+    skill: "Beginner",
+    price: 7999,
+    compareAt: 8999,
+    rating: 4.6,
+    reviews: 126,
+    badge: "Junior",
+    sku: "BB-JTR-02JR",
+    stock: 28,
+    swatches: ["#f5f3ed", "#7b3f5f"],
+    colorways: [
+      { name: "White", hex: "#f5f3ed" },
+      { name: "Grape", hex: "#7b3f5f" },
+    ],
+    optionLabel: "US size",
+    options: KIDS_SHOE_SIZES,
+    highlights: [
+      "Junior last with a padded collar",
+      "Single-density midsole tuned for lighter players",
+      "Non-marking outsole for school gym floors",
+    ],
+    specs: [
+      { label: "Brand", value: "Babolat" },
+      { label: "Fit", value: "Kid's · standard" },
+      { label: "Outsole", value: "Non-marking rubber" },
+      { label: "Surface", value: "All court" },
+      { label: "Weight", value: "7.4 oz" },
+    ],
+    art: { kind: "shoe", color: "#7b3f5f" },
+    image: "/photos/products/babolatproduct2.png",
+  },
+  {
+    id: "babolat-jet-tere-2-navy",
+    name: "Babolat Jet Tere 2 Navy",
+    blurb: "Full navy knit · same Michelin outsole",
+    description:
+      "The Jet Tere in a full navy knit. Identical platform to the white pair — pick this one if you play on courts that turn a white upper grey in a fortnight.",
+    category: "Shoes",
+    brand: "Babolat",
+    type: "Men's",
+    skill: "Advanced",
+    price: 13499,
+    rating: 4.7,
+    reviews: 208,
+    sku: "BB-JTR-02N",
+    stock: 16,
+    swatches: ["#1b2a54", "#f5f3ed"],
+    colorways: [
+      { name: "Navy", hex: "#1b2a54" },
+      { name: "White", hex: "#f5f3ed" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "Dark knit upper hides court dust",
+      "Michelin rubber outsole",
+      "Same fit as the white Jet Tere 2",
+    ],
+    specs: [
+      { label: "Brand", value: "Babolat" },
+      { label: "Fit", value: "Men's · narrow" },
+      { label: "Outsole", value: "Michelin rubber" },
+      { label: "Surface", value: "All court" },
+      { label: "Weight", value: "10.2 oz" },
+    ],
+    art: { kind: "shoe", color: "#1b2a54" },
+    image: "/photos/products/babolatproduct3.png",
+  },
+  {
+    id: "babolat-jet-mach-3",
+    name: "Babolat Jet Mach 3",
+    blurb: "Active Flexion upper · six-month outsole",
+    description:
+      "Babolat's flagship speed shoe. The Active Flexion upper tightens as you load into a lunge and releases when you push off, which is what makes it feel faster than its weight suggests.",
+    category: "Shoes",
+    brand: "Babolat",
+    type: "Men's",
+    skill: "Advanced",
+    price: 14999,
+    compareAt: 16999,
+    rating: 4.9,
+    reviews: 264,
+    badge: "New",
+    sku: "BB-JMC-03",
+    stock: 12,
+    swatches: ["#f5f3ed", "#1f3f8f"],
+    colorways: [
+      { name: "White", hex: "#f5f3ed" },
+      { name: "Estate Blue", hex: "#1f3f8f" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "Active Flexion upper tightens under load",
+      "Michelin outsole with a six-month guarantee",
+      "Kompressor shock absorption in the heel",
+    ],
+    specs: [
+      { label: "Brand", value: "Babolat" },
+      { label: "Fit", value: "Men's · standard" },
+      { label: "Outsole", value: "Michelin rubber" },
+      { label: "Surface", value: "All court" },
+      { label: "Weight", value: "10.9 oz" },
+    ],
+    art: { kind: "shoe", color: "#f5f3ed" },
+    image: "/photos/products/babolatproduct4.webp",
+  },
+  {
+    id: "mizuno-wave-exceed-light",
+    name: "Mizuno Wave Exceed Light 2",
+    blurb: "Wave plate · the lightest pair we stock",
+    description:
+      "Nine and a half ounces with a Wave plate through the midfoot. If you play a fast hands game at the line and hate feeling anchored, this is the pair to try first.",
+    category: "Shoes",
+    brand: "Mizuno",
+    type: "Men's",
+    skill: "Intermediate",
+    price: 9999,
+    rating: 4.7,
+    reviews: 347,
+    badge: "Lightest",
+    sku: "MZ-WXL-02",
+    stock: 31,
+    swatches: ["#f5f3ed", "#2f5fd8", "#d4ff3f"],
+    colorways: [
+      { name: "White", hex: "#f5f3ed" },
+      { name: "Reflex Blue", hex: "#2f5fd8" },
+      { name: "Volt", hex: "#d4ff3f" },
+    ],
+    optionLabel: "US size",
+    options: MENS_SHOE_SIZES,
+    highlights: [
+      "9.5 oz — the lightest shoe in the catalogue",
+      "Wave plate stiffens the midfoot without adding weight",
+      "Non-marking outsole for indoor play",
+    ],
+    specs: [
+      { label: "Brand", value: "Mizuno" },
+      { label: "Fit", value: "Men's · standard" },
+      { label: "Outsole", value: "D-Flex non-marking" },
+      { label: "Surface", value: "Indoor + outdoor" },
+      { label: "Weight", value: "9.5 oz" },
+    ],
+    art: { kind: "shoe", color: "#2f5fd8" },
+    image: "/photos/products/mizunoproduct.png",
+  },
+
+  /* ------------------------------------------------------------ more balls */
+
+  {
+    id: "head-pro-40-outdoor",
+    name: "HEAD Pro 40 Outdoor",
+    blurb: "3-ball sleeve · 40-hole tournament spec",
+    description:
+      "HEAD's tournament outdoor ball in the standard three-ball sleeve. A hard shell that keeps its shape through a long third-shot rally and a flight that does not wobble in a crosswind.",
+    category: "Balls",
+    brand: "HEAD",
+    skill: "All levels",
+    price: 899,
+    rating: 4.7,
+    reviews: 1432,
+    sku: "HD-P40-03",
+    stock: 260,
+    swatches: ["#d4ff3f", "#1c3f8f"],
+    colorways: [
+      { name: "Optic", hex: "#d4ff3f" },
+      { name: "Blue sleeve", hex: "#1c3f8f" },
+    ],
+    optionLabel: "Pack size",
+    options: ["3 balls"],
+    highlights: [
+      "40-hole outdoor pattern",
+      "Hard shell holds its round through a season",
+      "Tournament weight, matched sleeve to sleeve",
+    ],
+    specs: [
+      { label: "Brand", value: "HEAD" },
+      { label: "Type", value: "Outdoor" },
+      { label: "Holes", value: "40" },
+      { label: "Diameter", value: "74mm" },
+      { label: "Pack", value: "3 balls" },
+    ],
+    art: { kind: "ball", color: "#d4ff3f" },
+    image: "/photos/ballproduct2.png",
+  },
+  {
+    id: "head-pro-40-case",
+    name: "HEAD Pro 40 Outdoor · 4 sleeve case",
+    blurb: "12 balls · four sealed sleeves",
+    description:
+      "Four sleeves of the Pro 40 in one case — the way club nights actually buy them. Works out cheaper per ball than the single sleeve and keeps a spare tube in every bag.",
+    category: "Balls",
+    brand: "HEAD",
+    skill: "All levels",
+    price: 3199,
+    compareAt: 3596,
+    rating: 4.8,
+    reviews: 611,
+    badge: "Club pack",
+    sku: "HD-P40-12",
+    stock: 84,
+    swatches: ["#d4ff3f", "#c0342b"],
+    colorways: [
+      { name: "Optic", hex: "#d4ff3f" },
+      { name: "Red case", hex: "#c0342b" },
+    ],
+    optionLabel: "Pack size",
+    options: ["12 balls"],
+    highlights: [
+      "Four sealed three-ball sleeves",
+      "Cheaper per ball than a single sleeve",
+      "Same tournament spec as the single tube",
+    ],
+    specs: [
+      { label: "Brand", value: "HEAD" },
+      { label: "Type", value: "Outdoor" },
+      { label: "Holes", value: "40" },
+      { label: "Diameter", value: "74mm" },
+      { label: "Pack", value: "12 balls" },
+    ],
+    art: { kind: "ball", color: "#d4ff3f" },
+    image: "/photos/ballproduct1.png",
+  },
+  {
+    id: "sixx-club-40",
+    name: "SIXX Club 40 Outdoor",
+    blurb: "3-ball pack · the open-play workhorse",
+    description:
+      "The ball we put out for Saturday open play. Softer than a tournament ball, which means it survives a beginner's mishit off the edge guard instead of cracking.",
+    category: "Balls",
+    brand: "SIXX",
+    skill: "Beginner",
+    price: 749,
+    rating: 4.5,
+    reviews: 528,
+    sku: "SX-CL40-03",
+    stock: 190,
+    swatches: ["#f2c200", "#14171d"],
+    colorways: [
+      { name: "Yellow", hex: "#f2c200" },
+      { name: "Black pack", hex: "#14171d" },
+    ],
+    optionLabel: "Pack size",
+    options: ["3 balls"],
+    highlights: [
+      "Softer shell that survives edge-guard hits",
+      "40-hole outdoor pattern",
+      "The cheapest ball we are willing to stock",
+    ],
+    specs: [
+      { label: "Brand", value: "SIXX" },
+      { label: "Type", value: "Outdoor" },
+      { label: "Holes", value: "40" },
+      { label: "Diameter", value: "74mm" },
+      { label: "Pack", value: "3 balls" },
+    ],
+    art: { kind: "ball", color: "#f2c200" },
+    image: "/photos/ballproduct3.png",
+  },
+  {
+    id: "sixx-tour-40",
+    name: "SIXX Tour 40 Premium",
+    blurb: "3-ball pack · one-piece moulded",
+    description:
+      "SIXX's premium one-piece ball. No seam means no split, and the tighter weight tolerance is what tournament directors are actually paying for.",
+    category: "Balls",
+    brand: "SIXX",
+    skill: "Advanced",
+    price: 1099,
+    rating: 4.8,
+    reviews: 397,
+    badge: "Tournament",
+    sku: "SX-TR40-03",
+    stock: 132,
+    swatches: ["#d4ff3f", "#14171d"],
+    colorways: [
+      { name: "Optic", hex: "#d4ff3f" },
+      { name: "Black pack", hex: "#14171d" },
+    ],
+    optionLabel: "Pack size",
+    options: ["3 balls"],
+    highlights: [
+      "One-piece mould, no seam to split",
+      "Tight weight tolerance sleeve to sleeve",
+      "Approved for tournament play",
+    ],
+    specs: [
+      { label: "Brand", value: "SIXX" },
+      { label: "Type", value: "Outdoor" },
+      { label: "Holes", value: "40" },
+      { label: "Diameter", value: "74mm" },
+      { label: "Pack", value: "3 balls" },
+    ],
+    art: { kind: "ball", color: "#d4ff3f" },
+    image: "/photos/ballproduct4.png",
+  },
+  {
+    id: "sixx-bulk-20",
+    name: "SIXX 20-Ball Bulk Box",
+    blurb: "20 balls · coaching and ball-machine stock",
+    description:
+      "Twenty Tour 40s in a plain carton. This is what our coaching partners order when they are feeding drills four nights a week and losing balls over the fence.",
+    category: "Balls",
+    brand: "SIXX",
+    skill: "All levels",
+    price: 5999,
+    compareAt: 7326,
+    rating: 4.9,
+    reviews: 214,
+    badge: "Best value",
+    sku: "SX-BLK-20",
+    stock: 47,
+    swatches: ["#f5f3ed", "#14171d"],
+    colorways: [{ name: "Bulk carton", hex: "#f5f3ed" }],
+    optionLabel: "Pack size",
+    options: ["20 balls"],
+    highlights: [
+      "Twenty Tour 40 balls in one carton",
+      "Roughly a third off the sleeve price per ball",
+      "Sized for a ball machine hopper",
+    ],
+    specs: [
+      { label: "Brand", value: "SIXX" },
+      { label: "Type", value: "Outdoor" },
+      { label: "Holes", value: "40" },
+      { label: "Diameter", value: "74mm" },
+      { label: "Pack", value: "20 balls" },
+    ],
+    art: { kind: "ball", color: "#d4ff3f" },
+    image: "/photos/ballproduct5.png",
+  },
+
+  /* ---------------------------------------------------------- more paddles */
+
+  {
+    id: "engage-pursuit-pro1-ember",
+    name: "Engage Pursuit Pro1 Ember",
+    blurb: "Six-layer face · black on ember graphic",
+    description:
+      "Engage's control flagship. A six-layer face spreads the impact so the ball sits on the paddle a fraction longer, which is what makes the third-shot drop so repeatable with it.",
+    category: "Paddles",
+    brand: "Engage",
+    skill: "Advanced",
+    price: 19499,
+    compareAt: 21999,
+    rating: 4.8,
+    reviews: 402,
+    badge: "Control",
+    sku: "EG-PP1-EM",
+    stock: 14,
+    swatches: ["#14171d", "#c0342b"],
+    colorways: [
+      { name: "Onyx", hex: "#14171d" },
+      { name: "Ember", hex: "#c0342b" },
+    ],
+    optionLabel: "Grip size",
+    options: GRIP_SIZES,
+    highlights: [
+      "Six-layer face for a longer dwell time",
+      "Variable-release polymer core",
+      "Hand-weighted in pairs for doubles teams",
+    ],
+    specs: [
+      { label: "Brand", value: "Engage" },
+      { label: "Face", value: "Six-layer composite" },
+      { label: "Core", value: "16mm polymer" },
+      { label: "Shape", value: "Standard" },
+      { label: "Weight", value: "8.1 oz" },
+      { label: "Certification", value: "AIPA approved" },
+    ],
+    art: { kind: "paddle", face: "#14171d", texture: "carbon" },
+    image: "/photos/product1.png",
+  },
+  {
+    id: "engage-pursuit-pro1-ice",
+    name: "Engage Pursuit Pro1 Ice",
+    blurb: "Six-layer face · black on ice graphic",
+    description:
+      "The Pursuit Pro1 in the ice colourway. Identical layup to the Ember — pick on looks, not on feel, because on court there is nothing between them.",
+    category: "Paddles",
+    brand: "Engage",
+    skill: "Advanced",
+    price: 19499,
+    rating: 4.8,
+    reviews: 268,
+    sku: "EG-PP1-IC",
+    stock: 11,
+    swatches: ["#14171d", "#7dd3fc"],
+    colorways: [
+      { name: "Onyx", hex: "#14171d" },
+      { name: "Ice", hex: "#7dd3fc" },
+    ],
+    optionLabel: "Grip size",
+    options: GRIP_SIZES,
+    highlights: [
+      "Six-layer face for a longer dwell time",
+      "Variable-release polymer core",
+      "Same layup as the Ember colourway",
+    ],
+    specs: [
+      { label: "Brand", value: "Engage" },
+      { label: "Face", value: "Six-layer composite" },
+      { label: "Core", value: "16mm polymer" },
+      { label: "Shape", value: "Standard" },
+      { label: "Weight", value: "8.1 oz" },
+      { label: "Certification", value: "AIPA approved" },
+    ],
+    art: { kind: "paddle", face: "#14171d", texture: "carbon" },
+    image: "/photos/product2.png",
+  },
+];
+
+/**
+ * Photography is resolved once, here, rather than at every call site.
+ *
+ * The convention is `/photos/products/<id>.png`, so an entry only spells out
+ * `image` when the file breaks it (a `.webp` supplier shot) and only spells out
+ * `gallery` when we hold more than one angle of that SKU.
+ */
+export const products = catalogue.map((product) => {
+  const image = product.image ?? `/photos/products/${product.id}.png`;
+  return { ...product, image, gallery: product.gallery ?? [image] };
+});
+
+/* --------------------------------------------------------------- categories */
+
+const countIn = (filter) =>
+  products.filter((product) => product.category === filter).length;
+
+export const categories = [
+  {
+    id: "paddles",
+    index: "01",
+    name: "Paddles",
+    filter: "Paddles",
+    count: countIn("Paddles"),
+    blurb: "Raw carbon, thermoformed cores, tuned by pros.",
+    kind: "paddle",
+    accent: "#d4ff3f",
+    tint: "#eefcc4",
+  },
+  {
+    id: "balls",
+    index: "02",
+    name: "Balls",
+    filter: "Balls",
+    count: countIn("Balls"),
+    blurb: "Indoor and outdoor, true-flight moulded.",
+    kind: "ball",
+    accent: "#ff5c2b",
+    tint: "#ffe6d5",
+  },
+  {
+    id: "apparel",
+    index: "03",
+    name: "Apparel",
+    filter: "Apparel",
+    count: countIn("Apparel"),
+    blurb: "Court-ready fits that breathe in August.",
+    kind: "tee",
+    accent: "#d4ff3f",
+    tint: "#e2eeff",
+  },
+  {
+    id: "bags",
+    index: "04",
+    name: "Bags",
+    filter: "Gear",
+    count: countIn("Gear"),
+    blurb: "Six-paddle capacity with vented shoe wells.",
+    kind: "bag",
+    accent: "#d4ff3f",
+    tint: "#ece8dc",
+  },
+  {
+    id: "shoes",
+    index: "05",
+    name: "Shoes",
+    filter: "Shoes",
+    count: countIn("Shoes"),
+    blurb: "Asics, Babolat and Mizuno — men's and kid's.",
+    kind: "shoe",
+    accent: "#ff5c2b",
+    tint: "#dcf2e4",
+  },
 ];
 
 /* ------------------------------------------------------------------ lookups */
@@ -687,6 +1356,48 @@ export const paddleSpecs = [
   { label: "Core", value: "16mm polymer", note: "Thermoformed and foam-injected walls." },
   { label: "Swing weight", value: "112 · balanced", note: "Tuned for a fast hand battle at the line." },
   { label: "Handle", value: "5.5in · 4⅛ grip", note: "Two-hand backhand friendly." },
+];
+
+/**
+ * The paddle build, outside in. `art` keys into LAYER_ART, so a new layer is a
+ * data edit plus one glyph rather than a change to the section itself.
+ */
+export const paddleLayers = [
+  {
+    id: "face",
+    index: "01",
+    art: "grit",
+    title: "Peel-ply grit face",
+    copy: "Cured against peel-ply, so the grit is the weave itself rather than a sprayed coating that wears off by August.",
+  },
+  {
+    id: "carbon",
+    index: "02",
+    art: "weave",
+    title: "Raw T700 carbon",
+    copy: "Unidirectional sheets cross-laid at 45° — the reason the face resists twisting on a ball struck off centre.",
+  },
+  {
+    id: "walls",
+    index: "03",
+    art: "foam",
+    title: "Foam-injected walls",
+    copy: "Closed-cell foam fills the perimeter channel, so a ball caught near the edge keeps most of its pace.",
+  },
+  {
+    id: "core",
+    index: "04",
+    art: "honeycomb",
+    title: "16mm honeycomb core",
+    copy: "Polypropylene cells sized to swallow pace on a reset without flattening the pop on a drive.",
+  },
+  {
+    id: "handle",
+    index: "05",
+    art: "unibody",
+    title: "Unibody handle",
+    copy: "Face, throat and handle press as a single piece. Nothing is bonded on, so nothing works loose.",
+  },
 ];
 
 export const features = [
@@ -911,16 +1622,16 @@ export const faqs = [
 /* ------------------------------------------------------------------ photos */
 
 /**
- * Photographic slots. These are licensed Unsplash placeholders, verified by
- * their published alt text — they are NOT photographs of these SKUs, because
- * the catalogue is fictional. Replace with real shoots: drop files under
- * /public/photos/ and swap the `src` for "/photos/<name>.jpg" (no config
- * change needed for local paths).
+ * Editorial photographic slots — the shots that are not tied to a single SKU.
+ *
+ * All of these are served from /public/photos/, so nothing here depends on a
+ * remote host being reachable at build time. Swap in a real shoot by dropping
+ * the file in that folder and changing the `src` only.
  */
 export const photos = {
   courtStill: {
-    src: "https://images.unsplash.com/photo-1693142518820-78d7a05f1546?w=1400&q=80&auto=format&fit=crop",
-    alt: "Two pickleball paddles and three balls resting on a court",
+    src: "/photos/pickleball-gear.png",
+    alt: "A tour duffel and a pair of court shoes packed for a session",
   },
 };
 
@@ -990,6 +1701,7 @@ export const footerColumns = [
       { label: "All products", href: "/shop" },
       { label: "Paddles", href: "/shop?category=Paddles" },
       { label: "Balls", href: "/shop?category=Balls" },
+      { label: "Shoes", href: "/shop?category=Shoes" },
       { label: "Apparel", href: "/shop?category=Apparel" },
       { label: "Gear", href: "/shop?category=Gear" },
     ],

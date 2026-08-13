@@ -100,7 +100,8 @@ export default function ProductCard({ product }) {
             {lowStock ? (
               <span className="text-clay">Only {product.stock} left</span>
             ) : (
-              product.category
+              // footwear reads better by maker than by the shelf it sits on
+              product.brand ?? product.category
             )}
           </span>
         </div>

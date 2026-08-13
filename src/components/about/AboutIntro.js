@@ -77,7 +77,7 @@ export default function AboutIntro() {
             </div>
 
             <span className="absolute bottom-5 left-6 font-mono text-[11px] text-paper">
-              Saturday open play · Koramangala
+              Season 04 kit · Indiranagar studio
             </span>
           </div>
         </Reveal>

@@ -2,7 +2,8 @@ import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
 import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
-import { paddleSpecs } from "@/lib/data";
+import { LAYER_ART } from "@/components/art/LayerArt";
+import { paddleLayers, paddleSpecs } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
 /**
@@ -153,6 +154,54 @@ export default function TechShowcase() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ------------------------------------------------- the build, layer by layer */}
+      <div
+        data-speed="0.3"
+        className="relative mx-auto mt-16 w-full max-w-350 px-5 sm:px-8 lg:mt-24"
+      >
+        <Reveal className="flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
+          <h3 className="text-[clamp(1.4rem,2.6vw,2rem)] font-semibold tracking-[-0.03em]">
+            Five layers, <Accent>outside in</Accent>.
+          </h3>
+          <p className="max-w-md text-[13px] leading-relaxed text-mist">
+            A paddle is a laminate. What separates ours is what happens between
+            the face you can see and the core you cannot.
+          </p>
+        </Reveal>
+
+        <ol className="mt-10 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+          {paddleLayers.map((layer, index) => {
+            const Art = LAYER_ART[layer.art];
+
+            return (
+              <Reveal
+                key={layer.id}
+                as="li"
+                delay={index * 80}
+                className="group flex flex-col bg-paper p-6 transition-colors duration-500 hover:bg-surface"
+              >
+                <div className="flex items-center justify-between">
+                  {/* the glyph is the point of the tile, so it gets the volt plate */}
+                  <span className="grid size-14 place-items-center rounded-2xl bg-surface text-volt-deep transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-0.5 group-hover:bg-volt group-hover:text-ink">
+                    {Art ? <Art className="size-8" /> : null}
+                  </span>
+                  <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong">
+                    {layer.index}
+                  </span>
+                </div>
+
+                <p className="mt-6 text-[15px] font-semibold tracking-tight">
+                  {layer.title}
+                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-mist">
+                  {layer.copy}
+                </p>
+              </Reveal>
+            );
+          })}
+        </ol>
       </div>
     </ParallaxScene>
   );

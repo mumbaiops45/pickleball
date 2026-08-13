@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+
 import OtpInput from "@/components/auth/OtpInput";
 import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
@@ -11,124 +12,428 @@ import { useAuth } from "@/store/AuthProvider";
 
 const RESEND_SECONDS = 30;
 
-const PERKS = [
-  "Track orders and re-order in two taps",
-  "Early access to every limited drop",
-  "₹500 credit on your first order",
-];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[6-9]\d{9}$/;
 
 export default function AuthModal() {
-  const { modalOpen, closeAuth, completeSignIn } = useAuth();
+  const {
+    modalOpen,
+    closeAuth,
+    completeSignIn,
+  } = useAuth();
 
-  const [step, setStep] = useState("phone");
+  // ============================================================
+  // AUTH MODE
+  // ============================================================
+
+  const [authMode, setAuthMode] = useState("login");
+
+  // password | otp
+  const [loginMethod, setLoginMethod] = useState("password");
+
+  // ============================================================
+  // LOGIN - PASSWORD
+  // ============================================================
+
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  // ============================================================
+  // LOGIN - OTP
+  // ============================================================
+
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const [otpStep, setOtpStep] = useState("phone");
+  const [otpError, setOtpError] = useState("");
   const [countdown, setCountdown] = useState(0);
 
-  const phoneRef = useRef(null);
+  // ============================================================
+  // REGISTER
+  // ============================================================
 
-  const phoneValid = /^[6-9]\d{9}$/.test(phone);
-  const otpValid = otp.replace(/\D/g, "").length === 6;
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPhone, setRegisterPhone] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
 
-  // lock the page behind the modal and close on Escape
+  // ============================================================
+  // VALIDATION
+  // ============================================================
+
+  const loginEmailValid = EMAIL_REGEX.test(
+    loginEmail.trim()
+  );
+
+  const loginPasswordValid =
+    loginPassword.length >= 6;
+
+  const phoneValid = PHONE_REGEX.test(phone);
+
+  const otpValid =
+    otp.replace(/\D/g, "").length === 6;
+
+  const registerNameValid =
+    registerName.trim().length >= 2;
+
+  const registerEmailValid =
+    EMAIL_REGEX.test(registerEmail.trim());
+
+  const registerPhoneValid =
+    PHONE_REGEX.test(registerPhone);
+
+  const registerPasswordValid =
+    registerPassword.length >= 6;
+
+  // ============================================================
+  // LOCK BODY SCROLL + ESCAPE
+  // ============================================================
+
   useEffect(() => {
     if (!modalOpen) return;
-    const onKey = (event) => {
-      if (event.key === "Escape") closeAuth();
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeAuth();
+      }
     };
-    document.addEventListener("keydown", onKey);
+
+    document.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+
+    const previousOverflow =
+      document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
+
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      document.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+
+      document.body.style.overflow =
+        previousOverflow;
     };
   }, [modalOpen, closeAuth]);
 
-  // reset the flow a moment after closing, so it does not flicker mid-animation
+  // ============================================================
+  // RESET MODAL WHEN CLOSED
+  // ============================================================
+
   useEffect(() => {
     if (modalOpen) return;
+
     const timer = window.setTimeout(() => {
-      setStep("phone");
+      setAuthMode("login");
+      setLoginMethod("password");
+
+      setLoginEmail("");
+      setLoginPassword("");
+      setLoginError("");
+
+      setPhone("");
       setOtp("");
-      setName("");
-      setError("");
+      setOtpStep("phone");
+      setOtpError("");
+      setCountdown(0);
+
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPhone("");
+      setRegisterPassword("");
+      setRegisterError("");
     }, 400);
-    return () => window.clearTimeout(timer);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, [modalOpen]);
 
-  // resend cooldown
+  // ============================================================
+  // OTP COUNTDOWN
+  // ============================================================
+
   useEffect(() => {
     if (countdown <= 0) return;
-    const timer = window.setInterval(
-      () => setCountdown((current) => current - 1),
-      1000,
-    );
-    return () => window.clearInterval(timer);
+
+    const timer = window.setInterval(() => {
+      setCountdown((current) =>
+        current > 0 ? current - 1 : 0
+      );
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
   }, [countdown]);
 
-  const sendOtp = (event) => {
+  // ============================================================
+  // PASSWORD LOGIN
+  // ============================================================
+
+  const handlePasswordLogin = (event) => {
     event.preventDefault();
-    if (!phoneValid) {
-      setError("Enter a valid 10-digit Indian mobile number.");
+
+    setLoginError("");
+
+    if (!loginEmail.trim()) {
+      setLoginError(
+        "Please enter your email address."
+      );
       return;
     }
-    setError("");
+
+    if (!loginEmailValid) {
+      setLoginError(
+        "Please enter a valid email address."
+      );
+      return;
+    }
+
+    if (!loginPassword) {
+      setLoginError(
+        "Please enter your password."
+      );
+      return;
+    }
+
+    if (!loginPasswordValid) {
+      setLoginError(
+        "Password must be at least 6 characters."
+      );
+      return;
+    }
+
+    completeSignIn({
+      email: loginEmail.trim(),
+      password: loginPassword,
+    });
+  };
+
+  // ============================================================
+  // SEND OTP
+  // ============================================================
+
+  const handleSendOtp = (event) => {
+    event.preventDefault();
+
+    setOtpError("");
+
+    if (!phone) {
+      setOtpError(
+        "Please enter your mobile number."
+      );
+      return;
+    }
+
+    if (!phoneValid) {
+      setOtpError(
+        "Enter a valid 10-digit Indian mobile number."
+      );
+      return;
+    }
+
     setOtp("");
     setCountdown(RESEND_SECONDS);
-    setStep("otp");
+    setOtpStep("otp");
   };
 
-  const verifyOtp = (event) => {
+  // ============================================================
+  // VERIFY OTP
+  // ============================================================
+
+  const handleVerifyOtp = (event) => {
     event.preventDefault();
+
+    setOtpError("");
+
     if (!otpValid) {
-      setError("Enter the 6-digit code.");
+      setOtpError(
+        "Enter the 6-digit OTP."
+      );
       return;
     }
-    setError("");
-    setStep("profile");
+
+    completeSignIn({
+      phone: `+91 ${phone}`,
+      otp,
+    });
   };
 
-  const finish = (event) => {
+  // ============================================================
+  // REGISTER
+  // ============================================================
+
+  const handleRegister = (event) => {
     event.preventDefault();
-    completeSignIn({ phone: `+91 ${phone}`, name });
+
+    setRegisterError("");
+
+    if (!registerName.trim()) {
+      setRegisterError(
+        "Please enter your full name."
+      );
+      return;
+    }
+
+    if (!registerEmail.trim()) {
+      setRegisterError(
+        "Please enter your email address."
+      );
+      return;
+    }
+
+    if (!registerEmailValid) {
+      setRegisterError(
+        "Please enter a valid email address."
+      );
+      return;
+    }
+
+    if (!registerPhone) {
+      setRegisterError(
+        "Please enter your mobile number."
+      );
+      return;
+    }
+
+    if (!registerPhoneValid) {
+      setRegisterError(
+        "Enter a valid 10-digit mobile number."
+      );
+      return;
+    }
+
+    if (!registerPassword) {
+      setRegisterError(
+        "Please create a password."
+      );
+      return;
+    }
+
+    if (!registerPasswordValid) {
+      setRegisterError(
+        "Password must be at least 6 characters."
+      );
+      return;
+    }
+
+    completeSignIn({
+      name: registerName.trim(),
+      email: registerEmail.trim(),
+      phone: `+91 ${registerPhone}`,
+      password: registerPassword,
+    });
   };
+
+  // ============================================================
+  // SWITCH TO REGISTER
+  // ============================================================
+
+  const openRegister = () => {
+    setAuthMode("register");
+
+    setLoginError("");
+    setOtpError("");
+  };
+
+  // ============================================================
+  // SWITCH BACK TO LOGIN
+  // ============================================================
+
+  const openLogin = () => {
+    setAuthMode("login");
+
+    setLoginMethod("password");
+
+    setRegisterError("");
+  };
+
+  // ============================================================
+  // SWITCH LOGIN METHOD
+  // ============================================================
+
+  const selectPasswordLogin = () => {
+    setLoginMethod("password");
+
+    setLoginError("");
+    setOtpError("");
+    setOtpStep("phone");
+    setOtp("");
+  };
+
+  const selectOtpLogin = () => {
+    setLoginMethod("otp");
+
+    setLoginError("");
+    setOtpError("");
+  };
+
+  // ============================================================
+  // RENDER
+  // ============================================================
 
   return (
     <div
-      className={`fixed inset-0 z-80 grid place-items-center px-4 ${
-        modalOpen ? "pointer-events-auto" : "pointer-events-none"
+      className={`fixed inset-0 z-[80] grid place-items-center px-4 ${
+        modalOpen
+          ? "pointer-events-auto"
+          : "pointer-events-none"
       }`}
-      // the dialog stays mounted so it can animate; `inert` keeps its inputs
-      // out of the tab order and the accessibility tree while it is closed
-      inert={!modalOpen}
+      aria-hidden={!modalOpen}
     >
+      {/* ======================================================
+          BACKDROP
+      ======================================================= */}
+
       <button
         type="button"
         tabIndex={modalOpen ? 0 : -1}
-        aria-label="Close sign in"
+        aria-label="Close login"
         onClick={closeAuth}
         className={`absolute inset-0 bg-ink/55 backdrop-blur-sm transition-opacity duration-400 ${
-          modalOpen ? "opacity-100" : "opacity-0"
+          modalOpen
+            ? "opacity-100"
+            : "opacity-0"
         }`}
       />
+
+      {/* ======================================================
+          MODAL
+      ======================================================= */}
 
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Login or sign up"
-        className={`relative w-full max-w-md overflow-hidden rounded-3xl bg-paper shadow-[0_40px_80px_-20px_rgba(15,17,21,.45)] transition-all duration-400 ease-[cubic-bezier(.16,1,.3,1)] ${
+        aria-label={
+          authMode === "login"
+            ? "Login"
+            : "Create account"
+        }
+        className={`relative flex w-full max-w-[540px] max-h-[92vh] flex-col overflow-hidden rounded-3xl bg-paper shadow-[0_40px_80px_-20px_rgba(15,17,21,.45)] transition-all duration-400 ease-[cubic-bezier(.16,1,.3,1)] ${
           modalOpen
             ? "translate-y-0 scale-100 opacity-100"
             : "translate-y-6 scale-95 opacity-0"
         }`}
       >
-        {/* ---------------------------------------------------------- banner */}
-        <div className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#d4ff3f_0%,#a9dd00_55%,#7ba500_100%)] px-7 py-7">
+        {/* ====================================================
+            HEADER
+        ===================================================== */}
+
+        <div className="relative isolate shrink-0 overflow-hidden bg-[linear-gradient(135deg,#d4ff3f_0%,#a9dd00_55%,#7ba500_100%)] px-6 py-5">
+          {/* Decorative glow */}
           <span className="pointer-events-none absolute -right-6 -top-10 size-40 rounded-full bg-paper/25 blur-2xl" />
 
-          <div className="pointer-events-none absolute -right-2 -top-4 w-28 rotate-[18deg] opacity-95 sm:w-32">
+          {/* ==================================================
+              PADDLE
+          =================================================== */}
+
+          <div className="pointer-events-none absolute -right-2 -top-4 w-24 rotate-[18deg] opacity-95 sm:w-28">
             <PaddleArt
               id="auth-modal-paddle"
               face="#0f1115"
@@ -138,217 +443,591 @@ export default function AuthModal() {
               className="w-full drop-shadow-[0_18px_30px_rgba(15,17,21,.35)]"
             />
           </div>
-          <div className="pointer-events-none absolute bottom-2 right-28 w-10 opacity-90">
+
+          {/* ==================================================
+              BALL
+          =================================================== */}
+
+          <div className="pointer-events-none absolute bottom-2 right-24 w-9 opacity-90">
             <div className="float-slow">
-              <BallArt id="auth-modal-ball" color="#f5f3ed" className="w-full" />
+              <BallArt
+                id="auth-modal-ball"
+                color="#f5f3ed"
+                className="w-full"
+              />
             </div>
           </div>
+
+          {/* ==================================================
+              CLOSE
+          =================================================== */}
 
           <button
             type="button"
             tabIndex={modalOpen ? 0 : -1}
             onClick={closeAuth}
             aria-label="Close"
-            className="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-full text-ink/60 transition-colors hover:bg-ink/10 hover:text-ink"
+            className="absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full text-ink/60 transition-colors hover:bg-ink/10 hover:text-ink"
           >
-            <CloseIcon className="size-4.5" />
+            <CloseIcon className="size-4" />
           </button>
 
-          <div className="relative max-w-[62%]">
-            <LogoMark size="sm" tone="ink" />
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-ink">
-              New here?
-            </h2>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-ink/75">
-              Log in for member pricing, faster checkout and first look at every
-              drop.
-            </p>
+          {/* ==================================================
+              HEADER CONTENT
+          =================================================== */}
+
+          <div className="relative max-w-[68%]">
+            <LogoMark
+              size="sm"
+              tone="ink"
+            />
+
+            {authMode === "login" ? (
+              <>
+                <h2 className="mt-2 text-xl font-semibold tracking-tight text-ink">
+                  Welcome back
+                </h2>
+
+                <p className="mt-1 text-[12px] leading-relaxed text-ink/75">
+                  Login to your account for member
+                  pricing, faster checkout and exclusive
+                  drops.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="mt-2 text-xl font-semibold tracking-tight text-ink">
+                  Create your account
+                </h2>
+
+                <p className="mt-1 text-[12px] leading-relaxed text-ink/75">
+                  Join PaddleHaus and get access to
+                  exclusive offers and faster checkout.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
-        {/* ------------------------------------------------------------ body */}
-        <div className="px-7 pb-7 pt-6">
-          {step === "phone" ? (
-            <form onSubmit={sendOtp} noValidate>
-              <h3 className="text-xl font-semibold tracking-tight">
-                Login <span className="font-normal text-mist">or</span> Sign up
-              </h3>
-              <p className="mt-1.5 text-sm text-mist">
-                Access offers, save a wishlist and place orders quickly.
-              </p>
+        {/* ====================================================
+            BODY
+        ===================================================== */}
 
-              <div className="mt-6">
-                <label htmlFor="auth-phone" className="sr-only">
-                  Mobile number
-                </label>
-                <div
-                  className={`flex overflow-hidden rounded-2xl border transition-colors ${
-                    error ? "border-clay" : "border-line-strong focus-within:border-volt-deep"
+        <div className="min-h-0 flex-1 overflow-y-auto px-7 pb-6 pt-5">
+          {/* ==================================================
+              LOGIN
+          =================================================== */}
+
+          {authMode === "login" && (
+            <>
+              <h3 className="text-xl font-semibold tracking-tight text-ink">
+                Login to your account
+              </h3>
+
+              {/* =================================================
+                  LOGIN TABS
+              ================================================== */}
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={selectPasswordLogin}
+                  className={`h-12 rounded-xl border text-sm font-medium transition-all ${
+                    loginMethod === "password"
+                      ? "border-volt bg-volt/5 text-ink"
+                      : "border-line-strong bg-paper text-ink hover:border-volt"
                   }`}
                 >
-                  <span className="grid w-16 shrink-0 place-items-center border-r border-line bg-surface text-sm font-medium text-ink">
+                  Login with Password
+                </button>
+
+                <button
+                  type="button"
+                  onClick={selectOtpLogin}
+                  className={`h-12 rounded-xl border text-sm font-medium transition-all ${
+                    loginMethod === "otp"
+                      ? "border-volt bg-volt/5 text-ink"
+                      : "border-line-strong bg-paper text-ink hover:border-volt"
+                  }`}
+                >
+                  Login with OTP
+                </button>
+              </div>
+
+              {/* =================================================
+                  PASSWORD LOGIN
+              ================================================== */}
+
+              {loginMethod === "password" && (
+                <form
+                  onSubmit={handlePasswordLogin}
+                  noValidate
+                >
+                  {/* Email */}
+
+                  <div className="mt-4">
+                    <label
+                      htmlFor="login-email"
+                      className="mb-2 block text-sm font-medium text-ink"
+                    >
+                      Email Address
+                      <span className="ml-1 text-red-500">
+                        *
+                      </span>
+                    </label>
+
+                    <input
+                      id="login-email"
+                      type="email"
+                      autoComplete="email"
+                      value={loginEmail}
+                      onChange={(event) => {
+                        setLoginEmail(
+                          event.target.value
+                        );
+                        setLoginError("");
+                      }}
+                      placeholder="Email Address"
+                      className={`h-13 w-full rounded-xl border bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 ${
+                        loginError
+                          ? "border-clay"
+                          : "border-line-strong focus:border-volt-deep"
+                      }`}
+                    />
+                  </div>
+
+                  {/* Password */}
+
+                  <div className="mt-4">
+                    <label
+                      htmlFor="login-password"
+                      className="mb-2 block text-sm font-medium text-ink"
+                    >
+                      Password
+                      <span className="ml-1 text-red-500">
+                        *
+                      </span>
+                    </label>
+
+                    <input
+                      id="login-password"
+                      type="password"
+                      autoComplete="current-password"
+                      value={loginPassword}
+                      onChange={(event) => {
+                        setLoginPassword(
+                          event.target.value
+                        );
+                        setLoginError("");
+                      }}
+                      placeholder="Password"
+                      className={`h-13 w-full rounded-xl border bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 ${
+                        loginError
+                          ? "border-clay"
+                          : "border-line-strong focus:border-volt-deep"
+                      }`}
+                    />
+                  </div>
+
+                  {/* Error */}
+
+                  {loginError && (
+                    <p
+                      role="alert"
+                      className="mt-2 text-xs font-medium text-clay"
+                    >
+                      {loginError}
+                    </p>
+                  )}
+
+                  {/* Forgot Password */}
+
+                  <div className="mt-3 text-right">
+                    <Link
+                      href="/forgot-password"
+                      onClick={closeAuth}
+                      className="text-sm font-medium text-volt-deep underline-offset-2 hover:underline"
+                    >
+                      Forgot Password via Email?
+                    </Link>
+                  </div>
+
+                  {/* Login */}
+
+                  <button
+                    type="submit"
+                    className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+                  >
+                    Login Now
+                  </button>
+                </form>
+              )}
+
+              {/* =================================================
+                  OTP LOGIN
+              ================================================== */}
+
+              {loginMethod === "otp" && (
+                <>
+                  {/* PHONE */}
+
+                  {otpStep === "phone" && (
+                    <form
+                      onSubmit={handleSendOtp}
+                      noValidate
+                    >
+                      <div className="mt-4">
+                        <label
+                          htmlFor="login-phone"
+                          className="mb-2 block text-sm font-medium text-ink"
+                        >
+                          Mobile Number
+                          <span className="ml-1 text-red-500">
+                            *
+                          </span>
+                        </label>
+
+                        <div
+                          className={`flex overflow-hidden rounded-xl border ${
+                            otpError
+                              ? "border-clay"
+                              : "border-line-strong focus-within:border-volt-deep"
+                          }`}
+                        >
+                          <span className="grid w-14 shrink-0 place-items-center border-r border-line bg-surface text-sm font-medium text-ink">
+                            +91
+                          </span>
+
+                          <input
+                            id="login-phone"
+                            type="tel"
+                            inputMode="numeric"
+                            autoComplete="tel-national"
+                            maxLength={10}
+                            value={phone}
+                            onChange={(event) => {
+                              setPhone(
+                                event.target.value
+                                  .replace(/\D/g, "")
+                                  .slice(0, 10)
+                              );
+
+                              setOtpError("");
+                            }}
+                            placeholder="10-digit mobile number"
+                            className="h-13 min-w-0 flex-1 bg-paper px-4 text-sm text-ink outline-none placeholder:text-mist/70"
+                          />
+                        </div>
+
+                        {otpError && (
+                          <p className="mt-2 text-xs text-clay">
+                            {otpError}
+                          </p>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                      >
+                        Send OTP
+                      </button>
+                    </form>
+                  )}
+
+                  {/* OTP */}
+
+                  {otpStep === "otp" && (
+                    <form
+                      onSubmit={handleVerifyOtp}
+                      noValidate
+                    >
+                      <p className="mt-4 text-sm text-mist">
+                        Enter the OTP sent to{" "}
+                        <span className="font-medium text-ink">
+                          +91 {phone}
+                        </span>
+                      </p>
+
+                      <div className="mt-4">
+                        <OtpInput
+                          value={otp}
+                          onChange={(next) => {
+                            setOtp(next);
+                            setOtpError("");
+                          }}
+                        />
+
+                        {otpError && (
+                          <p className="mt-2 text-xs text-clay">
+                            {otpError}
+                          </p>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                      >
+                        Verify OTP
+                      </button>
+
+                      <div className="mt-3 text-center">
+                        {countdown > 0 ? (
+                          <p className="text-xs text-mist">
+                            Resend OTP in{" "}
+                            {countdown}s
+                          </p>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCountdown(
+                                RESEND_SECONDS
+                              );
+                            }}
+                            className="text-xs font-medium text-volt-deep hover:underline"
+                          >
+                            Resend OTP
+                          </button>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOtpStep("phone");
+                          setOtp("");
+                          setOtpError("");
+                        }}
+                        className="mt-2 w-full text-xs text-mist hover:text-ink"
+                      >
+                        Change mobile number
+                      </button>
+                    </form>
+                  )}
+                </>
+              )}
+
+              {/* =================================================
+                  REGISTER LINK
+              ================================================== */}
+
+              <p className="mt-5 text-center text-sm text-ink">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={openRegister}
+                  className="font-medium text-volt-deep hover:underline"
+                >
+                  Join free today
+                </button>
+              </p>
+            </>
+          )}
+
+          {/* ==================================================
+              REGISTER
+          =================================================== */}
+
+          {authMode === "register" && (
+            <form
+              onSubmit={handleRegister}
+              noValidate
+            >
+              <h3 className="text-xl font-semibold tracking-tight text-ink">
+                Create your account
+              </h3>
+
+              <p className="mt-1 text-sm text-mist">
+                Join free and start shopping.
+              </p>
+
+              {/* Name */}
+
+              <div className="mt-4">
+                <label
+                  htmlFor="register-name"
+                  className="mb-2 block text-sm font-medium text-ink"
+                >
+                  Full Name
+                  <span className="ml-1 text-red-500">
+                    *
+                  </span>
+                </label>
+
+                <input
+                  id="register-name"
+                  type="text"
+                  autoComplete="name"
+                  value={registerName}
+                  onChange={(event) => {
+                    setRegisterName(
+                      event.target.value
+                    );
+                    setRegisterError("");
+                  }}
+                  placeholder="Full Name"
+                  className="h-13 w-full rounded-xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
+                />
+              </div>
+
+              {/* Email */}
+
+              <div className="mt-4">
+                <label
+                  htmlFor="register-email"
+                  className="mb-2 block text-sm font-medium text-ink"
+                >
+                  Email Address
+                  <span className="ml-1 text-red-500">
+                    *
+                  </span>
+                </label>
+
+                <input
+                  id="register-email"
+                  type="email"
+                  autoComplete="email"
+                  value={registerEmail}
+                  onChange={(event) => {
+                    setRegisterEmail(
+                      event.target.value
+                    );
+                    setRegisterError("");
+                  }}
+                  placeholder="Email Address"
+                  className="h-13 w-full rounded-xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
+                />
+              </div>
+
+              {/* Mobile */}
+
+              <div className="mt-4">
+                <label
+                  htmlFor="register-phone"
+                  className="mb-2 block text-sm font-medium text-ink"
+                >
+                  Mobile Number
+                  <span className="ml-1 text-red-500">
+                    *
+                  </span>
+                </label>
+
+                <div className="flex overflow-hidden rounded-xl border border-line-strong focus-within:border-volt-deep">
+                  <span className="grid w-14 shrink-0 place-items-center border-r border-line bg-surface text-sm font-medium text-ink">
                     +91
                   </span>
+
                   <input
-                    id="auth-phone"
-                    ref={phoneRef}
+                    id="register-phone"
                     type="tel"
                     inputMode="numeric"
                     autoComplete="tel-national"
                     maxLength={10}
-                    value={phone}
+                    value={registerPhone}
                     onChange={(event) => {
-                      setPhone(event.target.value.replace(/\D/g, "").slice(0, 10));
-                      setError("");
+                      setRegisterPhone(
+                        event.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 10)
+                      );
+
+                      setRegisterError("");
                     }}
-                    placeholder="Enter your phone number"
-                    className="h-14 min-w-0 flex-1 bg-paper px-4 text-sm text-ink outline-none placeholder:text-mist/70"
+                    placeholder="10-digit mobile number"
+                    className="h-13 min-w-0 flex-1 bg-paper px-4 text-sm text-ink outline-none placeholder:text-mist/70"
                   />
                 </div>
-                {error ? <p className="mt-2 text-xs text-clay">{error}</p> : null}
               </div>
+
+              {/* Password */}
+
+              <div className="mt-4">
+                <label
+                  htmlFor="register-password"
+                  className="mb-2 block text-sm font-medium text-ink"
+                >
+                  Password
+                  <span className="ml-1 text-red-500">
+                    *
+                  </span>
+                </label>
+
+                <input
+                  id="register-password"
+                  type="password"
+                  autoComplete="new-password"
+                  value={registerPassword}
+                  onChange={(event) => {
+                    setRegisterPassword(
+                      event.target.value
+                    );
+                    setRegisterError("");
+                  }}
+                  placeholder="Create password"
+                  className="h-13 w-full rounded-xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
+                />
+              </div>
+
+              {/* Error */}
+
+              {registerError && (
+                <p
+                  role="alert"
+                  className="mt-2 text-xs font-medium text-clay"
+                >
+                  {registerError}
+                </p>
+              )}
+
+              {/* Register */}
 
               <button
                 type="submit"
-                disabled={!phoneValid}
-                className="mt-4 h-14 w-full rounded-2xl bg-volt text-sm font-semibold text-ink transition-all duration-300 enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-mist"
+                className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
               >
-                Continue
+                Create Account
+
+                <ArrowIcon className="size-4" />
               </button>
 
-              <div className="my-6 flex items-center gap-4">
-                <span className="h-px flex-1 bg-line" />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-mist">
-                  or login with
-                </span>
-                <span className="h-px flex-1 bg-line" />
-              </div>
+              {/* Back to Login */}
 
-              <button
-                type="button"
-                disabled
-                title="Social sign-in is not wired up in this static demo"
-                className="flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-line-strong text-sm font-medium text-mist disabled:cursor-not-allowed"
-              >
-                <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-                  <path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.700c2.2-2 3.4-5 3.4-8.6Z" />
-                  <path fill="#34A853" d="M12 23.5c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A11.5 11.5 0 0 0 12 23.5Z" />
-                  <path fill="#FBBC05" d="M5.6 14.2a6.9 6.9 0 0 1 0-4.4v-3H1.8a11.5 11.5 0 0 0 0 10.4l3.8-3Z" />
-                  <path fill="#EA4335" d="M12 5.1c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.5 11.5 0 0 0 1.8 6.8l3.8 3c.9-2.7 3.4-4.7 6.4-4.7Z" />
-                </svg>
-                Continue with Google
-              </button>
+              <p className="mt-5 text-center text-sm text-ink">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={openLogin}
+                  className="font-medium text-volt-deep hover:underline"
+                >
+                  Login here
+                </button>
+              </p>
 
-              <p className="mt-6 text-center text-[11px] leading-relaxed text-mist">
-                By continuing you agree to the{" "}
-                <Link href="/shop" onClick={closeAuth} className="text-volt-deep underline-offset-2 hover:underline">
+              {/* Terms */}
+
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-mist">
+                By creating an account, you agree to our{" "}
+                <Link
+                  href="/terms"
+                  onClick={closeAuth}
+                  className="text-volt-deep underline-offset-2 hover:underline"
+                >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/shop" onClick={closeAuth} className="text-volt-deep underline-offset-2 hover:underline">
+                <Link
+                  href="/privacy"
+                  onClick={closeAuth}
+                  className="text-volt-deep underline-offset-2 hover:underline"
+                >
                   Privacy Policy
                 </Link>
                 .
               </p>
             </form>
-          ) : null}
-
-          {step === "otp" ? (
-            <form onSubmit={verifyOtp} noValidate>
-              <h3 className="text-xl font-semibold tracking-tight">
-                Verify your number
-              </h3>
-              <p className="mt-1.5 text-sm text-mist">
-                We sent a 6-digit code to{" "}
-                <span className="font-medium text-ink">+91 {phone}</span>.
-                <button
-                  type="button"
-                  onClick={() => setStep("phone")}
-                  className="ml-2 text-volt-deep underline-offset-4 hover:underline"
-                >
-                  Change
-                </button>
-              </p>
-
-              <div className="mt-6">
-                <OtpInput
-                  value={otp}
-                  onChange={(next) => {
-                    setOtp(next);
-                    setError("");
-                  }}
-                />
-                {error ? <p className="mt-2 text-xs text-clay">{error}</p> : null}
-                <p className="mt-3 rounded-xl bg-surface px-3 py-2 text-[11px] text-mist">
-                  Demo build — no SMS is sent. Any 6 digits will verify.
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={!otpValid}
-                className="mt-5 h-14 w-full rounded-2xl bg-volt text-sm font-semibold text-ink transition-all duration-300 enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-mist"
-              >
-                Verify and continue
-              </button>
-
-              <p className="mt-4 text-center text-xs text-mist">
-                {countdown > 0 ? (
-                  <>Resend code in {countdown}s</>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setCountdown(RESEND_SECONDS)}
-                    className="text-volt-deep underline-offset-4 hover:underline"
-                  >
-                    Resend code
-                  </button>
-                )}
-              </p>
-            </form>
-          ) : null}
-
-          {step === "profile" ? (
-            <form onSubmit={finish} noValidate>
-              <h3 className="text-xl font-semibold tracking-tight">
-                What should we call you?
-              </h3>
-              <p className="mt-1.5 text-sm text-mist">
-                Last step — this is the name on your orders.
-              </p>
-
-              <div className="mt-6">
-                <label htmlFor="auth-name" className="sr-only">
-                  Full name
-                </label>
-                <input
-                  id="auth-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  autoComplete="name"
-                  placeholder="Ananya Rao"
-                  className="h-14 w-full rounded-2xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
-                />
-              </div>
-
-              <ul className="mt-6 flex flex-col gap-2 rounded-2xl bg-surface p-4">
-                {PERKS.map((perk) => (
-                  <li key={perk} className="flex gap-3 text-[13px] text-mist">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-volt-deep" />
-                    {perk}
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                type="submit"
-                className="group mt-6 flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-volt text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
-              >
-                Start shopping
-                <ArrowIcon className="size-4 transition-transform duration-400 group-hover:translate-x-1.5" />
-              </button>
-            </form>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

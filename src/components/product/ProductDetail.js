@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
-import ProductArt, { ART_THUMB } from "@/components/art/ProductArt";
 import QuantityStepper from "@/components/cart/QuantityStepper";
 import {
   ArrowIcon,
@@ -22,8 +22,24 @@ const TRUST = [
   { icon: ShieldIcon, label: "Lifetime edge-guard warranty" },
 ];
 
+function ProductPhoto({ src, alt, priority = false, sizes, className = "" }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      priority={priority}
+      sizes={sizes}
+      className={`object-contain ${className}`}
+    />
+  );
+}
+
 export default function ProductDetail({ product }) {
   const { addItem } = useCart();
+  // data.js guarantees a gallery of at least the product's own hero shot
+  const gallery = product.gallery ?? [product.image];
+  const [shot, setShot] = useState(0);
   const [colorway, setColorway] = useState(product.colorways[0]);
   const [option, setOption] = useState(product.options[0]);
   const [quantity, setQuantity] = useState(1);
@@ -62,13 +78,14 @@ export default function ProductDetail({ product }) {
             <div
               data-mouse="26"
               data-speed="0.9"
-              className="flex h-[74%] items-center justify-center"
+              className="relative h-[82%] w-[82%]"
             >
-              <ProductArt
-                product={product}
-                color={colorway.hex}
-                id={`pdp-${product.id}-${colorway.name}`}
-                className="h-full w-auto drop-shadow-[0_40px_70px_rgba(15,17,21,.12)]"
+              <ProductPhoto
+                src={gallery[shot]}
+                alt={`${product.name} — view ${shot + 1} of ${gallery.length}`}
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="drop-shadow-[0_28px_45px_rgba(15,17,21,.15)]"
               />
             </div>
 
@@ -83,36 +100,42 @@ export default function ProductDetail({ product }) {
             </span>
           </div>
 
-          {/* colourway thumbnails re-render the same vector in each colour */}
-          <div className="mt-4 flex gap-3">
-            {product.colorways.map((entry) => (
-              <button
-                key={entry.name}
-                type="button"
-                onClick={() => setColorway(entry)}
-                aria-label={entry.name}
-                aria-pressed={entry.name === colorway.name}
-                className={`grid size-20 place-items-center rounded-2xl border bg-surface-2 transition-all duration-300 ${
-                  entry.name === colorway.name
-                    ? "border-volt-deep"
-                    : "border-line hover:border-ink/40"
-                }`}
-              >
-                <ProductArt
-                  product={product}
-                  color={entry.hex}
-                  id={`thumb-${product.id}-${entry.name}`}
-                  className={`${ART_THUMB[product.art.kind]} w-auto`}
-                />
-              </button>
-            ))}
-          </div>
+          {/* Thumbnails page through the real shots we hold of this SKU. A
+              single-shot product has nothing to switch between, so the strip
+              stays hidden rather than rendering one dead button. */}
+          {gallery.length > 1 ? (
+            <div className="mt-4 flex gap-3">
+              {gallery.map((src, index) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => setShot(index)}
+                  aria-label={`View ${index + 1} of ${gallery.length}`}
+                  aria-pressed={index === shot}
+                  className={`relative grid size-20 overflow-hidden rounded-2xl border bg-surface-2 transition-all duration-300 ${
+                    index === shot
+                      ? "border-volt-deep"
+                      : "border-line hover:border-ink/40"
+                  }`}
+                >
+                  <ProductPhoto
+                    src={src}
+                    alt=""
+                    sizes="80px"
+                    className="p-1.5"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {/* ------------------------------------------------------- buy box */}
         <div>
           <p className="text-[11px] uppercase tracking-[0.18em] text-mist">
-            {product.category} · {product.skill}
+            {[product.brand, product.category, product.type, product.skill]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
 
           <h1 className="mt-3 text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.04] tracking-[-0.035em]">

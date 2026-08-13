@@ -10,6 +10,8 @@ const DEFAULT_FILTERS = {
   category: "All",
   skills: [],
   priceBands: [],
+  brands: [],
+  types: [],
   onSale: false,
 };
 
@@ -18,10 +20,16 @@ const inBand = (price, bandId) => {
   return band ? price >= band.min && price < band.max : true;
 };
 
-export default function ShopBrowser({ initialCategory = "All" }) {
+export default function ShopBrowser({
+  initialCategory = "All",
+  initialBrand = null,
+  initialType = null,
+}) {
   const [filters, setFilters] = useState({
     ...DEFAULT_FILTERS,
     category: initialCategory,
+    brands: initialBrand ? [initialBrand] : [],
+    types: initialType ? [initialType] : [],
   });
   const [sort, setSort] = useState("featured");
   const [panelOpen, setPanelOpen] = useState(false);
@@ -49,6 +57,20 @@ export default function ShopBrowser({ initialCategory = "All" }) {
               ? current.priceBands.filter((b) => b !== value)
               : [...current.priceBands, value],
           };
+        case "brand":
+          return {
+            ...current,
+            brands: current.brands.includes(value)
+              ? current.brands.filter((b) => b !== value)
+              : [...current.brands, value],
+          };
+        case "type":
+          return {
+            ...current,
+            types: current.types.includes(value)
+              ? current.types.filter((t) => t !== value)
+              : [...current.types, value],
+          };
         case "onSale":
           return { ...current, onSale: !current.onSale };
         default:
@@ -67,6 +89,12 @@ export default function ShopBrowser({ initialCategory = "All" }) {
         filters.priceBands.length &&
         !filters.priceBands.some((band) => inBand(product.price, band))
       )
+        return false;
+      // brand and fit only exist on footwear, so an unbranded item drops out
+      // as soon as either is asked for
+      if (filters.brands.length && !filters.brands.includes(product.brand))
+        return false;
+      if (filters.types.length && !filters.types.includes(product.type))
         return false;
       if (filters.onSale && !product.compareAt) return false;
       return true;
@@ -104,6 +132,14 @@ export default function ShopBrowser({ initialCategory = "All" }) {
       ),
       skill: products.reduce((acc, product) => {
         acc[product.skill] = (acc[product.skill] ?? 0) + 1;
+        return acc;
+      }, {}),
+      brand: products.reduce((acc, product) => {
+        if (product.brand) acc[product.brand] = (acc[product.brand] ?? 0) + 1;
+        return acc;
+      }, {}),
+      type: products.reduce((acc, product) => {
+        if (product.type) acc[product.type] = (acc[product.type] ?? 0) + 1;
         return acc;
       }, {}),
       price: PRICE_BANDS.reduce((acc, band) => {
