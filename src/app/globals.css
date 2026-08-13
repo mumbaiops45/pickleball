@@ -205,6 +205,19 @@ input[type="number"] {
   }
 }
 
+/* Fills the active hero-carousel dot over one slide's dwell time, so the bar
+   doubles as the countdown to the next slide. */
+.hero-progress {
+  width: 0;
+  animation: hero-progress var(--hero-progress-duration, 6.5s) linear forwards;
+}
+
+@keyframes hero-progress {
+  to {
+    width: 100%;
+  }
+}
+
 .scroll-hint {
   animation: scroll-hint 2.2s ease-in-out infinite;
 }
@@ -250,5 +263,10 @@ input[type="number"] {
   .scroll-hint,
   .step-in {
     animation: none;
+  }
+  /* autoplay is off under reduced motion, so the bar shows a resting state */
+  .hero-progress {
+    animation: none;
+    width: 100%;
   }
 }
