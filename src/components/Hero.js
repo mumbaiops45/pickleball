@@ -167,7 +167,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="mt-12 flex items-center gap-5">
+          {/* <div className="mt-12 flex items-center gap-5">
             <div className="flex -space-x-2.5">
               {["MV", "DR", "PN", "JK"].map((initials, index) => (
                 <span
@@ -191,11 +191,11 @@ export default function Hero() {
                 4.9 average from 12,480 verified players
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* stat strip */}
-        <dl
+        {/* <dl
           data-speed="1.1"
           className="mt-12 grid max-w-3xl grid-cols-2 gap-px lg:mt-16 overflow-hidden rounded-2xl bg-paper/20 shadow-[0_20px_50px_-30px_rgba(15,17,21,.5)] sm:grid-cols-4"
         >
@@ -209,7 +209,7 @@ export default function Hero() {
               </dd>
             </div>
           ))}
-        </dl>
+        </dl> */}
       </div>
 
       {/* scroll cue */}
