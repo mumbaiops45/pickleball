@@ -3,17 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/Icons";
 
-/**
- * Horizontal card slider built on native scroll-snap.
- *
- * The rail itself is just an overflow container, so touch swiping, trackpads
- * and keyboard scrolling keep working for free; the arrows only add a smooth
- * page-by-page jump on pointer devices. Every control hides itself when the
- * children already fit (the `lg` grid layouts pass `lg:overflow-visible`), so
- * the same component covers "rail on mobile, static grid on desktop".
- *
- * `className` is the rail's own class list — callers own the layout.
- */
+
 export default function CardRail({
   className = "",
   label = "Card slider",

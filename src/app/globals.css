@@ -205,8 +205,7 @@ input[type="number"] {
   }
 }
 
-/* Fills the active hero-carousel dot over one slide's dwell time, so the bar
-   doubles as the countdown to the next slide. */
+
 .hero-progress {
   width: 0;
   animation: hero-progress var(--hero-progress-duration, 6.5s) linear forwards;
@@ -234,10 +233,43 @@ input[type="number"] {
   }
 }
 
-/* One step of the paddle finder sliding into place. Keyed on the step index, so
-   re-mounting the panel replays it — the panel never silently swaps content. */
 .step-in {
   animation: step-in 0.5s var(--ease-out-expo) both;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .finder-track {
+    height: calc(var(--finder-stages, 4) * 100vh);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 880px) {
+  .finder-optional {
+    display: none;
+  }
+
+  .finder-stage {
+    padding-top: 7rem;
+    padding-bottom: 2rem;
+  }
+  .finder-pad {
+    padding: 1.5rem;
+  }
+  .finder-row {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+  .finder-art {
+    height: 7.5rem;
+  }
+  .finder-cta {
+    height: 3rem;
+  }
+}
+
+.step-item {
+  animation: step-in 0.55s var(--ease-out-expo) both;
+  animation-delay: var(--step-delay, 0ms);
 }
 
 @keyframes step-in {
@@ -261,7 +293,8 @@ input[type="number"] {
   .float-slower,
   .spin-slow,
   .scroll-hint,
-  .step-in {
+  .step-in,
+  .step-item {
     animation: none;
   }
   /* autoplay is off under reduced motion, so the bar shows a resting state */

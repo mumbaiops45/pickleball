@@ -6,10 +6,7 @@ import { LAYER_ART } from "@/components/art/LayerArt";
 import { paddleLayers, paddleSpecs } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
-/**
- * Full-bleed technology band. Five depth planes: glow, ghost type, the paddle
- * itself, the spec callouts and the floating balls, each on its own speed.
- */
+
 export default function TechShowcase() {
   return (
     <ParallaxScene
@@ -34,17 +31,19 @@ export default function TechShowcase() {
           RAW CARBON &middot; RAW CARBON
         </p>
       </div>
-      <div
-        data-speed="1.5"
-        data-speed-x="2.8"
-        className="pointer-events-none absolute inset-x-0 bottom-[6%] -z-20 select-none opacity-70"
-      >
-        <p className="text-stroke-volt whitespace-nowrap text-center text-[clamp(3rem,10vw,9rem)] font-black leading-none tracking-tighter">
-          16MM THERMOFORMED CORE
-        </p>
-      </div>
-
       <div className="relative mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-16 px-5 sm:px-8 lg:grid-cols-12">
+        {/* stays with the paddle stage — anchored to the section it would run
+            straight through the layer rows below */}
+        <div
+          data-speed="1.5"
+          data-speed-x="2.8"
+          className="pointer-events-none absolute inset-x-0 -bottom-4 -z-20 select-none opacity-70"
+        >
+          <p className="text-stroke-volt whitespace-nowrap text-center text-[clamp(3rem,10vw,9rem)] font-black leading-none tracking-tighter">
+            16MM THERMOFORMED CORE
+          </p>
+        </div>
+
         {/* copy */}
         <div className="lg:col-span-5">
           <Reveal>
@@ -157,11 +156,11 @@ export default function TechShowcase() {
       </div>
 
       {/* ------------------------------------------------- the build, layer by layer */}
-      {/* <div
+      <div
         data-speed="0.3"
         className="relative mx-auto mt-16 w-full max-w-350 px-5 sm:px-8 lg:mt-24"
-      > */}
-        {/* <Reveal className="flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
+      >
+        <Reveal className="flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
           <h3 className="text-[clamp(1.4rem,2.6vw,2rem)] font-semibold tracking-[-0.03em]">
             Five layers, <Accent>outside in</Accent>.
           </h3>
@@ -169,9 +168,12 @@ export default function TechShowcase() {
             A paddle is a laminate. What separates ours is what happens between
             the face you can see and the core you cannot.
           </p>
-        </Reveal> */}
+        </Reveal>
 
-        {/* <ol className="mt-10 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+        {/* Read as a section through the paddle rather than five equal tiles:
+            one row per layer, outside face at the top, handle at the bottom,
+            with a depth rule running down the left so the order is the point. */}
+        <ol className="mt-10 flex flex-col">
           {paddleLayers.map((layer, index) => {
             const Art = LAYER_ART[layer.art];
 
@@ -179,30 +181,29 @@ export default function TechShowcase() {
               <Reveal
                 key={layer.id}
                 as="li"
-                delay={index * 80}
-                className="group flex flex-col bg-paper p-6 transition-colors duration-500 hover:bg-surface"
+                delay={index * 70}
+                className="group grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 border-t border-line py-6 last:border-b lg:grid-cols-[3.5rem_3.5rem_15rem_1fr] lg:gap-x-8"
               >
-                <div className="flex items-center justify-between"> */}
-                  {/* the glyph is the point of the tile, so it gets the volt plate */}
-                  {/* <span className="grid size-14 place-items-center rounded-2xl bg-surface text-volt-deep transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-0.5 group-hover:bg-volt group-hover:text-ink">
-                    {Art ? <Art className="size-8" /> : null}
-                  </span>
-                  <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong">
-                    {layer.index}
-                  </span>
-                </div>
+                <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong">
+                  {layer.index}
+                </span>
 
-                <p className="mt-6 text-[15px] font-semibold tracking-tight">
+                <span className="grid size-14 place-items-center rounded-2xl bg-surface text-volt-deep transition-colors duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:bg-volt group-hover:text-ink">
+                  {Art ? <Art className="size-8" /> : null}
+                </span>
+
+                <p className="col-span-2 text-[15px] font-semibold tracking-tight lg:col-span-1">
                   {layer.title}
                 </p>
-                <p className="mt-2 text-[13px] leading-relaxed text-mist">
+
+                <p className="col-span-2 max-w-2xl text-[13px] leading-relaxed text-mist lg:col-span-1">
                   {layer.copy}
                 </p>
               </Reveal>
             );
-          })} */}
-        {/* </ol> */}
-      {/* </div> */}
+          })}
+        </ol>
+      </div>
     </ParallaxScene>
   );
 }

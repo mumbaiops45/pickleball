@@ -1,11 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
-import { ArrowIcon, RepeatIcon, StarIcon } from "@/components/ui/Icons";
+import ProductArt, { ART_HEIGHT, ART_MINI } from "@/components/art/ProductArt";
+import {
+  ArrowIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  RepeatIcon,
+  StarIcon,
+} from "@/components/ui/Icons";
 import {
   finderQuestions,
   findProduct,
@@ -17,74 +23,174 @@ import { formatPrice } from "@/lib/format";
 import { Accent } from "@/components/ui/Heading";
 
 const TOTAL = finderQuestions.length;
+/** One screen of scroll per question, plus one for the recommendation. */
+const STAGES = TOTAL + 1;
 const pad = (n) => String(n).padStart(2, "0");
 
+/** Position in the entrance sequence, as a custom property `.step-item` reads. */
+const at = (ms) => ({ "--step-delay": `${ms}ms` });
+
 /**
- * Premium Option Tile - Redesigned with better visual hierarchy
+ * One answer. Reads as a row in a form, not as a marketing tile: hairline edge,
+ * the shortcut digit in mono on the left, the reason we ask underneath.
  */
-function OptionTile({ option, index, onChoose }) {
+function OptionRow({ option, index, onChoose }) {
   return (
     <button
       type="button"
       onClick={() => onChoose(option.value)}
-      className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-0.5 hover:border-volt/40 hover:bg-volt/5 hover:shadow-[0_8px_30px_rgba(212,255,63,0.06)] focus-visible:outline-volt"
+      style={at(260 + index * 100)}
+      className="finder-row step-item group flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/3 px-5 py-4 text-left transition-colors duration-300 hover:border-volt/50 hover:bg-volt/5"
     >
-      {/* Hover gradient effect */}
-      <span className="absolute inset-0 bg-gradient-to-r from-volt/0 via-volt/5 to-volt/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-      
-      <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-xl border border-white/15 bg-white/5 font-mono text-xs font-semibold text-white/60 transition-all duration-300 group-hover:border-volt/30 group-hover:bg-volt/10 group-hover:text-volt">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/5 font-mono text-[11px] text-white/50 transition-colors duration-300 group-hover:border-volt/40 group-hover:text-volt">
         {index + 1}
       </span>
-      
-      <span className="relative z-10 min-w-0 flex-1">
-        <span className="block text-[15px] font-medium text-white/90 transition-colors duration-300 group-hover:text-white">
+
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-medium tracking-tight text-white">
           {option.label}
         </span>
-        <span className="mt-0.5 block text-xs text-white/40 transition-colors duration-300 group-hover:text-white/60">
+        <span className="mt-0.5 block text-[13px] text-white/45">
           {option.hint}
         </span>
       </span>
-      
-      <ArrowIcon className="relative z-10 size-4 shrink-0 text-white/20 transition-all duration-300 group-hover:translate-x-1 group-hover:text-volt" />
+
+      <ArrowIcon className="size-4 shrink-0 text-white/25 transition-all duration-300 group-hover:translate-x-1 group-hover:text-volt" />
     </button>
   );
 }
 
 export default function PaddleFinder() {
   const { addItem } = useCart();
+  const trackRef = useRef(null);
+  // mirrors `step` for the scroll listener, which must not re-subscribe per step
+  const stageRef = useRef(0);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
+  // a settled question reopened for a change, by index
+  const [editing, setEditing] = useState(null);
   const [added, setAdded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  // true once the section is playing as a pinned, scroll-driven sequence
+  const [pinned, setPinned] = useState(false);
 
   const done = step >= TOTAL;
-  const question = finderQuestions[step];
-  const match = done ? findProduct(recommendPaddle(answers)) : null;
-
   const answeredCount = finderQuestions.filter((q) => answers[q.id]).length;
+  const complete = answeredCount === TOTAL;
+  const firstPending = finderQuestions.findIndex((entry) => !answers[entry.id]);
+
+  // the one question showing its options — the step the scroll has reached, or
+  // whichever settled question was reopened
+  const activeIndex = editing !== null ? editing : done ? -1 : step;
+  const activeQuestion = activeIndex >= 0 ? finderQuestions[activeIndex] : null;
+
+  /* There is always a paddle to show: with every answer in it is a personal
+     match, with none it is the house pick. Scrolling the sequence through
+     without answering still has to end on a real product, not a dead end. */
+  const match = findProduct(recommendPaddle(answers));
+
+  /* ------------------------------------------------------------- pinned mode */
+
+  useEffect(() => {
+    const query = window.matchMedia(
+      "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+    );
+    const sync = () => setPinned(query.matches);
+
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  /* Scroll position is the source of truth for how far the sequence has run
+     while pinned: each stage owns an equal slice of the track's travel. */
+  useEffect(() => {
+    if (!pinned) return;
+    const track = trackRef.current;
+    if (!track) return;
+
+    let frame = 0;
+
+    const measure = () => {
+      frame = 0;
+      const travel = track.offsetHeight - window.innerHeight;
+      if (travel <= 0) return;
+
+      const scrolled = -track.getBoundingClientRect().top;
+      const progress = Math.min(Math.max(scrolled / travel, 0), 1);
+      const stage = Math.min(Math.floor(progress * STAGES), STAGES - 1);
+
+      if (stage === stageRef.current) return;
+      stageRef.current = stage;
+      setStep(stage);
+      setEditing(null);
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [pinned]);
+
+  /** Moves to a stage — by scrolling to it when pinned, directly otherwise. */
+  const goTo = (index) => {
+    const track = trackRef.current;
+    const travel = track ? track.offsetHeight - window.innerHeight : 0;
+
+    if (!pinned || travel <= 0) {
+      stageRef.current = index;
+      setStep(index);
+      setEditing(null);
+      return;
+    }
+
+    // land in the middle of the stage's slice, clear of both boundaries
+    const offset = (travel * (index + 0.5)) / STAGES;
+    window.scrollTo({
+      top: window.scrollY + track.getBoundingClientRect().top + offset,
+      behavior: "smooth",
+    });
+  };
 
   const choose = (value) => {
-    const next = { ...answers, [question.id]: value };
+    if (!activeQuestion) return;
+
+    const next = { ...answers, [activeQuestion.id]: value };
     setAnswers(next);
+
+    // a reopened question settles in place — the sequence has already moved on
+    if (editing !== null) {
+      setEditing(null);
+      return;
+    }
+
     const pending = finderQuestions.findIndex((entry) => !next[entry.id]);
-    setStep(pending === -1 ? TOTAL : pending);
+    goTo(pending === -1 ? TOTAL : Math.min(step + 1, TOTAL));
   };
 
   const restart = () => {
     setAnswers({});
-    setStep(0);
     setAdded(false);
+    goTo(0);
   };
 
   useEffect(() => {
-    if (done) return;
+    if (!activeQuestion) return;
 
     const onKey = (event) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
       if (event.target?.closest?.("input, textarea, select")) return;
 
       const index = Number(event.key) - 1;
-      const option = question.options[index];
+      const option = activeQuestion.options[index];
       if (option) {
         event.preventDefault();
         choose(option.value);
@@ -94,18 +200,6 @@ export default function PaddleFinder() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
-
-  const reasons = useMemo(
-    () =>
-      finderQuestions
-        .map(
-          (entry) =>
-            entry.options.find((option) => option.value === answers[entry.id])
-              ?.hint,
-        )
-        .filter(Boolean),
-    [answers],
-  );
 
   const alternates = useMemo(() => {
     if (!match) return [];
@@ -132,421 +226,350 @@ export default function PaddleFinder() {
   };
 
   return (
-    <ParallaxScene
-      as="section"
+    <section
+      ref={trackRef}
       id="finder"
-      pointer
-      className="relative isolate w-full overflow-hidden bg-gradient-to-b from-[#0a0c0e] via-[#0d0f13] to-[#0a0c0e] py-16 text-white lg:py-28"
+      style={{ "--finder-stages": STAGES }}
+      className="finder-track relative bg-[#0a0c0e]"
     >
-      {/* =====================================================
-          PREMIUM BACKGROUND EFFECTS
-      ====================================================== */}
+      <ParallaxScene
+        as="div"
+        className="finder-stage relative isolate w-full overflow-hidden bg-linear-to-b from-[#0a0c0e] via-[#0d0f13] to-[#0a0c0e] py-16 text-white lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:items-center lg:pb-0 lg:pt-28"
+      >
+        <div
+          data-speed="-1.2"
+          data-speed-x="0.8"
+          className="pointer-events-none absolute -left-32 top-[-10%] -z-10 size-125 rounded-full bg-volt/10 blur-[150px]"
+        />
+        <div
+          data-speed="1.4"
+          className="pointer-events-none absolute -right-24 bottom-[-20%] -z-10 size-100 rounded-full bg-clay/8 blur-[130px]"
+        />
 
-      {/* Main glow - volt */}
-      <div
-        data-speed="-1.2"
-        data-speed-x="0.8"
-        className="pointer-events-none absolute -left-32 top-[-10%] -z-10 size-[500px] rounded-full bg-volt/10 blur-[150px]"
-      />
-      
-      {/* Secondary glow - clay */}
-      <div
-        data-speed="1.4"
-        className="pointer-events-none absolute -right-24 bottom-[-20%] -z-10 size-[400px] rounded-full bg-clay/8 blur-[130px]"
-      />
-
-      {/* Subtle grid pattern */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)
-          `,
-          backgroundSize: "60px 60px",
-        }}
-      />
-
-      {/* Gradient overlay at bottom */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0c0e] to-transparent" />
-
-      <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-start gap-12 px-5 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
-        
-        {/* =====================================================
-            LEFT - PREMIUM PITCH
-        ====================================================== */}
-        
-        <Reveal>
-          {/* Premium badge */}
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-volt/30 bg-volt/10 py-1.5 pl-2 pr-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-volt backdrop-blur-sm">
-            <span className="rounded-full bg-volt px-2.5 py-0.5 text-[9px] text-ink font-bold">
-              {TOTAL}
+        <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1fr] lg:gap-20">
+          {/* ---------------------------------------------------------- pitch */}
+          <Reveal>
+            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt">
+              <span className="h-px w-8 bg-volt/40" />
+              Paddle finder
             </span>
-            Paddle finder
-            <span className="relative flex size-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-volt/60" />
-              <span className="relative inline-flex size-1.5 rounded-full bg-volt" />
-            </span>
-          </div>
 
-          <h2 className="mt-6 text-[clamp(2.1rem,4.6vw,3.6rem)] font-bold leading-[1.02] tracking-[-0.035em]">
-            Three questions.
-            <br />
-            One paddle that <Accent dark>fits</Accent>.
-          </h2>
+            <h2 className="mt-5 text-[clamp(2.1rem,4.6vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+              Three questions. One paddle that <Accent dark>fits</Accent>.
+            </h2>
 
-          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-white/50">
-            No quiz-funnel nonsense. Answer honestly and we point at the paddle
-            our fitters would hand you across the counter — then you have 30 days
-            on court to disagree with us.
-          </p>
+            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-white/50">
+              Answer the way you actually play and we point at the paddle our
+              fitters would hand you across the counter — then you have 30 days
+              on court to disagree with us.
+            </p>
 
-          {/* Trust indicators */}
-          <div className="mt-6 flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <svg className="size-4 text-volt" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs text-white/40">30-day play test</span>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[13px] text-white/45">
+              <span className="flex items-center gap-2">
+                <CheckIcon className="size-3.5 text-volt" />
+                30-day play test
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckIcon className="size-3.5 text-volt" />
+                AIPA approved
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckIcon className="size-3.5 text-volt" />
+                Free returns
+              </span>
             </div>
-            <div className="h-4 w-px bg-white/10" />
-            <div className="flex items-center gap-2">
-              <svg className="size-4 text-volt" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs text-white/40">AIPA approved</span>
-            </div>
-          </div>
 
-          {/* Step navigation - premium */}
-          <ol className="mt-10 max-w-md space-y-1">
-            {finderQuestions.map((entry, index) => {
-              const answer = answers[entry.id];
-              const current = !done && index === step;
-              const chosen = entry.options.find(
-                (option) => option.value === answer,
-              );
-              const reachable = Boolean(answer) || index <= step;
+            <p className="mt-10 font-mono text-[11px] uppercase tracking-[0.18em] text-white/30">
+              {answeredCount} of {TOTAL} answered
+            </p>
+          </Reveal>
 
-              return (
-                <li key={entry.id}>
-                  <button
-                    type="button"
-                    disabled={!reachable}
-                    onClick={() => setStep(index)}
-                    aria-current={current ? "step" : undefined}
-                    className={`group flex w-full items-center gap-4 rounded-xl px-4 py-3.5 text-left transition-all duration-300 disabled:cursor-default disabled:opacity-30 focus-visible:outline-volt ${
-                      current 
-                        ? "bg-white/5" 
-                        : "hover:bg-white/3"
+          {/* ---------------------------------------------------------- panel */}
+          <Reveal delay={120}>
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/3">
+              {/* progress: one segment per question, filled as they are answered */}
+              <div className="flex gap-1 px-7 pt-7 sm:px-9" aria-hidden="true">
+                {finderQuestions.map((entry, index) => (
+                  <span
+                    key={entry.id}
+                    className={`h-0.5 flex-1 rounded-full transition-colors duration-500 ${
+                      answers[entry.id]
+                        ? "bg-volt"
+                        : index === activeIndex
+                          ? "bg-volt/35"
+                          : "bg-white/10"
                     }`}
-                  >
-                    <span
-                      className={`font-mono text-[10px] font-semibold tracking-[0.16em] transition-colors duration-300 ${
-                        current
-                          ? "text-volt"
-                          : answer
-                            ? "text-white/60"
-                            : "text-white/20"
-                      }`}
-                    >
-                      {pad(index + 1)}
-                    </span>
+                  />
+                ))}
+              </div>
 
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={`block truncate text-sm transition-colors duration-300 ${
-                          current || answer
-                            ? "text-white group-hover:text-volt"
-                            : "text-white/30"
-                        }`}
+              {/* Every question the sequence has reached stays on the panel: the
+                  one in play shows its options, the ones behind it collapse to
+                  their answer and reopen on click. */}
+              {finderQuestions.map((entry, index) => {
+                if (index > step) return null;
+
+                const chosen = entry.options.find(
+                  (option) => option.value === answers[entry.id],
+                );
+                const open = index === activeIndex;
+
+                return (
+                  <div
+                    key={entry.id}
+                    style={at(0)}
+                    className="step-item border-b border-white/10"
+                  >
+                    {open ? (
+                      <div key={`${entry.id}-open`} className="finder-pad p-7 sm:p-9">
+                        <p
+                          style={at(0)}
+                          className="step-item font-mono text-[11px] uppercase tracking-[0.22em] text-volt"
+                        >
+                          Question {pad(index + 1)}
+                          <span className="text-white/30"> / {pad(TOTAL)}</span>
+                        </p>
+
+                        <h3
+                          style={at(90)}
+                          className="step-item mt-5 text-[clamp(1.35rem,2.2vw,1.75rem)] font-semibold leading-tight tracking-[-0.03em] text-white"
+                        >
+                          {entry.label}
+                        </h3>
+                        <p
+                          style={at(170)}
+                          className="step-item mt-2.5 max-w-md text-[13px] leading-relaxed text-white/45"
+                        >
+                          {entry.help}
+                        </p>
+
+                        <div className="mt-6 flex flex-col gap-2.5">
+                          {entry.options.map((option, optionIndex) => (
+                            <OptionRow
+                              key={option.value}
+                              option={option}
+                              index={optionIndex}
+                              onChoose={choose}
+                            />
+                          ))}
+                        </div>
+
+                        <p
+                          style={at(260 + entry.options.length * 100)}
+                          className="finder-optional step-item mt-5 hidden items-center gap-2 text-[12px] text-white/35 sm:flex"
+                        >
+                          Or press
+                          <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-white/70">
+                            1
+                          </kbd>
+                          –
+                          <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-white/70">
+                            {entry.options.length}
+                          </kbd>
+                          to answer.
+                        </p>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setEditing(index)}
+                        className="finder-row group flex w-full items-center gap-5 px-7 py-4 text-left transition-colors duration-300 hover:bg-white/3 sm:px-9"
                       >
-                        {entry.label}
-                      </span>
-                      {chosen ? (
-                        <span className="mt-0.5 block truncate text-xs text-volt font-medium">
-                          {chosen.label}
+                        <span className="font-mono text-[11px] tracking-[0.16em] text-white/30">
+                          {pad(index + 1)}
                         </span>
-                      ) : null}
-                    </span>
 
-                    {current ? (
-                      <span className="size-2 shrink-0 rounded-full bg-volt shadow-[0_0_20px_rgba(212,255,63,0.3)]" />
-                    ) : answer ? (
-                      <svg className="size-4 shrink-0 text-volt" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    ) : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[13px] text-white/45">
+                            {entry.label}
+                          </span>
+                          <span
+                            className={`mt-0.5 block truncate text-sm ${
+                              chosen ? "text-white" : "text-white/35"
+                            }`}
+                          >
+                            {chosen ? chosen.label : "Not answered yet"}
+                          </span>
+                        </span>
 
-          {/* Progress indicator */}
-          <div className="mt-6 flex items-center gap-3">
-            <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-volt transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)]"
-                style={{ width: `${(answeredCount / TOTAL) * 100}%` }}
-              />
-            </div>
-            <span className="font-mono text-[9px] text-white/30">
-              {answeredCount}/{TOTAL}
-            </span>
-          </div>
-        </Reveal>
-
-        {/* =====================================================
-            RIGHT - PREMIUM PANEL
-        ====================================================== */}
-
-        <Reveal delay={120}>
-          <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.02] p-6 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-all duration-500 hover:border-white/20 sm:p-9">
-            
-            {/* Premium glow behind card */}
-            <div className="pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-r from-volt/5 via-transparent to-clay/5 opacity-50" />
-            
-            {/* Progress bar - premium */}
-            <div className="absolute inset-x-0 top-0 h-0.5 bg-white/10" aria-hidden="true">
-              <div
-                className="h-full bg-gradient-to-r from-volt to-volt/80 shadow-[0_0_20px_rgba(212,255,63,0.3)] transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)]"
-                style={{ width: `${(answeredCount / TOTAL) * 100}%` }}
-              />
-            </div>
-
-            {/* Corner accents */}
-            <div className="pointer-events-none absolute -left-px -top-px size-6 rounded-tl-[32px] border-l-2 border-t-2 border-white/10" />
-            <div className="pointer-events-none absolute -right-px -top-px size-6 rounded-tr-[32px] border-r-2 border-t-2 border-white/10" />
-
-            {done && match ? (
-              /* =============================================
-                 RESULT VIEW - Premium
-              ============================================== */
-              <div key="result" className="step-in">
-                {/* Header */}
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="relative flex size-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-volt/60" />
-                      <span className="relative inline-flex size-2 rounded-full bg-volt" />
-                    </span>
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-volt">
-                      Your match
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={restart}
-                    className="inline-flex items-center gap-1.5 text-[10px] text-white/30 transition-all duration-300 hover:text-volt focus-visible:outline-volt group"
-                  >
-                    <RepeatIcon className="size-3.5 transition-transform duration-300 group-hover:rotate-180" />
-                    <span className="hidden sm:inline">Start over</span>
-                  </button>
-                </div>
-
-                {/* Product Card */}
-                <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
-                  <div className="relative grid h-44 w-full shrink-0 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 sm:w-40">
-                    <div className="absolute inset-x-6 top-6 h-24 rounded-full bg-volt/20 blur-2xl" />
-                    <Image
-                      src={match.image}
-                      alt={match.name}
-                      width={140}
-                      height={140}
-                      className="relative h-32 w-auto object-contain transition-transform duration-500 hover:scale-105"
-                    />
-                    {match.badge && (
-                      <span className="absolute left-3 top-3 rounded-full bg-volt px-2 py-0.5 text-[7px] font-bold uppercase tracking-[0.1em] text-ink">
-                        {match.badge}
-                      </span>
+                        {chosen ? (
+                          <CheckIcon className="size-4 shrink-0 text-volt" />
+                        ) : null}
+                        <span className="shrink-0 text-[11px] uppercase tracking-[0.16em] text-white/25 transition-colors duration-300 group-hover:text-volt">
+                          Change
+                        </span>
+                      </button>
                     )}
                   </div>
+                );
+              })}
 
-                  <div className="min-w-0">
-                    <h3 className="text-xl font-bold tracking-tight text-white">
-                      {match.name}
-                    </h3>
-                    <p className="mt-1.5 text-sm text-white/50">{match.blurb}</p>
-                    <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="text-xl font-bold text-volt">
-                        {formatPrice(match.price)}
-                      </span>
-                      {match.compareAt && (
-                        <span className="text-sm text-white/30 line-through">
-                          {formatPrice(match.compareAt)}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1 text-xs text-white/50">
-                        <StarIcon className="size-3 text-volt" />
-                        {match.rating} · {match.reviews.toLocaleString("en-IN")} reviews
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Reasons */}
-                {reasons.length > 0 && (
-                  <div className="mt-6">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/30">
-                      Why this fits
-                    </p>
-                    <div className="mt-2.5 flex flex-wrap gap-2">
-                      {reasons.map((reason) => (
-                        <span
-                          key={reason}
-                          className="rounded-full border border-volt/20 bg-volt/5 px-3 py-1.5 text-[10px] font-medium tracking-wide text-volt backdrop-blur-sm"
-                        >
-                          {reason}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Highlights */}
-                <ul className="mt-6 flex flex-col gap-2.5 border-t border-white/10 pt-5">
-                  {match.highlights.slice(0, 3).map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="flex gap-3 text-sm text-white/60"
-                    >
-                      <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-volt shadow-[0_0_10px_rgba(212,255,63,0.3)]" />
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Actions */}
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                  <button
-                    type="button"
-                    onClick={onAdd}
-                    className="group relative inline-flex h-12 flex-1 items-center justify-center overflow-hidden rounded-full bg-volt px-6 text-sm font-semibold text-ink transition-all duration-300 hover:shadow-[0_8px_30px_rgba(212,255,63,0.2)] hover:-translate-y-0.5"
+              {/* ------------------------------------------------ the result */}
+              {done ? (
+                <div key="result" className="finder-pad p-7 sm:p-9">
+                  <div
+                    style={at(0)}
+                    className="step-item flex items-center justify-between gap-4"
                   >
-                    <span className="relative z-10 flex items-center gap-2">
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-volt">
+                      {complete ? "Your match" : "Most popular pick"}
+                    </p>
+                    {answeredCount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={restart}
+                        className="group inline-flex items-center gap-2 text-[13px] text-white/45 transition-colors duration-300 hover:text-white"
+                      >
+                        <RepeatIcon className="size-3.5 transition-transform duration-500 group-hover:-rotate-180" />
+                        Start over
+                      </button>
+                    ) : null}
+                  </div>
+
+                  {!complete ? (
+                    <button
+                      type="button"
+                      onClick={() => setEditing(Math.max(firstPending, 0))}
+                      style={at(60)}
+                      className="step-item mt-3 flex items-center gap-2 text-[13px] text-white/45 transition-colors duration-300 hover:text-volt"
+                    >
+                      Answer question {pad(Math.max(firstPending, 0) + 1)} for a
+                      paddle picked around your game
+                      <ArrowIcon className="size-3.5" />
+                    </button>
+                  ) : null}
+
+                  <div
+                    style={at(120)}
+                    className="step-item mt-6 flex flex-col gap-6 sm:flex-row sm:items-center"
+                  >
+                    <div className="finder-art relative grid h-40 w-full shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 py-5 sm:w-36">
+                      <ProductArt
+                        product={match}
+                        className={`${ART_HEIGHT[match.art.kind]} w-auto`}
+                        sizes="(max-width: 640px) 60vw, 144px"
+                      />
+                      {match.badge ? (
+                        <span className="absolute left-3 top-3 rounded-full bg-volt px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
+                          {match.badge}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="text-[22px] font-semibold tracking-tight text-white">
+                        {match.name}
+                      </h3>
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-white/50">
+                        {match.blurb}
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <span className="text-xl font-semibold text-white">
+                          {formatPrice(match.price)}
+                        </span>
+                        {match.compareAt ? (
+                          <span className="text-sm text-white/35 line-through">
+                            {formatPrice(match.compareAt)}
+                          </span>
+                        ) : null}
+                        <span className="flex items-center gap-1.5 text-[13px] text-white/50">
+                          <StarIcon className="size-3 text-volt" />
+                          {match.rating} ·{" "}
+                          {match.reviews.toLocaleString("en-IN")} reviews
+                        </span>
+                      </div>
+
+                      <ul className="finder-optional mt-4 flex flex-col gap-2">
+                        {match.highlights.slice(0, 2).map((highlight) => (
+                          <li
+                            key={highlight}
+                            className="flex gap-2.5 text-[13px] leading-relaxed text-white/55"
+                          >
+                            <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-volt" />
+                            {highlight}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div
+                    style={at(280)}
+                    className="step-item mt-7 flex flex-col gap-3 sm:flex-row"
+                  >
+                    <button
+                      type="button"
+                      onClick={onAdd}
+                      className="finder-cta inline-flex h-14 flex-1 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
+                    >
                       {added ? (
                         <>
-                          <svg className="size-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                          <CheckIcon className="size-4" />
                           Added to cart
                         </>
                       ) : (
                         `Add to cart · ${formatPrice(match.price)}`
                       )}
-                    </span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-volt/0 via-white/20 to-volt/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                  </button>
-                  <Link
-                    href={`/products/${match.id}`}
-                    className="inline-flex h-12 items-center justify-center rounded-full border border-white/20 px-6 text-sm font-medium text-white transition-all duration-300 hover:border-volt hover:text-volt hover:bg-volt/5"
-                  >
-                    See details
-                  </Link>
-                </div>
-
-                {/* Alternates */}
-                {alternates.length > 0 && (
-                  <div className="mt-7 border-t border-white/10 pt-5">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/30">
-                      Close seconds
-                    </p>
-                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                      {alternates.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={`/products/${item.id}`}
-                          className="group flex items-center gap-3 rounded-xl border border-white/10 p-2.5 transition-all duration-300 hover:border-volt/30 hover:bg-white/5"
-                        >
-                          <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-white/5">
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              width={40}
-                              height={40}
-                              className="h-8 w-auto object-contain"
-                            />
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-[12px] font-medium text-white/80 transition-colors duration-300 group-hover:text-volt">
-                              {item.name}
-                            </span>
-                            <span className="block text-[10px] text-white/40">
-                              {formatPrice(item.price)}
-                            </span>
-                          </span>
-                          <ArrowIcon className="size-3 shrink-0 text-white/20 transition-all duration-300 group-hover:text-volt group-hover:translate-x-0.5" />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* =============================================
-                 QUESTION VIEW - Premium
-              ============================================== */
-              <div key={step} className="step-in">
-                {/* Header */}
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-[10px] font-semibold tracking-[0.22em] text-volt">
-                      {pad(step + 1)}
-                      <span className="text-white/20"> / {pad(TOTAL)}</span>
-                    </span>
-                    <span className="h-4 w-px bg-white/10" />
-                    <span className="text-[9px] text-white/20">
-                      {Math.round(((step + 1) / TOTAL) * 100)}%
-                    </span>
-                  </div>
-                  {step > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setStep(step - 1)}
-                      className="flex items-center gap-1.5 text-[10px] text-white/30 transition-all duration-300 hover:text-volt focus-visible:outline-volt group"
-                    >
-                      <ArrowIcon className="size-3 rotate-180 transition-transform duration-300 group-hover:-translate-x-0.5" />
-                      Back
                     </button>
-                  )}
-                </div>
+                    <Link
+                      href={`/products/${match.id}`}
+                      className="finder-cta inline-flex h-14 items-center justify-center rounded-full border border-white/20 px-8 text-sm font-medium text-white transition-colors hover:border-volt hover:text-volt"
+                    >
+                      See details
+                    </Link>
+                  </div>
 
-                {/* Question */}
-                <h3 className="mt-5 text-[clamp(1.45rem,2.4vw,1.95rem)] font-bold leading-tight tracking-tight text-white">
-                  {question.label}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-white/40">
-                  {question.help}
-                </p>
-
-                {/* Options */}
-                <div className="mt-7 flex flex-col gap-3">
-                  {question.options.map((option, index) => (
-                    <OptionTile
-                      key={option.value}
-                      option={option}
-                      index={index}
-                      onChoose={choose}
-                    />
-                  ))}
+                  {complete && alternates.length > 0 ? (
+                    <div
+                      style={at(380)}
+                      className="finder-optional step-item mt-7 border-t border-white/10 pt-5"
+                    >
+                      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/30">
+                        Close seconds
+                      </p>
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {alternates.map((item) => (
+                          <Link
+                            key={item.id}
+                            href={`/products/${item.id}`}
+                            className="group flex items-center gap-3 rounded-2xl border border-white/10 p-3 transition-colors duration-300 hover:border-volt/40 hover:bg-white/3"
+                          >
+                            <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-white/5">
+                              <ProductArt
+                                product={item}
+                                className={`${ART_MINI[item.art.kind]} w-auto`}
+                                sizes="44px"
+                              />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-[13px] font-medium tracking-tight text-white/85 transition-colors duration-300 group-hover:text-volt">
+                                {item.name}
+                              </span>
+                              <span className="block text-[12px] text-white/40">
+                                {formatPrice(item.price)}
+                              </span>
+                            </span>
+                            <ArrowIcon className="size-3.5 shrink-0 text-white/25 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-volt" />
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
+              ) : null}
+            </div>
 
-                {/* Keyboard shortcut hint */}
-                <div className="mt-5 flex items-center gap-2 text-[10px] text-white/20">
-                  <svg className="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  <span>
-                    Press <span className="font-mono text-white/40">1</span> to{" "}
-                    <span className="font-mono text-white/40">{question.options.length}</span> to answer
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-        </Reveal>
-      </div>
-    </ParallaxScene>
+            {/* the pinned sequence needs to say so, or the page reads as stuck */}
+            {pinned && !done ? (
+              <p className="mt-6 hidden items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/30 lg:flex">
+                Keep scrolling
+                <ChevronDownIcon className="scroll-hint size-3.5" />
+              </p>
+            ) : null}
+          </Reveal>
+        </div>
+      </ParallaxScene>
+    </section>
   );
 }

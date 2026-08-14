@@ -9,6 +9,7 @@
 import {
   ArrowRight,
   ArrowUpRight,
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -44,6 +45,7 @@ export const MenuIcon = adapt(Menu);
 export const CloseIcon = adapt(X);
 export const ArrowIcon = adapt(ArrowRight);
 export const ArrowUpRightIcon = adapt(ArrowUpRight);
+export const CheckIcon = adapt(Check);
 export const ChevronDownIcon = adapt(ChevronDown);
 export const ChevronLeftIcon = adapt(ChevronLeft);
 export const ChevronRightIcon = adapt(ChevronRight);
