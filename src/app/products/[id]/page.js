@@ -1,18 +1,21 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ProductDetail from "@/components/product/ProductDetail";
 import ProductSpecs from "@/components/product/ProductSpecs";
 import RelatedProducts from "@/components/product/RelatedProducts";
-import { findProduct, products } from "@/lib/data";
+import { findIn, loadCatalogue } from "@/lib/services/products";
 
-// every product page is prerendered at build time
-export function generateStaticParams() {
-  return products.map((product) => ({ id: product.id }));
-}
+// The page shows what the store is selling right now — price, stock, images
+// and copy come from the API on every request, so it cannot be prerendered.
+export const dynamic = "force-dynamic";
+
+// generateMetadata, the product and its neighbours all come off one read.
+const getCatalogue = cache(loadCatalogue);
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const product = findProduct(id);
+  const product = findIn(await getCatalogue(), id);
   if (!product) return { title: "Product not found" };
 
   return {
@@ -23,7 +26,8 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { id } = await params;
-  const product = findProduct(id);
+  const catalogue = await getCatalogue();
+  const product = findIn(catalogue, id);
 
   if (!product) notFound();
 
@@ -60,7 +64,7 @@ export default async function ProductPage({ params }) {
 
       <ProductDetail product={product} />
       <ProductSpecs product={product} />
-      <RelatedProducts product={product} />
+      <RelatedProducts product={product} catalogue={catalogue} />
     </>
   );
 }

@@ -1,10 +1,11 @@
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/ui/Reveal";
-import { relatedProducts } from "@/lib/data";
+import { products as localCatalogue } from "@/lib/data";
+import { relatedFrom } from "@/lib/services/products";
 import { Accent } from "@/components/ui/Heading";
 
-export default function RelatedProducts({ product }) {
-  const related = relatedProducts(product, 4);
+export default function RelatedProducts({ product, catalogue = localCatalogue }) {
+  const related = relatedFrom(catalogue, product, 4);
   if (related.length === 0) return null;
 
   return (

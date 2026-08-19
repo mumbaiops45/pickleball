@@ -16,7 +16,6 @@ export default function CartView() {
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState(null);
   const [promoError, setPromoError] = useState("");
-  const [placed, setPlaced] = useState(false);
 
   const applyPromo = (event) => {
     event.preventDefault();
@@ -36,31 +35,6 @@ export default function CartView() {
     return (
       <div className="mx-auto w-full max-w-350 px-5 py-10 sm:px-8 lg:py-20">
         <div className="h-64 animate-pulse rounded-3xl border border-line bg-surface" />
-      </div>
-    );
-  }
-
-  if (placed) {
-    return (
-      <div className="mx-auto w-full max-w-2xl px-5 py-16 text-center sm:px-8 lg:py-24">
-        <span className="grid size-16 place-items-center rounded-full bg-volt text-ink mx-auto">
-          <ShieldIcon className="size-7" />
-        </span>
-        <h2 className="mt-8 text-3xl font-semibold tracking-tight">
-          That is as far as the <Accent>demo</Accent> goes.
-        </h2>
-        <p className="mt-4 text-[15px] leading-relaxed text-mist">
-          There is no payment processor wired up yet — this is where the
-          checkout session would be created. Your cart has been cleared so you
-          can run through the flow again.
-        </p>
-        <Link
-          href="/shop"
-          className="mt-10 inline-flex h-14 items-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink"
-        >
-          Back to shop
-          <ArrowIcon className="size-4" />
-        </Link>
       </div>
     );
   }
@@ -204,21 +178,17 @@ export default function CartView() {
             </div>
           </dl>
 
-          <button
-            type="button"
-            onClick={() => {
-              clear();
-              setPlaced(true);
-            }}
+          <Link
+            href="/checkout"
             className="group mt-6 flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-volt text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
           >
             Checkout
             <ArrowIcon className="size-4 transition-transform duration-400 group-hover:translate-x-1.5" />
-          </button>
+          </Link>
 
           <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-mist">
             <ShieldIcon className="size-3.5 text-volt-deep" />
-            Demo checkout — no payment is taken
+            Secure checkout — pay online or on delivery
           </p>
         </div>
       </aside>

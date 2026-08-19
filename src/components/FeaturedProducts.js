@@ -6,17 +6,17 @@ import ParallaxScene from "@/components/parallax/ParallaxScene";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/ui/Reveal";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
-import { productFilters, products } from "@/lib/data";
+import { productFilters, products as localCatalogue } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
-export default function FeaturedProducts() {
+export default function FeaturedProducts({ catalogue = localCatalogue }) {
   const [filter, setFilter] = useState("All");
 
   // the homepage teases eight; /shop carries the full catalogue
   const visible = (
     filter === "All"
-      ? products
-      : products.filter((product) => product.category === filter)
+      ? catalogue
+      : catalogue.filter((product) => product.category === filter)
   ).slice(0, 8);
 
   return (
@@ -89,7 +89,7 @@ export default function FeaturedProducts() {
           href={filter === "All" ? "/shop" : `/shop?category=${filter}`}
           className="group inline-flex h-14 items-center gap-3 rounded-full border border-line-strong px-8 text-sm font-medium text-ink transition-colors hover:border-volt-deep hover:text-volt-deep"
         >
-          View all {products.length} products
+          View all {catalogue.length} products
           <ArrowUpRightIcon className="size-4 transition-transform duration-400 group-hover:translate-x-1 group-hover:-translate-y-1" />
         </Link>
       </Reveal>

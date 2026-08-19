@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navLinks } from "@/lib/data";
 import Logo from "@/components/ui/Logo";
 import AnnouncementBar from "@/components/AnnouncementBar";
+import { ACCOUNT_SECTIONS } from "@/lib/account";
 import {
   BagIcon,
   ChevronDownIcon,
   CloseIcon,
+  HeartIcon,
+  LogOutIcon,
   MenuIcon,
   SearchIcon,
   UserIcon,
 } from "@/components/ui/Icons";
 import { useCart } from "@/store/CartProvider";
 import { useAuth } from "@/store/AuthProvider";
+import { useWishlist } from "@/store/WishlistProvider";
 
 /**
  * Desktop mega-menu for a nav entry that carries `columns`.
@@ -89,13 +93,137 @@ function MegaMenu({ link, open, onOpen, onClose }) {
   );
 }
 
+/**
+ * Signed-in account dropdown: account, orders and wishlist in one place.
+ *
+ * Click to open rather than hover — this is a destination menu (it holds
+ * "Sign out"), so it should not fall open as the pointer crosses the header.
+ */
+function AccountMenu() {
+  const { user, signOut } = useAuth();
+  const { count: savedCount, hydrated: wishlistHydrated } = useWishlist();
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event) => {
+      if (!wrapperRef.current?.contains(event.target)) setOpen(false);
+    };
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative hidden sm:block"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={`flex h-10 items-center gap-2 rounded-full px-3 transition-colors ${
+          open ? "bg-surface-2 text-ink" : "text-mist hover:bg-surface-2 hover:text-ink"
+        }`}
+      >
+        <UserIcon className="size-4.5" />
+        <span className="max-w-24 truncate text-sm">
+          {user.name.split(" ")[0]}
+        </span>
+        <ChevronDownIcon
+          className={`size-3.5 transition-transform duration-300 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      <div
+        role="menu"
+        aria-label="Account"
+        className={`absolute right-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_28px_60px_-30px_rgba(15,17,21,.45)] transition-all duration-300 ease-[cubic-bezier(.16,1,.3,1)] ${
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-1 opacity-0"
+        }`}
+      >
+        <div className="border-b border-line bg-surface px-4 py-3.5">
+          <p className="truncate text-sm font-semibold tracking-tight">
+            {user.name}
+          </p>
+          {user.email || user.phone ? (
+            <p className="mt-0.5 truncate text-xs text-mist">
+              {user.email || user.phone}
+            </p>
+          ) : null}
+        </div>
+
+        <ul className="p-2">
+          {ACCOUNT_SECTIONS.map((entry) => {
+            const Icon = entry.icon;
+            return (
+              <li key={entry.href}>
+                <Link
+                  href={entry.href}
+                  role="menuitem"
+                  tabIndex={open ? 0 : -1}
+                  onClick={() => setOpen(false)}
+                  className="flex h-11 items-center gap-3 rounded-xl px-3 text-sm text-mist transition-colors hover:bg-surface hover:text-ink"
+                >
+                  <Icon className="size-4 shrink-0" />
+                  {entry.label}
+                  {entry.href === "/account/wishlist" &&
+                  wishlistHydrated &&
+                  savedCount ? (
+                    <span className="ml-auto rounded-full bg-ink px-2 py-0.5 font-mono text-[11px] text-paper">
+                      {savedCount}
+                    </span>
+                  ) : null}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="border-t border-line p-2">
+          <button
+            type="button"
+            role="menuitem"
+            tabIndex={open ? 0 : -1}
+            onClick={() => {
+              setOpen(false);
+              signOut();
+            }}
+            className="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm text-mist transition-colors hover:bg-surface hover:text-clay"
+          >
+            <LogOutIcon className="size-4 shrink-0" />
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const pathname = usePathname();
   const { count, openDrawer, hydrated } = useCart();
-  const { user, openAuth } = useAuth();
+  const { user, openAuth, signOut } = useAuth();
+  const { count: savedCount, hydrated: wishlistHydrated } = useWishlist();
 
   // only the homepage has a hero to sit over — everywhere else stays solid
   const overlayRoute = pathname === "/";
@@ -167,18 +295,25 @@ export default function Navbar() {
               <SearchIcon className="size-4.5" />
             </Link>
 
-            {/* signed out opens the modal; signed in goes to the account page */}
+            {/* signed in gets a wishlist shortcut with a live saved count */}
             {user ? (
               <Link
-                href="/account"
-                aria-label="Your account"
-                className="hidden h-10 items-center gap-2 rounded-full px-3 text-mist transition-colors hover:bg-surface-2 hover:text-ink sm:flex"
+                href="/account/wishlist"
+                aria-label="Your wishlist"
+                className="relative hidden size-10 place-items-center rounded-full text-mist transition-colors hover:bg-surface-2 hover:text-ink sm:grid"
               >
-                <UserIcon className="size-4.5" />
-                <span className="max-w-24 truncate text-sm">
-                  {user.name.split(" ")[0]}
-                </span>
+                <HeartIcon className="size-4.5" />
+                {wishlistHydrated && savedCount ? (
+                  <span className="absolute -right-0.5 -top-0.5 grid min-w-4.5 place-items-center rounded-full bg-clay px-1 font-mono text-[10px] font-semibold text-paper">
+                    {savedCount}
+                  </span>
+                ) : null}
               </Link>
+            ) : null}
+
+            {/* signed out opens the modal; signed in opens the account menu */}
+            {user ? (
+              <AccountMenu />
             ) : (
               <button
                 type="button"
@@ -198,9 +333,12 @@ export default function Navbar() {
             >
               <BagIcon className="size-4.5" />
               <span className="hidden sm:inline">Cart</span>
-              <span className="grid size-5 place-items-center rounded-full  font-semibold text-ink">
-                {/* {hydrated ? count : 0} */}
-              </span>
+              {/* an empty bag shows no bubble rather than a standing zero */}
+              {hydrated && count ? (
+                <span className="grid size-5 place-items-center rounded-full bg-volt font-mono text-[11px] font-semibold text-ink">
+                  {count}
+                </span>
+              ) : null}
             </button>
 
             <button
@@ -293,14 +431,48 @@ export default function Navbar() {
 
           <div className="mt-auto flex flex-col gap-3">
             {user ? (
-              <Link
-                href="/account"
-                tabIndex={menuOpen ? 0 : -1}
-                onClick={() => setMenuOpen(false)}
-                className="grid h-12 place-items-center rounded-full border border-line-strong text-sm font-medium text-ink"
-              >
-                Signed in as {user.name.split(" ")[0]}
-              </Link>
+              <>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-mist">
+                  Signed in as {user.name.split(" ")[0]}
+                </p>
+                <ul className="flex flex-col gap-2">
+                  {ACCOUNT_SECTIONS.map((entry) => {
+                    const Icon = entry.icon;
+                    return (
+                      <li key={entry.href}>
+                        <Link
+                          href={entry.href}
+                          tabIndex={menuOpen ? 0 : -1}
+                          onClick={() => setMenuOpen(false)}
+                          className="flex h-12 items-center gap-3 rounded-full border border-line px-5 text-sm font-medium text-ink"
+                        >
+                          <Icon className="size-4 shrink-0" />
+                          {entry.label}
+                          {entry.href === "/account/wishlist" &&
+                          wishlistHydrated &&
+                          savedCount ? (
+                            <span className="ml-auto rounded-full bg-ink px-2 py-0.5 font-mono text-[11px] text-paper">
+                              {savedCount}
+                            </span>
+                          ) : null}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <button
+                  type="button"
+                  tabIndex={menuOpen ? 0 : -1}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    signOut();
+                  }}
+                  className="flex h-12 items-center justify-center gap-2 rounded-full border border-line-strong text-sm font-medium text-ink"
+                >
+                  <LogOutIcon className="size-4" />
+                  Sign out
+                </button>
+              </>
             ) : (
               <button
                 type="button"

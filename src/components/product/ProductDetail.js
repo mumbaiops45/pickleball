@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import QuantityStepper from "@/components/cart/QuantityStepper";
+import WishlistButton from "@/components/product/WishlistButton";
 import {
   ArrowIcon,
   BagIcon,
@@ -243,6 +244,7 @@ export default function ProductDetail({ product }) {
               <BagIcon className="size-4" />
               {added ? "Added to cart" : `Add to cart · ${formatPrice(product.price * quantity)}`}
             </button>
+            <WishlistButton productId={product.id} variant="pill" />
           </div>
 
           <p className="mt-4 text-xs text-mist">

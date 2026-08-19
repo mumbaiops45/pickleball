@@ -1639,7 +1639,7 @@ export const photos = {
 
 export const contact = {
   addressLines: ["No. 42, 4th Block, Koramangala", "Bengaluru 560034, Karnataka"],
-  phone: "+91 80 4718 2200",
+  phone: "+91 xxxxxxxxxx",
   email: "hello@paddlehaus.in",
   hours: "Mon – Sat, 10am – 7pm IST",
 };
@@ -1706,22 +1706,20 @@ export const footerColumns = [
       { label: "Gear", href: "/shop?category=Gear" },
     ],
   },
+  // Only destinations that exist. Shipping, Returns and Warranty used to point
+  // at /shop for want of a page — a link that lands somewhere unrelated costs
+  // more trust than the missing page does. Add them back with their pages.
   {
     title: "Company",
     links: [
       { label: "About us", href: "/about" },
-      { label: "Our story", href: "/about#story" },
-      { label: "The team", href: "/about#team" },
-      { label: "Technology", href: "/#tech" },
-      { label: "Paddle finder", href: "/#finder" },
+      { label: "Privacy policy", href: "/privacy-policy" },
+      { label: "Terms of sale", href: "/terms" },
     ],
   },
   {
     title: "Support",
     links: [
-      { label: "Shipping", href: "/shop" },
-      { label: "Returns", href: "/shop" },
-      { label: "Warranty", href: "/shop" },
       { label: "FAQs", href: "/#faq" },
       { label: "Contact", href: "/about#contact" },
     ],
@@ -1731,7 +1729,9 @@ export const footerColumns = [
     links: [
       // opens the sign-in modal rather than navigating to a route
       { label: "Sign in", action: "auth" },
-      { label: "My orders", href: "/account" },
+      { label: "My account", href: "/account" },
+      { label: "My orders", href: "/account/orders" },
+      { label: "Wishlist", href: "/account/wishlist" },
       { label: "Cart", href: "/cart" },
     ],
   },

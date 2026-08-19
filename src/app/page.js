@@ -10,15 +10,22 @@ import Features from "@/components/Features";
 import Testimonials from "@/components/Testimonials";
 import Faq from "@/components/Faq";
 import Newsletter from "@/components/Newsletter";
+import FloatingActions from "@/components/ui/FloatingActions";
+import { loadCatalogue } from "@/lib/services/products";
 
-export default function Home() {
+// the featured grid shows live products, so the page is read per request
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const catalogue = await loadCatalogue();
+
   return (
     <>
       <Hero />
       <TickerBar />
       {/* <BrandStrip /> */}
       <CategoryGrid />
-      <FeaturedProducts />
+      <FeaturedProducts catalogue={catalogue} />
       <PaddleFinder />
       <TechShowcase />
       <BundleDeal />
@@ -26,6 +33,7 @@ export default function Home() {
       <Testimonials />
       <Faq />
       <Newsletter />
+      <FloatingActions />
     </>
   );
 }

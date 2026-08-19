@@ -79,6 +79,38 @@ export function createPersistentStore(key, initial) {
   };
 }
 
+/**
+ * The same store contract without the localStorage half, for transient values
+ * that must not survive a reload — in-flight flags, fetched-not-cached data.
+ *
+ * Providers use this instead of `useState` for anything an effect has to set,
+ * because writing to an external store is what effects are for; calling
+ * `setState` in an effect body triggers the cascading-render lint.
+ */
+export function createMemoryStore(initial) {
+  let snapshot = initial;
+  const listeners = new Set();
+
+  const write = (next) => {
+    if (Object.is(next, snapshot)) return;
+    snapshot = next;
+    for (const listener of listeners) listener();
+  };
+
+  return {
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    getSnapshot: () => snapshot,
+    getServerSnapshot: () => initial,
+    set: write,
+    update(updater) {
+      write(updater(snapshot));
+    },
+  };
+}
+
 export function usePersistentStore(store) {
   return useSyncExternalStore(
     store.subscribe,

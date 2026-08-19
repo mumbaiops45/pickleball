@@ -10,14 +10,23 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
+  Eye,
+  EyeOff,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  Heart,
+  LayoutGrid,
+  LocateFixed,
   Leaf,
+  LogOut,
   Mail,
   MapPin,
   Menu,
   MessageCircle,
+  Package,
+  Pencil,
   Phone,
   Plus,
   RefreshCw,
@@ -25,6 +34,7 @@ import {
   ShieldCheck,
   ShoppingBag,
   Star,
+  Trash2,
   Truck,
   User,
   X,
@@ -46,9 +56,12 @@ export const CloseIcon = adapt(X);
 export const ArrowIcon = adapt(ArrowRight);
 export const ArrowUpRightIcon = adapt(ArrowUpRight);
 export const CheckIcon = adapt(Check);
+export const EyeIcon = adapt(Eye);
+export const EyeOffIcon = adapt(EyeOff);
 export const ChevronDownIcon = adapt(ChevronDown);
 export const ChevronLeftIcon = adapt(ChevronLeft);
 export const ChevronRightIcon = adapt(ChevronRight);
+export const ChevronUpIcon = adapt(ChevronUp);
 export const PlusIcon = adapt(Plus);
 export const TruckIcon = adapt(Truck);
 export const ShieldIcon = adapt(ShieldCheck);
@@ -58,6 +71,18 @@ export const RepeatIcon = adapt(RefreshCw);
 export const MailIcon = adapt(Mail);
 export const PhoneIcon = adapt(Phone);
 export const PinIcon = adapt(MapPin);
+export const LocateIcon = adapt(LocateFixed);
+export const PencilIcon = adapt(Pencil);
+export const HeartIcon = adapt(Heart);
+export const PackageIcon = adapt(Package);
+export const GridIcon = adapt(LayoutGrid);
+export const LogOutIcon = adapt(LogOut);
+export const TrashIcon = adapt(Trash2);
+// saved items read as filled, the same way ratings do
+export const HeartFilledIcon = adapt(Heart, {
+  fill: "currentColor",
+  strokeWidth: 0,
+});
 /* Brand marks.
    lucide v1 removed third-party brand icons (`Instagram`, `Youtube` no longer
    exist), and icon libraries generally will not ship trademarked logos. These

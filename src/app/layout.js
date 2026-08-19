@@ -4,8 +4,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import AuthModal from "@/components/auth/AuthModal";
+import Toaster from "@/components/ui/Toaster";
 import { CartProvider } from "@/store/CartProvider";
 import { AuthProvider } from "@/store/AuthProvider";
+import { WishlistProvider } from "@/store/WishlistProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,14 +41,23 @@ export default function RootLayout({ children }) {
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      {/* Extensions (Grammarly, password managers) stamp attributes on <body>
+          before React hydrates, which reads as a mismatch. This silences that
+          one element's attributes only — never its children. */}
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-paper text-ink"
+      >
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CartDrawer />
-            <AuthModal />
+            <WishlistProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <CartDrawer />
+              <AuthModal />
+              <Toaster />
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>

@@ -130,6 +130,18 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* iOS Safari zooms the whole page in when a focused field is smaller than
+   16px, then leaves you panned sideways. Our fields are text-sm (14px), so
+   below the sm breakpoint they are bumped to 16px — the zoom never fires and
+   the design is unchanged from 640px up. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* swipeable rails read cleaner without a visible scrollbar */
 .no-scrollbar {
   scrollbar-width: none;

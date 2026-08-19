@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import ShopFilters from "@/components/shop/ShopFilters";
 import Reveal from "@/components/ui/Reveal";
-import { PRICE_BANDS, SORT_OPTIONS, products } from "@/lib/data";
+import { PRICE_BANDS, SORT_OPTIONS, products as localCatalogue } from "@/lib/data";
 
 const DEFAULT_FILTERS = {
   category: "All",
@@ -21,6 +21,8 @@ const inBand = (price, bandId) => {
 };
 
 export default function ShopBrowser({
+  // the catalogue the page fetched; data.js only stands in if none was passed
+  catalogue = localCatalogue,
   initialCategory = "All",
   initialBrand = null,
   initialType = null,
@@ -80,7 +82,7 @@ export default function ShopBrowser({
   };
 
   const visible = useMemo(() => {
-    const filtered = products.filter((product) => {
+    const filtered = catalogue.filter((product) => {
       if (filters.category !== "All" && product.category !== filters.category)
         return false;
       if (filters.skills.length && !filters.skills.includes(product.skill))
@@ -118,37 +120,37 @@ export default function ShopBrowser({
         break;
     }
     return sorted;
-  }, [filters, sort]);
+  }, [catalogue, filters, sort]);
 
   // counts are computed off the full catalogue so the numbers never vanish
   const counts = useMemo(
     () => ({
-      category: products.reduce(
+      category: catalogue.reduce(
         (acc, product) => {
           acc[product.category] = (acc[product.category] ?? 0) + 1;
           return acc;
         },
-        { All: products.length },
+        { All: catalogue.length },
       ),
-      skill: products.reduce((acc, product) => {
+      skill: catalogue.reduce((acc, product) => {
         acc[product.skill] = (acc[product.skill] ?? 0) + 1;
         return acc;
       }, {}),
-      brand: products.reduce((acc, product) => {
+      brand: catalogue.reduce((acc, product) => {
         if (product.brand) acc[product.brand] = (acc[product.brand] ?? 0) + 1;
         return acc;
       }, {}),
-      type: products.reduce((acc, product) => {
+      type: catalogue.reduce((acc, product) => {
         if (product.type) acc[product.type] = (acc[product.type] ?? 0) + 1;
         return acc;
       }, {}),
       price: PRICE_BANDS.reduce((acc, band) => {
-        acc[band.id] = products.filter((p) => inBand(p.price, band.id)).length;
+        acc[band.id] = catalogue.filter((p) => inBand(p.price, band.id)).length;
         return acc;
       }, {}),
-      onSale: products.filter((p) => p.compareAt).length,
+      onSale: catalogue.filter((p) => p.compareAt).length,
     }),
-    [],
+    [catalogue],
   );
 
   const reset = () => setFilters(DEFAULT_FILTERS);

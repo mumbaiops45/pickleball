@@ -4,13 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import OtpInput from "@/components/auth/OtpInput";
+import PasswordToggle from "@/components/auth/PasswordToggle";
 import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
 import { LogoMark } from "@/components/ui/Logo";
 import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
 import { useAuth } from "@/store/AuthProvider";
+import { errorMessage } from "@/lib/api";
+import { toast } from "@/store/toast";
 
 const RESEND_SECONDS = 30;
+
+/** Shown when an endpoint succeeds but hands back no token to sign in with. */
+const NO_SESSION =
+  "Verified, but the server did not return a login token. Use email and password for now.";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[6-9]\d{9}$/;
@@ -19,8 +26,14 @@ export default function AuthModal() {
   const {
     modalOpen,
     closeAuth,
-    completeSignIn,
+    signInWithPassword,
+    registerAccount,
+    requestOtp,
+    signInWithOtp,
   } = useAuth();
+
+  // blocks a second submit while a request is in flight
+  const [pending, setPending] = useState(false);
 
   // ============================================================
   // AUTH MODE
@@ -37,6 +50,7 @@ export default function AuthModal() {
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
 
   // ============================================================
@@ -57,6 +71,7 @@ export default function AuthModal() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [registerError, setRegisterError] = useState("");
 
   // ============================================================
@@ -134,6 +149,8 @@ export default function AuthModal() {
 
       setLoginEmail("");
       setLoginPassword("");
+      // a reopened modal must never start with a password on show
+      setShowLoginPassword(false);
       setLoginError("");
 
       setPhone("");
@@ -146,7 +163,10 @@ export default function AuthModal() {
       setRegisterEmail("");
       setRegisterPhone("");
       setRegisterPassword("");
+      setShowRegisterPassword(false);
       setRegisterError("");
+
+      setPending(false);
     }, 400);
 
     return () => {
@@ -176,7 +196,7 @@ export default function AuthModal() {
   // PASSWORD LOGIN
   // ============================================================
 
-  const handlePasswordLogin = (event) => {
+  const handlePasswordLogin = async (event) => {
     event.preventDefault();
 
     setLoginError("");
@@ -209,17 +229,33 @@ export default function AuthModal() {
       return;
     }
 
-    completeSignIn({
-      email: loginEmail.trim(),
-      password: loginPassword,
-    });
+    setPending(true);
+    try {
+      const result = await signInWithPassword({
+        email: loginEmail.trim(),
+        password: loginPassword,
+      });
+
+      if (result.user) {
+        toast.success(result.message || `Welcome back, ${result.user.name}.`);
+      } else {
+        toast.info(result.message || "Signed in.");
+        setLoginError(NO_SESSION);
+      }
+    } catch (error) {
+      const message = errorMessage(error, "Could not sign you in.");
+      setLoginError(message);
+      toast.error(message);
+    } finally {
+      setPending(false);
+    }
   };
 
   // ============================================================
   // SEND OTP
   // ============================================================
 
-  const handleSendOtp = (event) => {
+  const handleSendOtp = async (event) => {
     event.preventDefault();
 
     setOtpError("");
@@ -238,16 +274,27 @@ export default function AuthModal() {
       return;
     }
 
-    setOtp("");
-    setCountdown(RESEND_SECONDS);
-    setOtpStep("otp");
+    setPending(true);
+    try {
+      const result = await requestOtp({ phone });
+      toast.success(result?.message || `OTP sent to +91 ${phone}.`);
+      setOtp("");
+      setCountdown(RESEND_SECONDS);
+      setOtpStep("otp");
+    } catch (error) {
+      const message = errorMessage(error, "Could not send the OTP.");
+      setOtpError(message);
+      toast.error(message);
+    } finally {
+      setPending(false);
+    }
   };
 
   // ============================================================
   // VERIFY OTP
   // ============================================================
 
-  const handleVerifyOtp = (event) => {
+  const handleVerifyOtp = async (event) => {
     event.preventDefault();
 
     setOtpError("");
@@ -259,17 +306,33 @@ export default function AuthModal() {
       return;
     }
 
-    completeSignIn({
-      phone: `+91 ${phone}`,
-      otp,
-    });
+    setPending(true);
+    try {
+      const result = await signInWithOtp({ phone, otp });
+
+      // verify-otp currently answers {success, message} with no token, so the
+      // phone is confirmed but no session exists — say so instead of sitting
+      // on a modal that looks like it did nothing
+      if (result.user) {
+        toast.success(result.message || "Signed in.");
+      } else {
+        toast.info(result.message || "OTP verified.");
+        setOtpError(NO_SESSION);
+      }
+    } catch (error) {
+      const message = errorMessage(error, "That OTP did not work.");
+      setOtpError(message);
+      toast.error(message);
+    } finally {
+      setPending(false);
+    }
   };
 
   // ============================================================
   // REGISTER
   // ============================================================
 
-  const handleRegister = (event) => {
+  const handleRegister = async (event) => {
     event.preventDefault();
 
     setRegisterError("");
@@ -323,12 +386,32 @@ export default function AuthModal() {
       return;
     }
 
-    completeSignIn({
-      name: registerName.trim(),
-      email: registerEmail.trim(),
-      phone: `+91 ${registerPhone}`,
-      password: registerPassword,
-    });
+    setPending(true);
+    try {
+      const result = await registerAccount({
+        name: registerName.trim(),
+        email: registerEmail.trim(),
+        phone: registerPhone,
+        password: registerPassword,
+      });
+
+      toast.success(result.message || "Account created.");
+
+      // POST /auth/register returns the new user but no token, so the account
+      // exists and is not signed in — hand them straight to the login form
+      if (!result.user) {
+        setAuthMode("login");
+        setLoginMethod("password");
+        setLoginEmail(registerEmail.trim());
+        setLoginError("Account created. Please log in.");
+      }
+    } catch (error) {
+      const message = errorMessage(error, "Could not create your account.");
+      setRegisterError(message);
+      toast.error(message);
+    } finally {
+      setPending(false);
+    }
   };
 
   // ============================================================
@@ -609,24 +692,35 @@ export default function AuthModal() {
                       </span>
                     </label>
 
-                    <input
-                      id="login-password"
-                      type="password"
-                      autoComplete="current-password"
-                      value={loginPassword}
-                      onChange={(event) => {
-                        setLoginPassword(
-                          event.target.value
-                        );
-                        setLoginError("");
-                      }}
-                      placeholder="Password"
-                      className={`h-13 w-full rounded-xl border bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 ${
-                        loginError
-                          ? "border-clay"
-                          : "border-line-strong focus:border-volt-deep"
-                      }`}
-                    />
+                    <div className="relative">
+                      <input
+                        id="login-password"
+                        type={showLoginPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        value={loginPassword}
+                        onChange={(event) => {
+                          setLoginPassword(
+                            event.target.value
+                          );
+                          setLoginError("");
+                        }}
+                        placeholder="Password"
+                        className={`h-13 w-full rounded-xl border bg-paper pl-4 pr-12 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 ${
+                          loginError
+                            ? "border-clay"
+                            : "border-line-strong focus:border-volt-deep"
+                        }`}
+                      />
+
+                      <PasswordToggle
+                        shown={showLoginPassword}
+                        onToggle={() =>
+                          setShowLoginPassword(
+                            (current) => !current
+                          )
+                        }
+                      />
+                    </div>
                   </div>
 
                   {/* Error */}
@@ -656,9 +750,10 @@ export default function AuthModal() {
 
                   <button
                     type="submit"
-                    className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+                    disabled={pending}
+                    className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Login Now
+                    {pending ? "Logging in…" : "Login Now"}
                   </button>
                 </form>
               )}
@@ -728,9 +823,10 @@ export default function AuthModal() {
 
                       <button
                         type="submit"
-                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                        disabled={pending}
+                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        Send OTP
+                        {pending ? "Sending…" : "Send OTP"}
                       </button>
                     </form>
                   )}
@@ -767,9 +863,10 @@ export default function AuthModal() {
 
                       <button
                         type="submit"
-                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                        disabled={pending}
+                        className="mt-4 h-13 w-full rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        Verify OTP
+                        {pending ? "Verifying…" : "Verify OTP"}
                       </button>
 
                       <div className="mt-3 text-center">
@@ -781,12 +878,28 @@ export default function AuthModal() {
                         ) : (
                           <button
                             type="button"
-                            onClick={() => {
-                              setCountdown(
-                                RESEND_SECONDS
-                              );
+                            disabled={pending}
+                            onClick={async () => {
+                              setOtpError("");
+                              setPending(true);
+                              try {
+                                const result = await requestOtp({ phone });
+                                toast.success(
+                                  result?.message || "OTP sent again."
+                                );
+                                setCountdown(RESEND_SECONDS);
+                              } catch (error) {
+                                const message = errorMessage(
+                                  error,
+                                  "Could not resend the OTP."
+                                );
+                                setOtpError(message);
+                                toast.error(message);
+                              } finally {
+                                setPending(false);
+                              }
                             }}
-                            className="text-xs font-medium text-volt-deep hover:underline"
+                            className="text-xs font-medium text-volt-deep hover:underline disabled:opacity-60"
                           >
                             Resend OTP
                           </button>
@@ -814,7 +927,7 @@ export default function AuthModal() {
               ================================================== */}
 
               <p className="mt-5 text-center text-sm text-ink">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <button
                   type="button"
                   onClick={openRegister}
@@ -954,20 +1067,31 @@ export default function AuthModal() {
                   </span>
                 </label>
 
-                <input
-                  id="register-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={registerPassword}
-                  onChange={(event) => {
-                    setRegisterPassword(
-                      event.target.value
-                    );
-                    setRegisterError("");
-                  }}
-                  placeholder="Create password"
-                  className="h-13 w-full rounded-xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
-                />
+                <div className="relative">
+                  <input
+                    id="register-password"
+                    type={showRegisterPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    value={registerPassword}
+                    onChange={(event) => {
+                      setRegisterPassword(
+                        event.target.value
+                      );
+                      setRegisterError("");
+                    }}
+                    placeholder="Create password"
+                    className="h-13 w-full rounded-xl border border-line-strong bg-paper pl-4 pr-12 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep"
+                  />
+
+                  <PasswordToggle
+                    shown={showRegisterPassword}
+                    onToggle={() =>
+                      setShowRegisterPassword(
+                        (current) => !current
+                      )
+                    }
+                  />
+                </div>
               </div>
 
               {/* Error */}
@@ -985,9 +1109,10 @@ export default function AuthModal() {
 
               <button
                 type="submit"
-                className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                disabled={pending}
+                className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-volt text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Create Account
+                {pending ? "Creating account…" : "Create Account"}
 
                 <ArrowIcon className="size-4" />
               </button>
