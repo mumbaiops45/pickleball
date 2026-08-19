@@ -28,7 +28,7 @@ import { products } from "../src/lib/data.js";
 const here = dirname(fileURLToPath(import.meta.url));
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
 
 /** The catalogue's filter names against the categories the backend actually has. */
 const CATEGORY_NAME = {
