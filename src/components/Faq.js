@@ -25,10 +25,6 @@ export default function Faq() {
 
       <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <Reveal>
-          {/* <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-            <span className="h-px w-8 bg-volt-deep/40" />
-            Answers
-          </span> */}
           <h2 className="mt-5 text-[clamp(2.1rem,4.6vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
             Before you <Accent>check out</Accent>.
           </h2>

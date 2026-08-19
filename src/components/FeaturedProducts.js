@@ -33,10 +33,6 @@ export default function FeaturedProducts({ catalogue = localCatalogue }) {
 
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <Reveal className="max-w-xl">
-          {/* <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-            <span className="h-px w-8 bg-volt-deep/40" />
-            The line-up
-          </span> */}
           <h2 className="mt-5 text-[clamp(2.1rem,4.6vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
             Built for players who <Accent>keep score</Accent>.
           </h2>

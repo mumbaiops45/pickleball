@@ -1,6 +1,5 @@
 import Hero from "@/components/Hero";
 import TickerBar from "@/components/TickerBar";
-import BrandStrip from "@/components/BrandStrip";
 import CategoryGrid from "@/components/CategoryGrid";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import PaddleFinder from "@/components/PaddleFinder";
@@ -23,7 +22,6 @@ export default async function Home() {
     <>
       <Hero />
       <TickerBar />
-      {/* <BrandStrip /> */}
       <CategoryGrid />
       <FeaturedProducts catalogue={catalogue} />
       <PaddleFinder />

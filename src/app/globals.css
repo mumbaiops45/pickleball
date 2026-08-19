@@ -33,7 +33,11 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Anchors jump rather than animate. Smooth scrolling turned a footer link to
+     #faq into a long crawl up the page instead of showing the section. */
+  scroll-behavior: auto;
+  /* clears the fixed header, so a linked section lands below it, not under it */
+  scroll-padding-top: 6rem;
   -webkit-tap-highlight-color: transparent;
 }
 
