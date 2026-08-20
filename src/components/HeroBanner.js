@@ -64,9 +64,15 @@ export default function HeroBanner({ slides }) {
     const start = touchStart.current;
     if (start === null) return;
 
-    const delta = event.changedTouches[0].clientX - start;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
     touchStart.current = null;
-    if (Math.abs(delta) > 45) go(delta < 0 ? index + 1 : index - 1);
+
+    // a vertical scroll drifts sideways too — only act when the gesture was
+    // mostly horizontal, or the banner advances while you are scrolling past
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY))
+      go(deltaX < 0 ? index + 1 : index - 1);
   }
 
   return (
@@ -82,7 +88,8 @@ export default function HeroBanner({ slides }) {
       }}
       onKeyDown={onKeyDown}
       onTouchStart={(event) => {
-        touchStart.current = event.changedTouches[0].clientX;
+        const touch = event.changedTouches[0];
+        touchStart.current = { x: touch.clientX, y: touch.clientY };
       }}
       onTouchEnd={onTouchEnd}
     >

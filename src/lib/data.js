@@ -1638,10 +1638,15 @@ export const photos = {
 /* --------------------------------------------------------------- about page */
 
 export const contact = {
-  addressLines: ["No. 42, 4th Block, Koramangala", "Bengaluru 560034, Karnataka"],
+  addressLines: [
+    "Mumbai",
+    // "Aziznagar, Hyderabad, Telangana - 500075",
+  ],
   phone: "+91 xxxxxxxxxx",
-  email: "hello@paddlehaus.in",
-  hours: "Mon – Sat, 10am – 7pm IST",
+  email: "support@pickleballoutlet.in",
+  hours: "Monday – Saturday, 10.00 am – 6.00 pm",
+  // used for the "Get directions" link on /contact
+  // mapQuery: "Sreenidhi International School, Aziznagar, Hyderabad, Telangana 500075",
 };
 
 export const aboutIntro = {
@@ -1721,7 +1726,7 @@ export const footerColumns = [
     title: "Support",
     links: [
       { label: "FAQs", href: "/#faq" },
-      { label: "Contact", href: "/about#contact" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {

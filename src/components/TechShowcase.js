@@ -32,8 +32,7 @@ export default function TechShowcase() {
         </p>
       </div>
       <div className="relative mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-16 px-5 sm:px-8 lg:grid-cols-12">
-        {/* stays with the paddle stage — anchored to the section it would run
-            straight through the layer rows below */}
+
         <div
           data-speed="1.5"
           data-speed-x="2.8"

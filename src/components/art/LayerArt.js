@@ -1,11 +1,4 @@
-/**
- * Construction glyphs for the technology section — one per layer of the paddle
- * build, outside in.
- *
- * Every glyph is stroked in `currentColor` on a 64×64 grid, so the caller sets
- * the colour and the size and the whole set stays optically consistent. They
- * are diagrams rather than icons: each one draws the thing it names.
- */
+
 
 const BASE = {
   viewBox: "0 0 64 64",

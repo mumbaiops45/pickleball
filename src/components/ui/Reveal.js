@@ -2,11 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-/**
- * Reveals its children once they scroll into view. The hidden/!hidden states
- * live in globals.css (`[data-reveal]` / `.is-in`) so nothing flashes before
- * hydration and reduced-motion users get the content immediately.
- */
+
 export default function Reveal({
   as: Tag = "div",
   variant = "up",

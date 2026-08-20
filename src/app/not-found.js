@@ -6,7 +6,7 @@ import { Accent } from "@/components/ui/Heading";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-5 py-24 text-center sm:px-8 lg:py-32">
+    <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-5 pb-24 pt-32 text-center sm:px-8 lg:py-32">
       <div className="w-24">
         <div className="float-slow">
           <BallArt id="404-ball" color="#d4ff3f" className="w-full" />

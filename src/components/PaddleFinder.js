@@ -27,13 +27,8 @@ const TOTAL = finderQuestions.length;
 const STAGES = TOTAL + 1;
 const pad = (n) => String(n).padStart(2, "0");
 
-/** Position in the entrance sequence, as a custom property `.step-item` reads. */
 const at = (ms) => ({ "--step-delay": `${ms}ms` });
 
-/**
- * One answer. Reads as a row in a form, not as a marketing tile: hairline edge,
- * the shortcut digit in mono on the left, the reason we ask underneath.
- */
 function OptionRow({ option, index, onChoose }) {
   return (
     <button

@@ -24,10 +24,6 @@ function Row({ items, direction, duration }) {
   );
 }
 
-/**
- * Two counter-rotated ticker rails. Each rail loops on its own, and the whole
- * band is pushed along the x-axis by scroll position for a layered read.
- */
 export default function TickerBar() {
   return (
     <ParallaxScene as="section" className="relative z-10 overflow-hidden py-6">

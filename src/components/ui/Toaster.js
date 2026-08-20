@@ -3,13 +3,7 @@
 import { CheckIcon, CloseIcon } from "@/components/ui/Icons";
 import { dismissToast, useToasts } from "@/store/toast";
 
-/**
- * Fixed stack of API messages. Sits at the very top of the tree so a toast
- * raised from a provider or a service still has somewhere to land.
- *
- * Bottom-right on desktop, full width at the top on phones where a bottom-right
- * card would sit under the thumb.
- */
+
 const TONE = {
   success: "border-volt-deep/50 bg-surface text-ink",
   error: "border-clay/50 bg-surface text-ink",

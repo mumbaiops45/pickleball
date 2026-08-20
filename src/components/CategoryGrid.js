@@ -13,6 +13,9 @@ function CategoryArt({ kind, accent, id }) {
   const imageProps = {
     alt: `${kind} product`,
     fill: true,
+    // the art box is the card minus its p-5 gutters, so the candidate widths
+    // track CategoryCard's own w-[78vw] / sm:w-[46vw] / lg:w-80 steps
+    sizes: "(min-width: 1024px) 280px, (min-width: 640px) 46vw, 78vw",
     className: "object-contain",
   };
 

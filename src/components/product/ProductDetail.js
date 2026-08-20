@@ -103,9 +103,11 @@ export default function ProductDetail({ product }) {
 
           {/* Thumbnails page through the real shots we hold of this SKU. A
               single-shot product has nothing to switch between, so the strip
-              stays hidden rather than rendering one dead button. */}
+              stays hidden rather than rendering one dead button. The strip
+              wraps: the gallery comes from the CMS, and four 80px thumbs plus
+              their gaps are already wider than a 360px phone. */}
           {gallery.length > 1 ? (
-            <div className="mt-4 flex gap-3">
+            <div className="mt-4 flex flex-wrap gap-3">
               {gallery.map((src, index) => (
                 <button
                   key={src}

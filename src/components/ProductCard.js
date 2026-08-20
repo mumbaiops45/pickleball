@@ -22,18 +22,10 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-paper shadow-[0_1px_2px_rgba(15,17,21,.04),0_8px_24px_-16px_rgba(15,17,21,.12)] transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1.5 hover:border-line-strong hover:shadow-[0_2px_4px_rgba(15,17,21,.05),0_28px_50px_-24px_rgba(15,17,21,.25)]">
-      {/* Media. A square stage, so the shot is as large as the card is wide
-          rather than a fixed strip, and the photo fits the box on its longest
-          side — a wide bag fills the width, a tall paddle the height.
 
-          No stacking context here: the title's stretched link sits at z-10 over
-          the whole card, so the photo and the controls both reach past it. */}
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[radial-gradient(80%_70%_at_50%_18%,#ffffff_0%,#eceae2_78%)] p-6">
         <span className="absolute inset-x-8 top-8 z-0 h-40 rounded-full bg-volt/25 blur-3xl transition-all duration-700 group-hover:bg-volt/40" />
 
-        {/* The shot holds still on hover. Lifting and tilting it pushed the
-            photo under the Quick add button and past the edges of the stage,
-            which reads as a glitch once the image fills the card. */}
         <div className="relative z-10 flex h-full w-full items-center justify-center">
           <ProductArt
             product={product}
@@ -42,8 +34,6 @@ export default function ProductCard({ product }) {
           />
         </div>
 
-        {/* badges stack on the left so the heart owns the top-right corner.
-            z-20 keeps them above the photo, which sits at z-10 */}
         <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-4.5rem)] flex-col items-start gap-2">
           {product.badge ? (
             <span className="max-w-full truncate rounded-full bg-volt px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">

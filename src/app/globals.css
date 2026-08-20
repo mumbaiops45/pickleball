@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -24,8 +25,10 @@
   /* commerce urgency: sale prices, low stock. 5.6:1 both as text and as a fill */
   --color-clay: #c2320f;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* one family across the whole site — the "mono" token keeps its name because
+     44 components spell it, but it now resolves to Jakarta like everything else */
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "Plus Jakarta Sans", sans-serif;
 }
 
 :root {
@@ -36,8 +39,9 @@ html {
   /* Anchors jump rather than animate. Smooth scrolling turned a footer link to
      #faq into a long crawl up the page instead of showing the section. */
   scroll-behavior: auto;
-  /* clears the fixed header, so a linked section lands below it, not under it */
-  scroll-padding-top: 6rem;
+  /* clears the fixed header, so a linked section lands below it, not under it
+     — the announcement bar (h-9) plus the nav (h-18) plus its border is 109px */
+  scroll-padding-top: 7.5rem;
   -webkit-tap-highlight-color: transparent;
 }
 

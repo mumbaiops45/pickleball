@@ -1,11 +1,4 @@
-/**
- * Icon set, backed by lucide-react.
- *
- * These are thin named adapters rather than direct imports so that call sites
- * stay stable and every icon inherits the same stroke weight. Sizing comes
- * from Tailwind classes (`size-4`) — the CSS width/height overrides the
- * width/height attributes lucide renders.
- */
+
 import {
   ArrowRight,
   ArrowUpRight,
@@ -16,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  Clock,
   Heart,
   LayoutGrid,
   LocateFixed,
@@ -71,6 +65,8 @@ export const RepeatIcon = adapt(RefreshCw);
 export const MailIcon = adapt(Mail);
 export const PhoneIcon = adapt(Phone);
 export const PinIcon = adapt(MapPin);
+export const ClockIcon = adapt(Clock);
+export const MessageIcon = adapt(MessageCircle);
 export const LocateIcon = adapt(LocateFixed);
 export const PencilIcon = adapt(Pencil);
 export const HeartIcon = adapt(Heart);
@@ -83,10 +79,7 @@ export const HeartFilledIcon = adapt(Heart, {
   fill: "currentColor",
   strokeWidth: 0,
 });
-/* Brand marks.
-   lucide v1 removed third-party brand icons (`Instagram`, `Youtube` no longer
-   exist), and icon libraries generally will not ship trademarked logos. These
-   three stay as local glyphs — everything functional comes from lucide. */
+
 
 const brandBase = {
   fill: "none",

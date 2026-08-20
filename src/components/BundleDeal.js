@@ -125,7 +125,7 @@ export default function BundleDeal() {
           </Reveal>
 
           {/* stacked art */}
-          <div className="flex items-center justify-center gap-8 lg:gap-12">
+          <div className="flex items-center justify-center gap-5 sm:gap-8 lg:gap-12">
             {items.map((item, index) => {
               const imageMap = {
                 Paddles: "/photos/paddle-product.png",
@@ -140,7 +140,10 @@ export default function BundleDeal() {
                   key={item.id}
                   data-speed={String(2.2 + index * 0.7)}
                   data-mouse={String(30 + index * 15)}
-                  className="flex-shrink-0 flex items-center justify-center"
+                  // a share of the row rather than a fixed 180px: three of
+                  // those plus the gaps are wider than a phone, and the card
+                  // clips its overflow, so the outer two were cut in half
+                  className="flex w-[28%] max-w-45 items-center justify-center"
                 >
                   <div className="drop-shadow-[0_30px_50px_rgba(0,0,0,.45)]">
                     <Image
@@ -148,7 +151,8 @@ export default function BundleDeal() {
                       alt={item.name}
                       width={180}
                       height={180}
-                      className="h-auto w-auto object-contain"
+                      sizes="(min-width: 1024px) 180px, 28vw"
+                      className="h-auto w-full object-contain"
                       priority={index === 0}
                     />
                   </div>

@@ -1,7 +1,4 @@
-/**
- * Vector paddle. Face colour, edge guard, grip wrap and surface texture are all
- * configurable so one component can render the whole catalogue.
- */
+
 export default function PaddleArt({
   face = "#d4ff3f",
   edge = "#0d0f13",

@@ -1,4 +1,3 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,16 +7,6 @@ import Toaster from "@/components/ui/Toaster";
 import { CartProvider } from "@/store/CartProvider";
 import { AuthProvider } from "@/store/AuthProvider";
 import { WishlistProvider } from "@/store/WishlistProvider";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: {
@@ -39,7 +28,7 @@ export default function RootLayout({ children }) {
       lang="en"
       // tells Next not to animate the scroll on route transitions
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       {/* Extensions (Grammarly, password managers) stamp attributes on <body>
           before React hydrates, which reads as a mismatch. This silences that

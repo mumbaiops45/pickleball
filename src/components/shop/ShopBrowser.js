@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import ShopFilters from "@/components/shop/ShopFilters";
 import Reveal from "@/components/ui/Reveal";
@@ -152,6 +152,15 @@ export default function ShopBrowser({
     }),
     [catalogue],
   );
+
+  // the sheet covers the page, so the grid behind it must not scroll under it
+  useEffect(() => {
+    if (!panelOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [panelOpen]);
 
   const reset = () => setFilters(DEFAULT_FILTERS);
 

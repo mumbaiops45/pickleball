@@ -6,20 +6,7 @@ import {
   PhoneIcon,
   WhatsappIcon,
 } from "@/components/ui/Icons";
-/**
- * The floating call / WhatsApp / back-to-top stack.
- *
- * The numbers come from the environment, not from `data.js`, because the real
- * ones have not been given to us yet — and a contact button that dials a
- * placeholder is worse than no button. Each one renders only once its number
- * is set, so back-to-top works today and the other two switch themselves on
- * the day the numbers land:
- *
- *   NEXT_PUBLIC_CONTACT_PHONE=+918047182200
- *   NEXT_PUBLIC_WHATSAPP_NUMBER=918047182200
- *
- * WhatsApp wants bare digits with the country code and no `+`.
- */
+
 const digitsOf = (value) => (value ?? "").replace(/\D/g, "");
 
 const CALL_NUMBER = digitsOf(process.env.NEXT_PUBLIC_CONTACT_PHONE);
@@ -29,13 +16,11 @@ const WHATSAPP_TEXT = encodeURIComponent(
   "Hi PADDLEHAUS — I have a question about an order.",
 );
 
-/** Far enough down that the button is a shortcut, not clutter over the hero. */
 const SHOW_AFTER = 600;
 
 const bubble =
   "grid size-12 place-items-center rounded-full shadow-[0_10px_24px_-10px_rgba(15,17,21,.45)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:-translate-y-0.5";
 
-/** The name sits to the left of its button, on hover and on keyboard focus. */
 function Label({ children }) {
   return (
     <span className="pointer-events-none absolute right-14 hidden whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-xs font-medium text-paper opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">
@@ -44,13 +29,7 @@ function Label({ children }) {
   );
 }
 
-/**
- * A contact bubble that shows whether or not its number is known.
- *
- * With a number it is a real link. Without one it still draws — the design
- * calls for it, and the numbers are not with us yet — but it is inert and says
- * so on hover, rather than dialling a placeholder or opening an empty chat.
- */
+
 function ContactBubble({ href, tone, label, pending, children }) {
   if (!href) {
     return (

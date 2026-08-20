@@ -1,7 +1,4 @@
-/** Apparel, bag and shoe silhouettes used by product cards and category tiles. */
 
-/* Light colourways would disappear against the white product panels, so every
-   silhouette carries a faint dark outline. */
 const OUTLINE = { stroke: "#0f1115", strokeOpacity: 0.22, strokeWidth: 2.5 };
 
 export function TeeArt({ color = "#f5f3ed", accent = "#d4ff3f", className = "" }) {

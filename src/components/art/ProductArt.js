@@ -1,9 +1,6 @@
 import Image from "next/image";
 
-/**
- * Fallback shots, used only when an entry has no photography of its own — a
- * generic image of the right kind beats an empty tile.
- */
+
 const KIND_PHOTOS = {
   paddle: "/photos/paddle-product.png",
   ball: "/photos/pickleball-balls.png",

@@ -28,7 +28,18 @@ const FREE_SHIPPING_THRESHOLD = 2499;
 const SHIPPING_FLAT = 99;
 const MAX_PER_LINE = 20;
 
-const cartStore = createPersistentStore("paddlehaus.cart", []);
+/** The key carries a version because lines written before `ownerStore` existed
+ *  cannot be told apart from a guest cart, and would be pushed up one last
+ *  time — doubling every quantity. Starting a new key retires them instead. */
+const cartStore = createPersistentStore("paddlehaus.cart.v2", []);
+
+/** Which account the persisted lines were last read from.
+ *
+ *  `POST /cart` adds to the quantity the server already holds, so the mirror
+ *  may only be pushed up while it is still a guest cart. Once it belongs to an
+ *  account it is a copy of the server's own lines, and pushing it again adds
+ *  every quantity on top of itself. */
+const ownerStore = createPersistentStore("paddlehaus.cart.owner", null);
 
 /** True while the sign-in merge and first server read are in flight. */
 const syncingStore = createMemoryStore(false);
@@ -75,13 +86,24 @@ export function CartProvider({ children }) {
     previousUser.current = userKey;
 
     if (!userKey) {
-      if (hadUser) cartStore.set([]);
+      if (hadUser) {
+        cartStore.set([]);
+        ownerStore.set(null);
+      }
       syncingStore.set(false);
       return;
     }
 
     syncingStore.set(true);
-    const pending = cartStore.getSnapshot();
+
+    // Lines this account already owns came back from `/api/cart` and are not
+    // ours to send up again: a reload would otherwise add every quantity on top
+    // of itself, and so would Strict Mode running this effect twice. The mirror
+    // is claimed synchronously, before the first await, so the second pass sees
+    // it already claimed.
+    const pending =
+      ownerStore.getSnapshot() === userKey ? [] : cartStore.getSnapshot();
+    ownerStore.set(userKey);
 
     // push anything collected while signed out, then take the server's answer
     const merge = pending.length
@@ -136,24 +158,36 @@ export function CartProvider({ children }) {
   const addItem = useCallback(
     ({ productId, colorway, option, quantity = 1, openDrawer = true }) => {
       const key = lineKey(productId, colorway, option);
+      const existing = cartStore
+        .getSnapshot()
+        .find((line) => line.key === key);
 
-      commit(
-        (current) => {
-          const existing = current.find((line) => line.key === key);
-          if (existing) {
-            return current.map((line) =>
-              line.key === key
-                ? {
-                    ...line,
-                    quantity: Math.min(line.quantity + quantity, MAX_PER_LINE),
-                  }
-                : line,
-            );
-          }
-          return [...current, { key, productId, colorway, option, quantity }];
-        },
-        () => cartApi.addToCart({ productId, quantity, colorway, option }),
-      );
+      // `POST /cart` adds whatever it is sent, so the ceiling has to be applied
+      // before the request rather than only to the local line — otherwise the
+      // shopper sees 20 while the server quietly climbs past it, and the next
+      // read brings the excess back.
+      const added = existing
+        ? Math.min(existing.quantity + quantity, MAX_PER_LINE) -
+          existing.quantity
+        : Math.min(quantity, MAX_PER_LINE);
+
+      if (added > 0) {
+        commit(
+          (current) =>
+            existing
+              ? current.map((line) =>
+                  line.key === key
+                    ? { ...line, quantity: line.quantity + added }
+                    : line,
+                )
+              : [
+                  ...current,
+                  { key, productId, colorway, option, quantity: added },
+                ],
+          () =>
+            cartApi.addToCart({ productId, quantity: added, colorway, option }),
+        );
+      }
 
       if (openDrawer) setDrawerOpen(true);
     },

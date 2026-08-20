@@ -9,7 +9,6 @@ export const metadata = {
     "What PADDLEHAUS collects when you shop, why we hold it, who we share it with, and how to have it corrected or erased.",
 };
 
-/** Shown in the hero and at the foot. Update it whenever the copy changes. */
 const UPDATED = "19 August 2026";
 
 const TOC = [

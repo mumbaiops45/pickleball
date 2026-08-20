@@ -16,23 +16,16 @@ const NOMINATIM = "https://nominatim.openstreetmap.org/reverse";
 
 const USER_AGENT = "PADDLEHAUS storefront (hello@paddlehaus.in)";
 
-// ~11 metres. Enough to place a building, and it makes two shoppers in the
-// same block share a cached answer.
+
 const PRECISION = 4;
 
 const DAY = 86400;
 
 const fail = (message, status) => Response.json({ message }, { status });
 
-/** First value that actually says something. */
 const first = (...values) =>
   values.find((value) => typeof value === "string" && value.trim())?.trim() ?? "";
 
-/**
- * Nominatim's address bag against the fields on `addressSchema`. Nothing is
- * invented: a field the lookup cannot answer comes back empty and the shopper
- * fills it in, which is why the form only overwrites what is present.
- */
 function toAddress(place) {
   const found = place?.address ?? {};
 
