@@ -8,17 +8,17 @@ import AboutContact from "@/components/about/AboutContact";
 export const metadata = {
   title: "About us",
   description:
-    "PADDLEHAUS presses its own paddles in Bengaluru — built for monsoon humidity, coarse outdoor courts and players who are on court four times a week.",
+    "India's premier pickleball manufacturing house. PADDLEHAUS presses its own paddles and rotomolds its own balls in Bengaluru — built for monsoon humidity, coarse outdoor courts, and shipped to players in the USA, Dubai and Belgium.",
 };
 
 export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="Since 2023"
-        title="We make the paddle we could not buy here."
-        titleAccent="could not buy here"
-        copy="Pressed in Bengaluru, tested every Saturday on public courts, and priced without an import bill on top."
+        eyebrow="Since 2023 · Made in India"
+        title="India's premier pickleball manufacturing house."
+        titleAccent="manufacturing house"
+        copy="Paddles pressed and balls rotomolded in Bengaluru from high-quality imported raw materials, tested every Saturday on public courts, and played on in the USA, Dubai and Belgium."
         crumbs={[{ label: "About" }]}
       />
       <AboutIntro />

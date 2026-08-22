@@ -1,5 +1,5 @@
 import HeroBanner from "@/components/HeroBanner";
-import { stats } from "@/lib/data";
+import { brand } from "@/lib/data";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
 import bannerElevate from "../../public/Banner.png";
 import bannerProV from "../../public/Banner1.png";
@@ -29,8 +29,11 @@ export default function Hero() {
     <section id="top" className="relative isolate">
       <div className="grain relative bg-[radial-gradient(120%_140%_at_50%_-40%,#f4ffd6_0%,#fbfaf6_55%,#ffffff_100%)] pt-27">
         <div className="mx-auto flex max-w-350 flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 pb-6 sm:px-8">
+          {/* The first line above the banner — the brand's own claim, not a
+              feature. Sits here rather than inside the artwork so it stays
+              readable when a slide is swapped. */}
           <p className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-mist sm:block">
-            Built with touring pros · Tested on public courts weekly
+            {brand.identity} &middot; {brand.taglines.origin}
           </p>
           <a
             href="#tech"

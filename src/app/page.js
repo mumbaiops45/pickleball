@@ -4,6 +4,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import PaddleFinder from "@/components/PaddleFinder";
 import TechShowcase from "@/components/TechShowcase";
+import BallCraft from "@/components/BallCraft";
 import BundleDeal from "@/components/BundleDeal";
 import Features from "@/components/Features";
 import Testimonials from "@/components/Testimonials";
@@ -26,6 +27,7 @@ export default async function Home() {
       <FeaturedProducts catalogue={catalogue} />
       <PaddleFinder />
       <TechShowcase />
+      <BallCraft />
       <BundleDeal />
       <Features />
       <Testimonials />

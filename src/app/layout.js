@@ -14,7 +14,7 @@ export const metadata = {
     template: "%s · PADDLEHAUS",
   },
   description:
-    "Thermoformed raw carbon paddles, true-flight balls and court apparel. AIPA approved, free shipping over ₹2,499 across India and a 30-day play test.",
+    "India's premier pickleball manufacturing house. Thermoformed raw carbon paddles and premium-quality 40-hole rotomolded pickleballs made from high-quality imported raw materials — designed in India, played in the USA, Dubai and Belgium. AIPA approved, free shipping over ₹2,499 and a 30-day play test.",
 };
 
 export const viewport = {

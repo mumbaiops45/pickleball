@@ -87,7 +87,13 @@ export default function Footer() {
               </Link>
 
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-paper/55">
-                {brand.tagline} Pressed, tested and shipped from Bengaluru.
+                {brand.identity} Paddles pressed and balls rotomolded in
+                Bengaluru, shipped to courts in{" "}
+                {brand.exportMarkets.join(", ")} and across India.
+              </p>
+
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-volt">
+                {brand.taglines.manufacturing}
               </p>
 
               <address className="mt-7 flex flex-col gap-3.5 text-sm not-italic">

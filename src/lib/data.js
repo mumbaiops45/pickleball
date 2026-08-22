@@ -1,6 +1,36 @@
 export const brand = {
   name: "PADDLEHAUS",
   tagline: "Performance pickleball, engineered in Bengaluru.",
+
+  /**
+   * The one-line answer to "who are you?". `identity` is the line actually in
+   * use — the alternates sit beside it so re-positioning the brand is an edit
+   * here rather than a hunt through the components.
+   */
+  identity: "India's premier pickleball manufacturing house.",
+  identityAlternates: [
+    "Crafting world-class pickleball gear for global players.",
+    "Quality made in India, trusted on courts in the USA, Dubai and Belgium.",
+    "Innovating the future of pickleball equipment.",
+  ],
+
+  /**
+   * Short slogans keyed by the register each one strikes. A component pulls the
+   * key that fits its slot instead of hard-coding a string, so the whole site
+   * can be re-voiced from this one object.
+   */
+  taglines: {
+    performance: "Built for precision. Born for victory.",
+    origin: "Designed in India. Played in the USA and beyond.",
+    passion: "Where skill meets fun.",
+    manufacturing: "Crafted. Engineered. Perfected.",
+    short: "Dink. Spin. Win.",
+    premium: "Performance you can feel.",
+    reach: "From India to the world of pickleball.",
+  },
+
+  /** Courts we export to. Quoted in the identity line and on the about page. */
+  exportMarkets: ["USA", "Dubai", "Belgium"],
 };
 
 /**
@@ -41,9 +71,17 @@ export const navLinks = [
   { label: "About", href: "/about" },
 ];
 
+/**
+ * The scrolling marquee. Slogans are interleaved with the promises rather than
+ * grouped, so a reader catching two or three items in passing gets one of each
+ * instead of a run of pure sloganeering.
+ */
 export const announcements = [
+  "Dink. Spin. Win.",
   "Free shipping over ₹2,499",
+  "Designed in India · played in the USA, Dubai & Belgium",
   "AIPA tournament approved",
+  "Crafted. Engineered. Perfected.",
   "30-day play test — love it or return it",
   "Season 04 drop is live",
   "Lifetime edge-guard warranty",
@@ -286,7 +324,7 @@ const catalogue = [
     name: "TrueFlight Outdoor 40",
     blurb: "12-ball tube · seamless rotational mould",
     description:
-      "Rotationally moulded in one piece so there is no seam to split. 40 holes, tournament weight, and a flight path that stays true in wind.",
+      "A premium-quality 40-hole rotomolded pickleball, produced using high-quality imported raw materials, ensuring exceptional durability, consistent flight, and outstanding playing performance comparable to leading international brands such as Franklin. Moulded in one piece, so there is no seam to split.",
     category: "Balls",
     skill: "All levels",
     price: 2199,
@@ -303,12 +341,15 @@ const catalogue = [
     optionLabel: "Pack size",
     options: ["3 balls", "12 balls", "36 balls"],
     highlights: [
-      "Seamless one-piece mould",
+      "Rotomolded in one piece — no seam to split",
+      "Pressed from high-quality imported raw material",
       "40 holes, outdoor tournament spec",
       "Stays round through a full league season",
     ],
     specs: [
       { label: "Type", value: "Outdoor" },
+      { label: "Construction", value: "One-piece rotomolded" },
+      { label: "Material", value: "Imported raw material" },
       { label: "Holes", value: "40" },
       { label: "Diameter", value: "74mm" },
       { label: "Weight", value: "26.5 g" },
@@ -321,7 +362,7 @@ const catalogue = [
     name: "TrueFlight Indoor 26",
     blurb: "6-ball sleeve · softer indoor compound",
     description:
-      "A softer compound and larger holes for gym floors. Quieter off the face and easier to control on a slick surface.",
+      "The same imported raw material and one-piece rotomold as the outdoor ball, run in a softer compound with larger holes for gym floors. Quieter off the face and easier to control on a slick surface.",
     category: "Balls",
     skill: "All levels",
     price: 1499,
@@ -338,11 +379,14 @@ const catalogue = [
     options: ["6 balls", "24 balls"],
     highlights: [
       "26-hole indoor pattern",
+      "Rotomolded from the same imported raw material",
       "Softer compound for gym floors",
       "Noticeably quieter off the paddle",
     ],
     specs: [
       { label: "Type", value: "Indoor" },
+      { label: "Construction", value: "One-piece rotomolded" },
+      { label: "Material", value: "Imported raw material" },
       { label: "Holes", value: "26" },
       { label: "Diameter", value: "74mm" },
       { label: "Weight", value: "24.0 g" },
@@ -1273,7 +1317,7 @@ export const categories = [
     name: "Balls",
     filter: "Balls",
     count: countIn("Balls"),
-    blurb: "Indoor and outdoor, true-flight moulded.",
+    blurb: "40-hole rotomolded, indoor and outdoor.",
     kind: "ball",
     accent: "#ff5c2b",
     tint: "#ffe6d5",
@@ -1399,6 +1443,47 @@ export const paddleLayers = [
     copy: "Face, throat and handle press as a single piece. Nothing is bonded on, so nothing works loose.",
   },
 ];
+
+/**
+ * The balls counterpart to `paddleLayers`. TechShowcase only ever speaks about
+ * the paddle, so the manufacturing story for the rotomolded ball line lives
+ * here and renders through <BallCraft /> on the home page.
+ */
+export const ballCraft = {
+  eyebrow: "The ball line",
+  // Headline and body are the client's supplied copy, kept word for word.
+  title: "Premium-quality 40-hole rotomolded pickleballs.",
+  titleAccent: "rotomolded",
+  body: "Our pickleballs are produced using high-quality imported raw materials, ensuring exceptional durability, consistent flight, and outstanding playing performance comparable to leading international brands such as Franklin.",
+  points: [
+    {
+      index: "01",
+      title: "Imported raw material",
+      copy: "The resin is bought to the same specification the international brands work to, so the shell keeps its hardness through a season of coarse outdoor courts.",
+    },
+    {
+      index: "02",
+      title: "One-piece rotomold",
+      copy: "Rotationally moulded rather than pressed as two halves and bonded. No seam means nothing to split on a hard drive off the face.",
+    },
+    {
+      index: "03",
+      title: "40-hole tournament pattern",
+      copy: "The regulation outdoor pattern, drilled to a tolerance tight enough that the flight holds its line in a crosswind instead of wobbling.",
+    },
+    {
+      index: "04",
+      title: "Weight-matched sleeves",
+      copy: "Every ball is checked for weight and roundness before it is sleeved, so a tube plays the same from the first ball to the last.",
+    },
+  ],
+  specs: [
+    { value: "40", label: "Hole pattern" },
+    { value: "74mm", label: "Diameter" },
+    { value: "26.5g", label: "Tournament weight" },
+    { value: "3", label: "Export markets" },
+  ],
+};
 
 export const features = [
   {
@@ -1639,7 +1724,7 @@ export const photos = {
 
 export const contact = {
   addressLines: [
-    "Mumbai",
+    "Bengaluru",
     // "Aziznagar, Hyderabad, Telangana - 500075",
   ],
   phone: "+91 xxxxxxxxxx",
@@ -1657,6 +1742,7 @@ export const aboutIntro = {
     "In 2023 there were four pickleball courts in Bengaluru and none of them had a paddle you could buy locally. Everything came through a suitcase from the US, at twice the price and six weeks late, and half of it delaminated in the first monsoon.",
     "So we started pressing our own. The first hundred paddles were made in a Peenya workshop, tested every Saturday morning by whoever turned up at the court, and rebuilt four times before we were willing to sell one.",
     "We still test that way. Every paddle in this catalogue has been through a season of Bengaluru humidity, coarse outdoor courts and players who use their gear four times a week.",
+    "Three years on we press paddles and rotomold balls under one roof, from imported raw material, and the same runs go out to courts in the USA, Dubai and Belgium. Designed in India, played well beyond it.",
   ],
 };
 
@@ -1683,6 +1769,14 @@ export const values = [
   {
     title: "Repair before replace",
     copy: "Edge guards and grips are replaceable parts. We stock them and we will fit them for free in store.",
+  },
+  {
+    title: "Imported raw material",
+    copy: "Carbon, polymer and ball resin are bought to international specification. Made in India is a manufacturing decision, not a compromise on what goes in.",
+  },
+  {
+    title: "Held to an export standard",
+    copy: "The same batches ship to courts in the USA, Dubai and Belgium, so every run is inspected against what those buyers will accept.",
   },
 ];
 
