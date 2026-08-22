@@ -55,7 +55,7 @@ function OptionRow({ option, index, onChoose }) {
   );
 }
 
-export default function PaddleFinder() {
+export default function PaddleFinder({ catalogue }) {
   const { addItem } = useCart();
   const trackRef = useRef(null);
   // mirrors `step` for the scroll listener, which must not re-subscribe per step
@@ -78,10 +78,25 @@ export default function PaddleFinder() {
   const activeIndex = editing !== null ? editing : done ? -1 : step;
   const activeQuestion = activeIndex >= 0 ? finderQuestions[activeIndex] : null;
 
+  /* Resolved against the catalogue the page loaded rather than data.js: this
+     file describes paddles the store does not necessarily stock, and one with
+     no row behind it cannot be added to a cart. `recommendPaddle` answers with
+     a preference list, so the finder falls to the closest stocked paddle. The
+     data.js fallbacks keep it working when the API is down and the page is
+     rendering from the local catalogue. */
+  const paddles = useMemo(() => {
+    const pool = catalogue?.length ? catalogue : products;
+    return pool.filter((item) => item.category === "Paddles");
+  }, [catalogue]);
+
   /* There is always a paddle to show: with every answer in it is a personal
      match, with none it is the house pick. Scrolling the sequence through
      without answering still has to end on a real product, not a dead end. */
-  const match = findProduct(recommendPaddle(answers));
+  const ranked = recommendPaddle(answers);
+  const match =
+    ranked.map((id) => paddles.find((item) => item.id === id)).find(Boolean) ??
+    paddles[0] ??
+    findProduct(ranked[0]);
 
   /* ------------------------------------------------------------- pinned mode */
 
@@ -198,11 +213,11 @@ export default function PaddleFinder() {
 
   const alternates = useMemo(() => {
     if (!match) return [];
-    return products
-      .filter((item) => item.category === "Paddles" && item.id !== match.id)
+    return paddles
+      .filter((item) => item.id !== match.id)
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 2);
-  }, [match]);
+  }, [match, paddles]);
 
   const addPayload = match
     ? {

@@ -3,7 +3,7 @@ import Reveal from "@/components/ui/Reveal";
 import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
 import { LAYER_ART } from "@/components/art/LayerArt";
-import { paddleLayers, paddleSpecs } from "@/lib/data";
+import { brand, paddleLayers, paddleSpecs } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
 
@@ -58,6 +58,11 @@ export default function TechShowcase() {
               closed-cell foam and hand-balance the finished paddle to a swing
               weight window of &plusmn;3. That is why the sweet spot does not
               fall off at the edge.
+            </p>
+
+            {/* the claim the paragraph above has just earned */}
+            <p className="mt-7 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
+              {brand.taglines.performance}
             </p>
           </Reveal>
 

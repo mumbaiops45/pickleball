@@ -25,7 +25,7 @@ export default async function Home() {
       <TickerBar />
       <CategoryGrid />
       <FeaturedProducts catalogue={catalogue} />
-      <PaddleFinder />
+      <PaddleFinder catalogue={catalogue} />
       <TechShowcase />
       <BallCraft />
       <BundleDeal />

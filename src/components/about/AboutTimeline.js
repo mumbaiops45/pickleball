@@ -1,6 +1,6 @@
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
-import { milestones } from "@/lib/data";
+import { brand, milestones } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
 export default function AboutTimeline() {
@@ -45,6 +45,16 @@ export default function AboutTimeline() {
             </Reveal>
           ))}
         </ol>
+
+        {/* Closes the timeline: the four dates run out at Season 04, and this
+            is the line that says where they are heading. */}
+        <Reveal delay={400} className="mt-10 flex items-center gap-5">
+          <span className="h-px flex-1 bg-line" />
+          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
+            {brand.taglines.reach}
+          </p>
+          <span className="h-px flex-1 bg-line" />
+        </Reveal>
       </div>
     </ParallaxScene>
   );

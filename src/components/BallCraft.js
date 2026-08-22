@@ -2,7 +2,7 @@ import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
 import BallArt from "@/components/art/BallArt";
 import { Accent, TwoTone } from "@/components/ui/Heading";
-import { ballCraft } from "@/lib/data";
+import { ballCraft, brand } from "@/lib/data";
 
 /**
  * The balls answer to <TechShowcase />.
@@ -113,7 +113,7 @@ export default function BallCraft() {
             delay={320}
             className="mt-6 border-t border-line pt-6 text-[11px] font-semibold uppercase tracking-[0.2em]"
           >
-            <Accent>Crafted. Engineered. Perfected.</Accent>
+            <Accent>{brand.taglines.manufacturing}</Accent>
           </Reveal>
         </ol>
       </div>

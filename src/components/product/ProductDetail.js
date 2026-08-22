@@ -15,6 +15,7 @@ import {
   TruckIcon,
 } from "@/components/ui/Icons";
 import { useCart } from "@/store/CartProvider";
+import { brand } from "@/lib/data";
 import { formatPrice } from "@/lib/format";
 
 const TRUST = [
@@ -269,8 +270,14 @@ export default function ProductDetail({ product }) {
             ))}
           </ul>
 
+          {/* Brand line, carrying the rule that used to sit above the trust
+              marks — two stacked rules here read as a broken layout. */}
+          <p className="mt-7 border-t border-line pt-7 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
+            {brand.taglines.premium}
+          </p>
+
           {/* trust */}
-          <ul className="mt-7 flex flex-col gap-3 border-t border-line pt-7">
+          <ul className="mt-5 flex flex-col gap-3">
             {TRUST.map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-center gap-3 text-sm text-mist">
                 <Icon className="size-4 shrink-0 text-volt-deep" />

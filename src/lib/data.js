@@ -68,7 +68,16 @@ export const navLinks = [
   },
   { label: "Apparel", href: "/shop?category=Apparel" },
   { label: "Gear", href: "/shop?category=Gear" },
-  { label: "About", href: "/about" },
+  {
+    label: "About",
+    href: "/about",
+    /**
+     * Columns are filled in below, once `certification.pages` is declared —
+     * the AIPA report is eight routes and listing them by hand here would be
+     * two places to keep in step. See the assignment under `certification`.
+     */
+    columns: [],
+  },
 ];
 
 /**
@@ -322,9 +331,9 @@ const catalogue = [
   {
     id: "trueflight-outdoor",
     name: "TrueFlight Outdoor 40",
-    blurb: "12-ball tube · seamless rotational mould",
+    blurb: "12-ball tube · seamless rotational mold",
     description:
-      "A premium-quality 40-hole rotomolded pickleball, produced using high-quality imported raw materials, ensuring exceptional durability, consistent flight, and outstanding playing performance comparable to leading international brands such as Franklin. Moulded in one piece, so there is no seam to split.",
+      "A premium-quality 40-hole rotomolded pickleball, produced using high-quality imported raw materials, ensuring exceptional durability, consistent flight, and outstanding playing performance comparable to leading international brands such as Franklin. Molded in one piece, so there is no seam to split.",
     category: "Balls",
     skill: "All levels",
     price: 2199,
@@ -1132,7 +1141,7 @@ const catalogue = [
   {
     id: "sixx-tour-40",
     name: "SIXX Tour 40 Premium",
-    blurb: "3-ball pack · one-piece moulded",
+    blurb: "3-ball pack · one-piece molded",
     description:
       "SIXX's premium one-piece ball. No seam means no split, and the tighter weight tolerance is what tournament directors are actually paying for.",
     category: "Balls",
@@ -1152,7 +1161,7 @@ const catalogue = [
     optionLabel: "Pack size",
     options: ["3 balls"],
     highlights: [
-      "One-piece mould, no seam to split",
+      "One-piece mold, no seam to split",
       "Tight weight tolerance sleeve to sleeve",
       "Approved for tournament play",
     ],
@@ -1464,7 +1473,7 @@ export const ballCraft = {
     {
       index: "02",
       title: "One-piece rotomold",
-      copy: "Rotationally moulded rather than pressed as two halves and bonded. No seam means nothing to split on a hard drive off the face.",
+      copy: "Rotationally molded rather than pressed as two halves and bonded. No seam means nothing to split on a hard drive off the face.",
     },
     {
       index: "03",
@@ -1646,13 +1655,29 @@ export const finderQuestions = [
   },
 ];
 
-/** Maps a finder answer set onto a real product id. */
+/**
+ * Maps a finder answer set onto paddle ids, best fit first.
+ *
+ * A list rather than one id because the store does not necessarily stock
+ * everything this file describes — the storefront renders whatever the API
+ * returns, and recommending a paddle with no row behind it ends in "not in the
+ * store catalogue yet" the moment someone taps Add to cart. The caller walks
+ * this list and takes the first one actually for sale, so the finder degrades
+ * to the closest stocked paddle instead of failing.
+ */
 export function recommendPaddle({ style, level, budget }) {
-  if (level === "Beginner" || budget === "value") return "rally-starter";
-  if (budget === "premium") return style === "power" ? "drive-pro-x" : "flux-elite";
-  if (style === "power") return "drive-pro-x";
-  if (style === "control") return "kitchen-control-14";
-  return "apex-carbon-16";
+  if (level === "Beginner" || budget === "value")
+    return ["rally-starter", "kitchen-control-14", "apex-carbon-16"];
+
+  if (budget === "premium")
+    return style === "power"
+      ? ["drive-pro-x", "flux-elite", "apex-carbon-16"]
+      : ["flux-elite", "apex-carbon-16", "drive-pro-x"];
+
+  if (style === "power") return ["drive-pro-x", "apex-carbon-16"];
+  if (style === "control") return ["kitchen-control-14", "apex-carbon-16"];
+
+  return ["apex-carbon-16", "kitchen-control-14"];
 }
 
 /* ------------------------------------------------------------------ bundle */
@@ -1780,6 +1805,442 @@ export const values = [
   },
 ];
 
+/* ------------------------------------------------------- lab certification */
+
+/**
+ * The AIPA equipment test report for order BST-251227-6ZV, rendered under
+ * /certification as one route per page of the source document.
+ *
+ * This is a transcription, not a write-up. Every table, figure, compliance
+ * range and Remarks line below is the laboratory's own — nothing is
+ * summarised, re-explained or added to, because the whole value of these pages
+ * is that they are the report rather than a description of it.
+ *
+ * Two omissions, both deliberate. The customer block on page 1 carries a
+ * personal mobile number and private email address; those two lines are held
+ * back rather than published to a public page. The two scanned signatures on
+ * page 8 are left out for the same reason — a handwritten signature on a
+ * public page is forgery material — and the signatories are named instead.
+ */
+export const certification = {
+  documentTitle: "Test Report (Pickleball)",
+  standard: "AIPA Equipment Standards and Testing Manual 2022",
+
+  lab: {
+    name: "Brainwave SportsTech",
+    role: "All India Pickleball Association's Equipment Testing Laboratory",
+    addressLines: [
+      "Unit 403, 404 - Motibhai Smrutee Tower, Opposite Railway Station,",
+      "Badlapur (W) - 421503, Maharashtra, INDIA",
+    ],
+    phone: "+91 74986499191",
+    email: "admin@brainwavesportstech.com",
+    website: "www.brainwavesportstech.com",
+    href: "https://www.brainwavesportstech.com",
+  },
+
+  marks: [
+    {
+      id: "brainwave",
+      src: "/certification/brainwave.png",
+      alt: "Brainwave SportsTech seal",
+    },
+    {
+      id: "aipa",
+      src: "/certification/aipa.png",
+      alt: "All India Pickleball Association seal — Sport for Life",
+    },
+  ],
+
+  /** The accordion / route order — one entry per page of the document. */
+  pages: [
+    {
+      id: "order",
+      slug: "order-and-sample",
+      page: "01",
+      title: "Order and Sample Description",
+      titleAccent: "Sample Description",
+      body: "order",
+    },
+    {
+      id: "weight",
+      slug: "weight-test",
+      page: "02",
+      title: "Pickleball Weight Test",
+      titleAccent: "Weight Test",
+      body: "test",
+    },
+    {
+      id: "diameter",
+      slug: "diameter-test",
+      page: "03",
+      title: "Pickleball Diameter Test",
+      titleAccent: "Diameter Test",
+      body: "test",
+    },
+    {
+      id: "bounce",
+      slug: "bounce-test",
+      page: "04",
+      title: "Pickleball Bounce Test",
+      titleAccent: "Bounce Test",
+      body: "test",
+    },
+    {
+      id: "hardness",
+      slug: "hardness-test",
+      page: "05",
+      title: "Pickleball Hardness Test",
+      titleAccent: "Hardness Test",
+      body: "test",
+    },
+    {
+      id: "compression",
+      slug: "compression-test",
+      page: "06",
+      title: "Pickleball Compression Test",
+      titleAccent: "Compression Test",
+      body: "test",
+    },
+    {
+      id: "conditioning",
+      slug: "conditioning-and-instruments",
+      page: "07",
+      title: "Sample Conditioning and Instruments Used",
+      titleAccent: "Instruments Used",
+      body: "conditioning",
+    },
+    {
+      id: "certificate",
+      slug: "certificate-of-recognition",
+      page: "08",
+      title: "Certificate of Recognition by AIPA",
+      titleAccent: "Recognition by AIPA",
+      body: "certificate",
+    },
+  ],
+
+  /* ------------------------------------------------------------- page 1 */
+
+  order: [
+    { label: "Order ID", value: "BST-251227-6ZV" },
+    { label: "Sample ID", value: "NSPB-1 to NSPB-6" },
+    { label: "Manufacturer", value: "Nishiland Sports Private Limited" },
+    { label: "Model Name / Model Number", value: "PICKLEBALL PRO" },
+    { label: "Colour of the Pickleball", value: "Yellow" },
+    { label: "Product Description", value: "TPE, Seamless, Outdoor Pickleball" },
+    { label: "Number of Specimens Received", value: "6 (Six)" },
+    { label: "Sample Received on", value: "December 30, 2025 at 6:25 PM" },
+    { label: "Date of Payment of Testing Fee", value: "December 27, 2025 at 4:55 PM" },
+    { label: "Sample Testing Completed on", value: "January 19, 2026 at 2:20 PM" },
+    { label: "Report Generated on", value: "January 20, 2026 at 6:05 PM" },
+    {
+      label: "Customer Details",
+      value: "Paresh Shah",
+      // printed in full as the report prints it, at the client's instruction
+      phone: "+91 9820001314",
+      email: "nishilandsports@gmail.com",
+    },
+  ],
+
+  disclaimer:
+    "This equipment test report is based on the specific conditions, methodologies, and parameters outlined in the report. The results presented herein are valid only for the tested samples under the stated conditions and may vary under different conditions or in real-world applications. This report is confidential and intended solely for the recipient. Unauthorized reproduction, distribution, or use of this report is strictly prohibited.",
+
+  /* --------------------------------------------------------- pages 2 to 6 */
+
+  tests: [
+    {
+      id: "weight",
+      number: "1)",
+      name: "Pickleball Weight Test",
+      columns: ["Sample Code", "Weight (g)", "Compliance Range", "Pass (Y / N)"],
+      rows: [
+        { code: "W1", value: "26.83 g" },
+        { code: "W2", value: "26.82 g" },
+        { code: "W3", value: "26.72 g" },
+        { code: "W4", value: "26.71 g" },
+        { code: "W5", value: "26.81 g" },
+        { code: "W6", value: "26.80 g" },
+        { code: "W7", value: "26.72 g" },
+        { code: "W8", value: "26.72 g" },
+        { code: "W9", value: "26.71 g" },
+      ],
+      average: { code: "Wavg", value: "26.76 g" },
+      compliance: "22.10 g - 26.50 g",
+      pass: "Conditionally Approved",
+      passed: false,
+      photoCaption: "Photographs - Pickleball Weight Test",
+      photos: [
+        { src: "/certification/weight-1.png", alt: "Pickleball Pro on the bench balance reading 26.83 g" },
+        { src: "/certification/weight-2.png", alt: "Pickleball Pro on the bench balance reading 26.82 g" },
+        { src: "/certification/weight-3.png", alt: "Pickleball Pro on the bench balance reading 26.72 g" },
+        { src: "/certification/weight-4.png", alt: "Pickleball Pro on the bench balance reading 26.71 g" },
+        { src: "/certification/weight-5.png", alt: "Pickleball Pro on the bench balance reading 26.81 g" },
+        { src: "/certification/weight-6.png", alt: "Pickleball Pro on the bench balance reading 26.80 g" },
+      ],
+      remark:
+        "Weight of “Pickleball Pro” pickleball exceeds compliance range, with all readings little above the upper limit. Average weight of “Pickleball Pro” was found to be 26.76 g. The readings are under 10 % deviation hence the ball is conditionally approved.",
+    },
+    {
+      id: "diameter",
+      number: "2)",
+      name: "Pickleball Diameter Test",
+      // The source table repeats its header in the data row; rendered as
+      // gauge / result, which is what those two lines say.
+      columns: ["Gauge", "Pass (Y / N)"],
+      gauges: [
+        { gauge: "Go 75.5 mm", result: "Pass" },
+        { gauge: "No-Go 73 mm", result: "Pass" },
+      ],
+      pass: "Yes",
+      passed: true,
+      photoCaption: "Photographs - Pickleball Diameter Test",
+      photos: [
+        { src: "/certification/diameter-go.png", alt: "Pickleball Pro inside the GO GAUGE 75.50 MM" },
+        { src: "/certification/diameter-nogo.png", alt: "Pickleball Pro against the NO GO GAUGE 73.00 MM" },
+      ],
+      remark:
+        "All specimens of “Pickleball Pro” passed pickleball diameter test. All six pickleballs passed through GO 75.5 mm gauge but did not pass through NOGO 73 mm gauge in any orientation.",
+    },
+    {
+      id: "bounce",
+      number: "3)",
+      name: "Pickleball Bounce Test",
+      columns: ["Sample Code", "Bounce (cm)", "Compliance Range", "Pass (Y / N)"],
+      rows: [
+        { code: "B1", value: "80.4 cm" },
+        { code: "B2", value: "82.5 cm" },
+        { code: "B3", value: "80.0 cm" },
+        { code: "B4", value: "77.4 cm" },
+        { code: "B5", value: "79.1 cm" },
+        { code: "B6", value: "78.7 cm" },
+        { code: "B7", value: "76.5 cm" },
+        { code: "B8", value: "75.3 cm" },
+        { code: "B9", value: "81.2 cm" },
+        { code: "B10", value: "81.7 cm" },
+        { code: "B11", value: "78.2 cm" },
+        { code: "B12", value: "77.8 cm" },
+        { code: "B13", value: "78.2 cm" },
+        { code: "B14", value: "83.1 cm" },
+        { code: "B15", value: "80.6 cm" },
+      ],
+      average: { code: "Bavg", value: "79.38 cm" },
+      compliance: "75 cm ≤ Bavg ≤ 85 cm",
+      pass: "Yes",
+      passed: true,
+      photoCaption: "Photographs - Pickleball Bounce Test",
+      photos: [
+        { src: "/certification/bounce-1.png", alt: "Pickleball Pro photographed against the bounce scale" },
+        { src: "/certification/bounce-2.png", alt: "Pickleball Pro photographed against the bounce scale" },
+        { src: "/certification/bounce-3.png", alt: "Pickleball Pro photographed against the bounce scale" },
+        { src: "/certification/bounce-4.png", alt: "Pickleball Pro photographed against the bounce scale" },
+      ],
+      remark:
+        "All specimens of “Pickleball Pro” passed the pickleball bounce test. The first bounce of all the balls was within 75 cm to 85 cm. Average bounce was found to be 79.38 cm when dropped from 200 cm under free fall condition onto the 4” thick granite slab.",
+    },
+    {
+      id: "hardness",
+      number: "4)",
+      name: "Pickleball Hardness Test",
+      columns: ["Sample Code", "Reading", "Compliance Range", "Pass (Y / N)"],
+      rows: [
+        { code: "H1", value: "42.5" },
+        { code: "H2", value: "45.5" },
+        { code: "H3", value: "44.0" },
+        { code: "H4", value: "45.0" },
+        { code: "H5", value: "44.0" },
+        { code: "H6", value: "43.0" },
+        { code: "H7", value: "44.5" },
+        { code: "H8", value: "44.5" },
+        { code: "H9", value: "43.0" },
+      ],
+      average: { code: "Havg", value: "44.00" },
+      compliance: "40 ≤ Havg ≤ 50",
+      pass: "Yes",
+      passed: true,
+      photoCaption: "Photographs - Pickleball Hardness Test",
+      photos: [
+        { src: "/certification/hardness-1.png", alt: "Shore D durometer on the Pickleball Pro reading 42.5" },
+        { src: "/certification/hardness-2.png", alt: "Shore D durometer on the Pickleball Pro reading 45.5" },
+        { src: "/certification/hardness-3.png", alt: "Shore D durometer on the Pickleball Pro reading 44" },
+        { src: "/certification/hardness-4.png", alt: "Shore D durometer on the Pickleball Pro reading 45" },
+      ],
+      remark:
+        "Average hardness of “Pickleball Pro” pickleball was found to be 44.00 on Shore D scale which is well within the compliance range.",
+    },
+    {
+      id: "compression",
+      number: "5)",
+      name: "Pickleball Compression Test",
+      columns: ["Sample Code", "Reading (kgf)", "Compliance Range", "Pass (Y / N)"],
+      rows: [
+        { code: "C1", value: "10.449 kgf" },
+        { code: "C2", value: "9.572 kgf" },
+        { code: "C3", value: "11.142 kgf" },
+        { code: "C4", value: "10.084 kgf" },
+        { code: "C5", value: "11.376 kgf" },
+        { code: "C6", value: "10.016 kgf" },
+      ],
+      average: { code: "Cavg", value: "10.440 kgf" },
+      compliance: "Cavg ≤ 20 kgf",
+      pass: "Yes",
+      passed: true,
+      photoCaption: "Photographs - Pickleball Compression Test",
+      photos: [
+        { src: "/certification/compression-1.png", alt: "Pickleball Pro under load in the compression tester" },
+        { src: "/certification/compression-2.png", alt: "Pickleball Pro under load in the compression tester" },
+      ],
+      charts: [
+        { src: "/certification/compression-graph-1.png", alt: "Load versus displacement plot for one specimen" },
+        { src: "/certification/compression-graph-2.png", alt: "Load versus displacement plot for one specimen" },
+        { src: "/certification/compression-graph-3.png", alt: "Load versus displacement plot for one specimen" },
+        { src: "/certification/compression-graph-4.png", alt: "Load versus displacement plot for one specimen" },
+      ],
+      remark:
+        "All the specimens of “Pickleball Pro” passed pickleball compression test and showed average compression force value of 10.440 kgf.",
+    },
+  ],
+
+  /* ------------------------------------------------------------- page 7 */
+
+  conditioning: {
+    title: "Sample Conditioning Prior to Testing",
+    columns: ["Parameter", "Actual Value", "Requirement Range"],
+    rows: [
+      { label: "Temperature", actual: "27 °C", required: "27 °C ± 5 °C" },
+      { label: "Humidity", actual: "60.1 %", required: "60 % ± 10 %" },
+      { label: "Conditioning Time", actual: "48 h", required: "48 h" },
+    ],
+    photos: [
+      { src: "/certification/conditioning-chamber.png", alt: "Stability chamber controller reading 27.0 °C and 60.1 % humidity" },
+      { src: "/certification/conditioning-rack.png", alt: "Pickleballs conditioning on the rack inside the stability chamber" },
+    ],
+  },
+
+  instrumentColumns: ["Instrument Name", "Model", "Make", "Date of Calibration"],
+
+  instruments: [
+    { name: "Diameter Gauge", model: "Go NoGo Gauge", make: "BSpTech", calibrated: "25/01/2025" },
+    { name: "Weighing Machine", model: "i-400c", make: "i-Scale", calibrated: "18/01/2025" },
+    { name: "Hardness Tester", model: "Shore D", make: "Genex", calibrated: "22/01/2025" },
+    { name: "Ball Compression Tester", model: "zeusUtimo", make: "PSTPL", calibrated: "19/01/2025" },
+    { name: "Pickleball Drop Tower", model: "precision", make: "PrimeS", calibrated: "30/01/2025" },
+    { name: "Digital Vernier Calliper", model: "-", make: "Vizbrite", calibrated: "25/01/2025" },
+  ],
+
+  footnotes: [
+    "All testing done as per the AIPA Equipment Standards and Testing Manual 2022",
+    "Only representative photographs are displayed in this report.",
+  ],
+
+  /* ------------------------------------------------------------- page 8 */
+
+  authorisation: {
+    title: "Certificate of Recognition by AIPA",
+    lead: "This is to certify that,",
+    /**
+     * The certifying sentence, split where the document emphasises it: model,
+     * manufacturer, model again, and the term of the authorisation. `body`
+     * below is joined from these, so the plain and marked-up versions cannot
+     * drift apart.
+     */
+    bodyParts: [
+      { text: "Pickleball model " },
+      { text: "Pickleball Pro", strong: true },
+      { text: " submitted by " },
+      { text: "Nishiland Sports Private Limited", strong: true },
+      {
+        text: " passed all the tests as per the AIPA Equipment Standards and Testing Manual 2022 and that ",
+      },
+      { text: "Pickleball Pro", strong: true },
+      {
+        text: " pickleball model is authorized for use in the sanctioned tournaments from ",
+      },
+      { text: "20th January 2026 till 19th January 2029", strong: true },
+      { text: "." },
+    ],
+    place: "Mumbai",
+    date: "20th January 2026",
+    /**
+     * Both signatures are images in the report, not text — the document's own
+     * fonts are anonymised subsets, so there is no face to match. Each is
+     * rendered out of page 8 at 600 dpi rather than reconstructed.
+     */
+    signatories: [
+      {
+        heading: "Name of Brainwave SportsTech Signatory:",
+        name: "Dr Sunil Peshane, PhD DPATech",
+        role: "Signature of Analyst / QC / QA Manager",
+        signatureImage: "/certification/signature-sunil-peshane.png",
+        signatureAlt:
+          "Signature of Dr Sunil Peshane, Analyst / QC / QA Manager, Brainwave SportsTech",
+      },
+      {
+        heading: "Name of the AIPA Signatory:",
+        name: "Mr Chetan Sanil",
+        role: "Signature of the AIPA Authority",
+        signatureImage: "/certification/signature-chetan-sanil.png",
+        signatureAlt: "Signature of Mr Chetan Sanil, AIPA Authority",
+      },
+    ],
+  },
+
+  /**
+   * Set to { label, href } once the report PDF is in /public to add a download
+   * button. Left null so nothing links to a missing file — and note the
+   * report's own confidentiality clause before publishing it whole.
+   */
+  document: null,
+};
+
+/**
+ * The plain-text certifying sentence, joined from the emphasised segments so
+ * the index card and the page metadata cannot fall out of step with what the
+ * certificate itself renders.
+ */
+certification.authorisation.body = certification.authorisation.bodyParts
+  .map((part) => part.text)
+  .join("");
+
+/** One page of the report by its slug, for the `/certification/[slug]` route. */
+export function findCertificationPage(slug) {
+  return certification.pages.find((entry) => entry.slug === slug) ?? null;
+}
+
+const reportHref = (entry) => `/certification/${entry.slug}`;
+
+const pagesIn = (...ids) =>
+  ids.map((id) => {
+    const entry = certification.pages.find((page) => page.id === id);
+    return { label: `${entry.page} · ${entry.title}`, href: reportHref(entry) };
+  });
+
+/**
+ * Fills the About mega-menu declared above.
+ *
+ * Split three ways rather than one column of ten: the five measured tests are
+ * what a buyer came for, and burying them under the order number would be the
+ * wrong order of importance.
+ */
+navLinks.find((link) => link.label === "About").columns = [
+  {
+    title: "Company",
+    links: [
+      { label: "Our story", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Full test report", href: "/certification" },
+    ],
+  },
+  {
+    title: "Lab tests",
+    links: pagesIn("weight", "diameter", "bounce", "hardness", "compression"),
+  },
+  {
+    title: "Report and certificate",
+    links: pagesIn("order", "conditioning", "certificate"),
+  },
+];
+
 export const team = [
   { name: "Ananya Rao", role: "Founder · product", note: "4.5 · ex-badminton state level" },
   { name: "Rohan Menon", role: "Head of testing", note: "Coaches eleven sessions a week" },
@@ -1812,6 +2273,7 @@ export const footerColumns = [
     title: "Company",
     links: [
       { label: "About us", href: "/about" },
+      { label: "Lab test report", href: "/certification" },
       { label: "Privacy policy", href: "/privacy-policy" },
       { label: "Terms of sale", href: "/terms" },
     ],

@@ -6,6 +6,7 @@ import Reveal from "@/components/ui/Reveal";
 import BallArt from "@/components/art/BallArt";
 import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
 import { Accent } from "@/components/ui/Heading";
+import { brand } from "@/lib/data";
 
 /** What the list actually gets you — stated plainly, in the order it matters. */
 const PERKS = [
@@ -72,6 +73,10 @@ export default function Newsletter() {
               <p className="mt-5 max-w-md text-[15px] leading-relaxed text-paper/70">
                 No countdown timers, no daily &ldquo;last chance&rdquo;. Just the
                 paddles going out next and an honest read on who they suit.
+              </p>
+
+              <p className="mt-7 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt">
+                {brand.taglines.passion}
               </p>
             </Reveal>
 
