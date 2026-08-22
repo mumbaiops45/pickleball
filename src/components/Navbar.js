@@ -31,7 +31,10 @@ import { useWishlist } from "@/store/WishlistProvider";
 function MegaMenu({ link, open, onOpen, onClose }) {
   return (
     <li
-      className="relative"
+      // Full height of the bar, so `top-full` on the panel below resolves to
+      // the header's bottom edge. Sized to the link instead, the panel opened
+      // partway up the bar and slid under the cart button.
+      className="relative flex h-full items-center"
       onMouseEnter={onOpen}
       onMouseLeave={onClose}
       onFocus={onOpen}
@@ -56,7 +59,10 @@ function MegaMenu({ link, open, onOpen, onClose }) {
 
       <div
         // kept mounted so the fade runs both ways; pointer events follow `open`
-        className={`absolute left-0 top-full flex min-w-95 border border-line bg-paper shadow-[0_28px_60px_-30px_rgba(15,17,21,.45)] transition-all duration-300 ease-[cubic-bezier(.16,1,.3,1)] ${
+        // max-w keeps it inside the window whatever the trigger's position
+        className={`absolute top-full flex max-w-[calc(100vw-2.5rem)] border border-line bg-paper shadow-[0_28px_60px_-30px_rgba(15,17,21,.45)] transition-all duration-300 ease-[cubic-bezier(.16,1,.3,1)] ${
+          link.menuAlign === "right" ? "right-0" : "left-0"
+        } ${
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-1 opacity-0"
@@ -65,13 +71,19 @@ function MegaMenu({ link, open, onOpen, onClose }) {
         {link.columns.map((column, index) => (
           <div
             key={column.title}
-            className={`min-w-45 flex-1 px-7 py-6 ${
+            // No min-width and no flex-1: with nowrap entries each column is
+            // already exactly as wide as its longest label, so a minimum only
+            // padded the panel out with dead space.
+            className={`shrink-0 px-6 py-6 ${
               index === 0 ? "bg-paper" : "bg-surface-2"
             }`}
           >
-            <p className="text-sm font-semibold tracking-tight text-ink">
+            <p className="whitespace-nowrap text-sm font-semibold tracking-tight text-ink">
               {column.title}
             </p>
+            {/* Entries stay on one line and the column widens to fit. Left to
+                wrap, a long label broke over three lines and the panel read as
+                a block of ragged text rather than a list. */}
             <ul className="mt-5 flex flex-col gap-3.5">
               {column.links.map((entry) => (
                 <li key={entry.label}>
@@ -79,7 +91,7 @@ function MegaMenu({ link, open, onOpen, onClose }) {
                     href={entry.href}
                     tabIndex={open ? 0 : -1}
                     onClick={onClose}
-                    className="text-sm text-mist transition-colors hover:text-volt-deep"
+                    className="whitespace-nowrap text-sm text-mist transition-colors hover:text-volt-deep"
                   >
                     {entry.label}
                   </Link>
@@ -257,7 +269,7 @@ export default function Navbar() {
           <Logo />
 
           <ul
-            className="hidden items-center gap-1 lg:flex"
+            className="hidden items-center gap-1 lg:flex lg:h-full"
             onKeyDown={(event) => {
               if (event.key === "Escape") setOpenMenu(null);
             }}

@@ -72,6 +72,12 @@ export const navLinks = [
     label: "About",
     href: "/about",
     /**
+     * Anchored to its right edge, not its left. About is the last entry in the
+     * bar, so a left-anchored panel opens towards the edge of the window and
+     * its final column is cut off by the viewport.
+     */
+    menuAlign: "right",
+    /**
      * Columns are filled in below, once `certification.pages` is declared —
      * the AIPA report is eight routes and listing them by hand here would be
      * two places to keep in step. See the assignment under `certification`.
@@ -1860,6 +1866,7 @@ export const certification = {
       page: "01",
       title: "Order and Sample Description",
       titleAccent: "Sample Description",
+      navLabel: "Order and Sample",
       body: "order",
     },
     {
@@ -1868,6 +1875,7 @@ export const certification = {
       page: "02",
       title: "Pickleball Weight Test",
       titleAccent: "Weight Test",
+      navLabel: "Weight Test",
       body: "test",
     },
     {
@@ -1876,6 +1884,7 @@ export const certification = {
       page: "03",
       title: "Pickleball Diameter Test",
       titleAccent: "Diameter Test",
+      navLabel: "Diameter Test",
       body: "test",
     },
     {
@@ -1884,6 +1893,7 @@ export const certification = {
       page: "04",
       title: "Pickleball Bounce Test",
       titleAccent: "Bounce Test",
+      navLabel: "Bounce Test",
       body: "test",
     },
     {
@@ -1892,6 +1902,7 @@ export const certification = {
       page: "05",
       title: "Pickleball Hardness Test",
       titleAccent: "Hardness Test",
+      navLabel: "Hardness Test",
       body: "test",
     },
     {
@@ -1900,6 +1911,7 @@ export const certification = {
       page: "06",
       title: "Pickleball Compression Test",
       titleAccent: "Compression Test",
+      navLabel: "Compression Test",
       body: "test",
     },
     {
@@ -1908,6 +1920,7 @@ export const certification = {
       page: "07",
       title: "Sample Conditioning and Instruments Used",
       titleAccent: "Instruments Used",
+      navLabel: "Conditioning and Instruments",
       body: "conditioning",
     },
     {
@@ -1916,6 +1929,7 @@ export const certification = {
       page: "08",
       title: "Certificate of Recognition by AIPA",
       titleAccent: "Recognition by AIPA",
+      navLabel: "Certificate of Recognition",
       body: "certificate",
     },
   ],
@@ -2209,10 +2223,18 @@ export function findCertificationPage(slug) {
 
 const reportHref = (entry) => `/certification/${entry.slug}`;
 
+/**
+ * Menu entries use `navLabel`, not `title`. The full titles repeat the word
+ * "Pickleball" the column heading has already said, and at menu width they
+ * wrapped to three lines each — the panel became a wall of ragged text.
+ */
 const pagesIn = (...ids) =>
   ids.map((id) => {
     const entry = certification.pages.find((page) => page.id === id);
-    return { label: `${entry.page} · ${entry.title}`, href: reportHref(entry) };
+    return {
+      label: `${entry.page} · ${entry.navLabel}`,
+      href: reportHref(entry),
+    };
   });
 
 /**
@@ -2269,20 +2291,17 @@ export const footerColumns = [
   // Only destinations that exist. Shipping, Returns and Warranty used to point
   // at /shop for want of a page — a link that lands somewhere unrelated costs
   // more trust than the missing page does. Add them back with their pages.
+  // Support's two entries fold in here: the footer now carries a Get in touch
+  // column, and a third two-item column beside it left the row lopsided.
   {
     title: "Company",
     links: [
       { label: "About us", href: "/about" },
       { label: "Lab test report", href: "/certification" },
-      { label: "Privacy policy", href: "/privacy-policy" },
-      { label: "Terms of sale", href: "/terms" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
       { label: "FAQs", href: "/#faq" },
       { label: "Contact", href: "/contact" },
+      { label: "Privacy policy", href: "/privacy-policy" },
+      { label: "Terms of sale", href: "/terms" },
     ],
   },
   {
