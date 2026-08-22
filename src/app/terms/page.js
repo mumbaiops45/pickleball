@@ -4,7 +4,7 @@ import { Accent } from "@/components/ui/Heading";
 import { contact } from "@/lib/data";
 
 export const metadata = {
-  title: "Terms of sale",
+  title: "Terms and conditions",
   description:
     "The terms you agree to when you buy from PADDLEHAUS — pricing, delivery, the 30-day play test, the warranty and how disputes are handled.",
 };
@@ -70,8 +70,8 @@ export default function TermsPage() {
     <>
       <PageHero
         eyebrow={`Last updated ${UPDATED}`}
-        title="Terms of sale"
-        titleAccent="Terms"
+        title="Terms and conditions"
+        titleAccent="and conditions"
         copy="What you agree to when you buy from us, and what we owe you in return. Plain terms, and the same ones our checkout actually applies."
         crumbs={[{ label: "Terms" }]}
       />

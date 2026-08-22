@@ -5,6 +5,7 @@ import AuthLink from "@/components/auth/AuthLink";
 import {
   ArrowIcon,
   ArrowUpRightIcon,
+  ClockIcon,
   InstagramIcon,
   MailIcon,
   PhoneIcon,
@@ -20,13 +21,43 @@ const SOCIAL_ICONS = {
   whatsapp: WhatsappIcon,
 };
 
-const PAYMENTS = ["UPI", "RuPay", "Visa", "Mastercard", "Net banking", "COD"];
+/**
+ * The Get in touch column, built from `contact` so the footer, the contact
+ * page and the certification pages all quote the same details.
+ *
+ * Phone and email carry an href; address and hours do not — a map link would
+ * need a real street address, and the hours are a statement, not a target.
+ */
+const CONTACT_ROWS = [
+  {
+    icon: PhoneIcon,
+    label: "Phone",
+    value: contact.phone,
+    href: `tel:${contact.phone.replace(/\s/g, "")}`,
+  },
+  {
+    icon: MailIcon,
+    label: "Email",
+    value: contact.email,
+    href: `mailto:${contact.email}`,
+  },
+  {
+    icon: PinIcon,
+    label: "Address",
+    value: contact.addressLines.join(", "),
+  },
+  {
+    icon: ClockIcon,
+    label: "Hours",
+    value: contact.hours,
+  },
+];
 
 /** The bottom-bar legal row. Only pages that exist are listed here — a link
  *  that lands somewhere unrelated is worse than no link. */
 const LEGAL_LINKS = [
-  { label: "Privacy", href: "/privacy-policy" },
-  { label: "Terms", href: "/terms" },
+  { label: "Privacy policy", href: "/privacy-policy" },
+  { label: "Terms and conditions", href: "/terms" },
 ];
 
 const linkClass =
@@ -73,8 +104,8 @@ export default function Footer() {
               Twelve columns that add up to twelve: brand takes four, the four
               link columns take two each. */}
           <div className="grid grid-cols-2 gap-x-8 gap-y-12 border-t border-paper/12 py-14 md:grid-cols-4 lg:grid-cols-12 lg:py-16">
-            {/* brand, contact and the marks that earn trust */}
-            <div className="col-span-2 md:col-span-4 lg:col-span-4 lg:pr-10">
+            {/* brand and the social marks — contact moved to its own column */}
+            <div className="col-span-2 md:col-span-4 lg:col-span-3 lg:pr-8">
               <Link href="/" className="group inline-flex items-center gap-2.5">
                 <LogoMark
                   size="md"
@@ -96,38 +127,7 @@ export default function Footer() {
                 {brand.taglines.manufacturing}
               </p>
 
-              <address className="mt-7 flex flex-col gap-3.5 text-sm not-italic">
-                <span className="flex gap-3 text-paper/55">
-                  <PinIcon className="mt-0.5 size-4 shrink-0 text-volt" />
-                  <span>
-                    {contact.addressLines.map((line) => (
-                      <span key={line} className="block">
-                        {line}
-                      </span>
-                    ))}
-                  </span>
-                </span>
-
-                <a
-                  href={`tel:${contact.phone.replace(/\s/g, "")}`}
-                  className="flex items-center gap-3 text-paper/55 transition-colors hover:text-volt"
-                >
-                  <PhoneIcon className="size-4 shrink-0 text-volt" />
-                  {contact.phone}
-                </a>
-
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="flex items-center gap-3 text-paper/55 transition-colors hover:text-volt"
-                >
-                  <MailIcon className="size-4 shrink-0 text-volt" />
-                  {contact.email}
-                </a>
-
-                <span className="text-xs text-paper/40">{contact.hours}</span>
-              </address>
-
-              <div className="mt-7 flex gap-2.5">
+              <div className="mt-8 flex gap-2.5">
                 {socials.map((social) => {
                   const Icon = SOCIAL_ICONS[social.icon];
                   return (
@@ -169,27 +169,61 @@ export default function Footer() {
                 </ul>
               </nav>
             ))}
+
+            {/* ------------------------------------------------ get in touch
+                A column of its own rather than four lines under the logo: the
+                phone number and the address are what someone scrolls this far
+                looking for, and buried in the brand block they read as
+                small print. Each row is labelled, so the value beneath it
+                needs no explaining. */}
+            <div className="col-span-2 md:col-span-4 lg:col-span-3">
+              <h3 className={headingClass}>Get in touch</h3>
+
+              <ul className="mt-5 flex flex-col gap-5">
+                {CONTACT_ROWS.map((row) => {
+                  const Icon = row.icon;
+
+                  return (
+                    <li key={row.label} className="flex gap-3.5">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-paper/12 bg-paper/6 text-volt">
+                        <Icon className="size-4.5" />
+                      </span>
+
+                      <span className="min-w-0 pt-0.5">
+                        <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/40">
+                          {row.label}
+                        </span>
+
+                        {row.href ? (
+                          <a
+                            href={row.href}
+                            className="mt-1 block wrap-break-word text-sm text-paper/75 transition-colors hover:text-volt"
+                          >
+                            {row.value}
+                          </a>
+                        ) : (
+                          <span className="mt-1 block text-sm leading-relaxed text-paper/75">
+                            {row.value}
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
 
-          {/* ------------------------------------------------ payment marks
-              Alongside the legal line rather than on a rule of their own —
-              three stacked bars at the foot of a page reads as clutter. */}
-          <div className="flex flex-col gap-5 border-t border-paper/12 py-7 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-              <span className="mr-1 text-[11px] uppercase tracking-[0.16em] text-paper/35">
-                We accept
-              </span>
-              {PAYMENTS.map((payment) => (
-                <span
-                  key={payment}
-                  className="rounded-md border border-paper/15 px-2.5 py-1.5 text-[11px] tracking-wide text-paper/55"
-                >
-                  {payment}
-                </span>
-              ))}
-            </div>
+          {/* ---------------------------------------------------- legal line
+              Copyright left, policy links right. Stacked on a phone, where the
+              two would otherwise be squeezed onto one line. */}
+          <div className="flex flex-col gap-4 border-t border-paper/12 py-7 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              &copy; {new Date().getFullYear()} {brand.name}. All rights
+              reserved.
+            </p>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-paper/45">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               {LEGAL_LINKS.map((entry) => (
                 <Link
                   key={entry.label}
@@ -199,10 +233,6 @@ export default function Footer() {
                   {entry.label}
                 </Link>
               ))}
-              <p>
-                &copy; {new Date().getFullYear()} {brand.name}. All rights
-                reserved.
-              </p>
             </div>
           </div>
 

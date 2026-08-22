@@ -2301,7 +2301,7 @@ export const footerColumns = [
       { label: "FAQs", href: "/#faq" },
       { label: "Contact", href: "/contact" },
       { label: "Privacy policy", href: "/privacy-policy" },
-      { label: "Terms of sale", href: "/terms" },
+      { label: "Terms and conditions", href: "/terms" },
     ],
   },
   {
