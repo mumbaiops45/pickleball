@@ -115,7 +115,11 @@ export default function ProductCard({ product }) {
             type="button"
             onClick={quickAdd}
             aria-label={`Add ${product.name} to cart`}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-volt bg-transparent text-sm font-semibold text-volt hover:bg-volt/10 transition-colors"
+            className={`flex h-10 w-full items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all ${
+              added
+                ? "bg-volt text-ink"
+                : "border border-volt bg-transparent text-volt hover:bg-volt/10"
+            }`}
           >
             {added ? (
               <>
