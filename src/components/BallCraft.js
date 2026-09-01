@@ -23,8 +23,7 @@ export default function BallCraft() {
         {/* --------------------------------------------------------- copy */}
         <div className="lg:col-span-5">
           <Reveal>
-            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-              <span className="h-px w-8 bg-volt-deep/40" />
+            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
               {ballCraft.eyebrow}
             </span>
             <h2 className="mt-5 text-[clamp(2rem,4.4vw,3.4rem)] font-semibold leading-[1.04] tracking-[-0.035em]">

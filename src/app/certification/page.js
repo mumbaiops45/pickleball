@@ -42,8 +42,7 @@ export default function CertificationIndex() {
       <section className="w-full py-14 lg:py-20">
         <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
           <Reveal>
-            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-              <span className="h-px w-8 bg-volt-deep/40" />
+            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
               Eight pages
             </span>
             <h2 className="mt-5 text-[clamp(1.7rem,3.2vw,2.4rem)] font-semibold leading-[1.06] tracking-[-0.035em]">

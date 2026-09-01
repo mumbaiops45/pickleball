@@ -26,8 +26,7 @@ export default function TechShowcase() {
         {/* copy */}
         <div className="lg:col-span-5">
           <Reveal>
-            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-              <span className="h-px w-8 bg-volt-deep/40" />
+            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
               The technology
             </span>
             <h2 className="mt-5 text-[clamp(2.1rem,4.6vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
@@ -140,54 +139,71 @@ export default function TechShowcase() {
       </div>
 
       {/* ------------------------------------------------- the build, layer by layer */}
-      <div
-        data-speed="0.3"
-        className="relative mx-auto mt-16 w-full max-w-350 px-5 sm:px-8 lg:mt-24"
-      >
-        <Reveal className="grid gap-4 border-t border-line pt-8 lg:grid-cols-[3.5rem_3.5rem_15rem_1fr] lg:items-end lg:gap-x-8">
-          <h3 className="text-[clamp(1.4rem,2.6vw,2rem)] font-semibold tracking-[-0.03em] lg:col-span-3">
+      <div className="relative mx-auto mt-16 w-full max-w-350 px-5 sm:px-8 lg:mt-24">
+        <Reveal className="border-t border-line pt-10 text-center">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
+            The build
+          </p>
+          <h3 className="mt-4 text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
             Five layers, <Accent>outside in</Accent>.
           </h3>
-          {/* max-w-2xl matches the layer rows, so both columns share an edge */}
-          <p className="max-w-2xl text-[13px] leading-relaxed text-mist">
+          <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-mist">
             A paddle is a laminate. What separates ours is what happens between
             the face you can see and the core you cannot.
           </p>
         </Reveal>
 
-        {/* Read as a section through the paddle rather than five equal tiles:
-            one row per layer, outside face at the top, handle at the bottom,
-            with a depth rule running down the left so the order is the point. */}
-        <ol className="mt-10 flex flex-col">
+        {/* Cards rather than table rows. The old layout put a three-word title
+            in a 15rem column and its sentence 448px away, so every row read as
+            two stranded fragments across a very wide container. A card binds
+            each layer's icon, name and explanation into one block.
+
+            The face spans two columns, which both gives the outermost layer
+            the emphasis "outside in" implies and fills the grid exactly:
+            2 cols -> [01][01] / [02][03] / [04][05]
+            3 cols -> [01][01][02] / [03][04][05]
+            No orphan cell at either width. */}
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {paddleLayers.map((layer, index) => {
             const Art = LAYER_ART[layer.art];
+            const lead = index === 0;
 
             return (
-              <Reveal
+              <li
                 key={layer.id}
-                as="li"
-                delay={index * 70}
-                className="group grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 border-t border-line py-6 last:border-b lg:grid-cols-[3.5rem_3.5rem_15rem_1fr] lg:gap-x-8"
+                className={`flex flex-col rounded-3xl border border-line p-6 ${
+                  lead ? "bg-surface sm:col-span-2" : "bg-paper"
+                }`}
               >
-                <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong">
-                  {layer.index}
-                </span>
+                <div className="flex items-start justify-between gap-4">
+                  <span
+                    className={`grid shrink-0 place-items-center rounded-2xl ${
+                      lead
+                        ? "size-16 bg-volt text-ink"
+                        : "size-14 bg-surface text-volt-deep"
+                    }`}
+                  >
+                    {Art ? <Art className={lead ? "size-9" : "size-8"} /> : null}
+                  </span>
+                  <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong">
+                    {layer.index}
+                  </span>
+                </div>
 
-                <span className="grid size-14 place-items-center rounded-2xl bg-surface text-volt-deep transition-colors duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:bg-volt group-hover:text-ink">
-                  {Art ? <Art className="size-8" /> : null}
-                </span>
-
-                <p className="col-span-2 text-[15px] font-semibold tracking-tight lg:col-span-1">
+                <p
+                  className={`mt-6 font-semibold tracking-tight ${
+                    lead ? "text-xl" : "text-[16px]"
+                  }`}
+                >
                   {layer.title}
                 </p>
-
-                <p className="col-span-2 max-w-2xl text-[13px] leading-relaxed text-mist lg:col-span-1">
+                <p className="mt-2 max-w-prose text-[13px] leading-relaxed text-mist">
                   {layer.copy}
                 </p>
-              </Reveal>
+              </li>
             );
           })}
-        </ol>
+        </ul>
       </div>
     </ParallaxScene>
   );

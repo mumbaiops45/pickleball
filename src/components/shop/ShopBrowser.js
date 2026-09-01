@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import ShopFilters from "@/components/shop/ShopFilters";
-import Reveal from "@/components/ui/Reveal";
 import { PRICE_BANDS, SORT_OPTIONS, products as localCatalogue } from "@/lib/data";
 
 const DEFAULT_FILTERS = {
@@ -228,14 +227,10 @@ export default function ShopBrowser({
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {visible.map((product, index) => (
-              <Reveal
-                key={product.id}
-                delay={(index % 3) * 80}
-                className="h-full *:h-full"
-              >
+            {visible.map((product) => (
+              <div key={product.id} className="h-full *:h-full">
                 <ProductCard product={product} />
-              </Reveal>
+              </div>
             ))}
           </div>
         )}

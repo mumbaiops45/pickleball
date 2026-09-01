@@ -11,8 +11,7 @@ export default function RelatedProducts({ product, catalogue = localCatalogue })
   return (
     <section className="mx-auto w-full max-w-350 border-t border-line px-5 py-14 sm:px-8 lg:py-20">
       <Reveal>
-        <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-          <span className="h-px w-8 bg-volt-deep/40" />
+        <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
           Pairs well with
         </span>
         <h2 className="mt-5 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.03em]">
@@ -21,14 +20,10 @@ export default function RelatedProducts({ product, catalogue = localCatalogue })
       </Reveal>
 
       <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {related.map((item, index) => (
-          <Reveal
-            key={item.id}
-            delay={(index % 4) * 80}
-            className="h-full *:h-full"
-          >
+        {related.map((item) => (
+          <div key={item.id} className="h-full *:h-full">
             <ProductCard product={item} />
-          </Reveal>
+          </div>
         ))}
       </div>
     </section>

@@ -60,8 +60,7 @@ export default function Newsletter() {
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
             {/* ------------------------------------------------------- copy */}
             <Reveal>
-              <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt">
-                <span className="h-px w-8 bg-volt/40" />
+              <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt">
                 The drop list
               </span>
 

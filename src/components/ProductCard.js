@@ -1,30 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import ProductArt from "@/components/art/ProductArt";
 import WishlistButton from "@/components/product/WishlistButton";
-import { PlusIcon, StarIcon } from "@/components/ui/Icons";
+import { CheckIcon, PlusIcon } from "@/components/ui/Icons";
 import { useCart } from "@/store/CartProvider";
 import { formatPrice } from "@/lib/format";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
+  const [added, setAdded] = useState(false);
   const discounted = Boolean(product.compareAt);
   const lowStock = product.stock <= 10;
 
-  const quickAdd = () =>
+  const quickAdd = () => {
     addItem({
       productId: product.id,
       colorway: product.colorways[0]?.name,
       option: product.options[0],
       quantity: 1,
     });
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 2000);
+  };
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-paper shadow-[0_1px_2px_rgba(15,17,21,.04),0_8px_24px_-16px_rgba(15,17,21,.12)] transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-1.5 hover:border-line-strong hover:shadow-[0_2px_4px_rgba(15,17,21,.05),0_28px_50px_-24px_rgba(15,17,21,.25)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-paper shadow-[0_1px_2px_rgba(15,17,21,.04),0_8px_24px_-16px_rgba(15,17,21,.12)] hover:border-line-strong">
 
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[radial-gradient(80%_70%_at_50%_18%,#ffffff_0%,#eceae2_78%)] p-6">
-        <span className="absolute inset-x-8 top-8 z-0 h-40 rounded-full bg-volt/25 blur-3xl transition-all duration-700 group-hover:bg-volt/40" />
+        <span className="absolute inset-x-8 top-8 z-0 h-40 rounded-full bg-volt/25 blur-3xl" />
 
         <div className="relative z-10 flex h-full w-full items-center justify-center">
           <ProductArt
@@ -51,53 +56,21 @@ export default function ProductCard({ product }) {
           productId={product.id}
           className="absolute right-4 top-4 z-20"
         />
-
-        <button
-          type="button"
-          onClick={quickAdd}
-          className="absolute inset-x-4 bottom-4 z-20 flex h-11 translate-y-16 items-center justify-center gap-2 rounded-full bg-forest text-sm font-semibold text-paper opacity-0 transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100"
-        >
-          <PlusIcon className="size-4" />
-          Quick add
-        </button>
       </div>
 
       {/* details */}
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="text-[15px] font-semibold tracking-tight">
-            {/* stretched link keeps the whole card clickable */}
-            <Link
-              href={`/products/${product.id}`}
-              className="before:absolute before:inset-0 before:z-10 before:content-['']"
-            >
-              {product.name}
-            </Link>
-          </h3>
-          <span className="flex shrink-0 items-center gap-1 text-xs text-mist">
-            <StarIcon className="size-3 text-volt-deep" />
-            {product.rating}
-          </span>
-        </div>
+        <h3 className="text-[15px] font-semibold tracking-tight">
+          {/* stretched link keeps the whole card clickable */}
+          <Link
+            href={`/products/${product.id}`}
+            className="before:absolute before:inset-0 before:z-10 before:content-['']"
+          >
+            {product.name}
+          </Link>
+        </h3>
 
-        <p className="mt-1.5 text-[13px] leading-relaxed text-mist">
-          {product.blurb}
-        </p>
-
-        <div className="mt-4 flex items-center gap-1.5">
-          {product.swatches.map((swatch) => (
-            <span
-              key={swatch}
-              className="size-3.5 rounded-full border border-ink/20"
-              style={{ background: swatch }}
-            />
-          ))}
-          <span className="ml-1 text-[11px] text-mist">
-            {product.reviews.toLocaleString("en-IN")} reviews
-          </span>
-        </div>
-
-        <div className="mt-5 flex items-baseline gap-2 border-t border-line pt-4">
+        <div className="mt-auto flex items-baseline gap-2 border-t border-line pt-5">
           <span className="text-lg font-semibold">{formatPrice(product.price)}</span>
           {discounted ? (
             <span className="text-sm text-mist line-through">
@@ -113,6 +86,28 @@ export default function ProductCard({ product }) {
             )}
           </span>
         </div>
+
+        {/* Always on, not hover-revealed: a hover-only control is unreachable
+            on touch, where most of this grid is read. `relative z-20` lifts it
+            over the title's stretched link, which otherwise covers the card. */}
+        <button
+          type="button"
+          onClick={quickAdd}
+          aria-label={`Add ${product.name} to cart`}
+          className="relative z-20 mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-volt text-sm font-semibold text-ink"
+        >
+          {added ? (
+            <>
+              <CheckIcon className="size-4" />
+              Added to cart
+            </>
+          ) : (
+            <>
+              <PlusIcon className="size-4" />
+              Add to cart
+            </>
+          )}
+        </button>
       </div>
     </article>
   );

@@ -63,14 +63,10 @@ export default function FeaturedProducts({ catalogue = localCatalogue }) {
       </div>
 
       <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {visible.map((product, index) => (
-          <Reveal
-            key={product.id}
-            delay={(index % 4) * 90}
-            className="h-full *:h-full"
-          >
+        {visible.map((product) => (
+          <div key={product.id} className="h-full *:h-full">
             <ProductCard product={product} />
-          </Reveal>
+          </div>
         ))}
       </div>
 

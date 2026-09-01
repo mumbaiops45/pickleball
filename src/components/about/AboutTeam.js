@@ -22,8 +22,7 @@ export default function AboutTeam() {
       <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <Reveal className="max-w-xl">
-            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
-              <span className="h-px w-8 bg-volt-deep/40" />
+            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
               The team
             </span>
             <h2 className="mt-5 text-[clamp(1.9rem,4vw,3rem)] font-semibold leading-[1.04] tracking-[-0.035em]">

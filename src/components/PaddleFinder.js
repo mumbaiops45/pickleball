@@ -259,8 +259,7 @@ export default function PaddleFinder({ catalogue }) {
         <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1fr] lg:gap-20">
           {/* ---------------------------------------------------------- pitch */}
           <Reveal>
-            <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt">
-              <span className="h-px w-8 bg-volt/40" />
+            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt">
               Paddle finder
             </span>
 
