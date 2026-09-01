@@ -68,7 +68,7 @@ const headingClass =
 
 export default function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden bg-ink text-paper">
+    <footer className="relative isolate overflow-hidden bg-forest text-paper">
       <ParallaxScene className="relative">
         <div
           data-speed="-1.4"

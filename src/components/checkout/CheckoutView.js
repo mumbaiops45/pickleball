@@ -457,7 +457,7 @@ export default function CheckoutView() {
                             {address.addressType.toLowerCase()}
                           </span>
                           {address.isDefault ? (
-                            <span className="rounded-full bg-ink px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-paper">
+                            <span className="rounded-full bg-forest px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-paper">
                               Default
                             </span>
                           ) : null}

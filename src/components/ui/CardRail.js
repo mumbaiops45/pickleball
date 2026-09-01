@@ -91,11 +91,11 @@ export default function CardRail({
       {/* travel indicator, doubles as the "there is more" hint */}
       {overflowing && (
         <div
-          className="mx-auto mt-6 h-0.5 w-32 overflow-hidden rounded-full bg-ink/10"
+          className="mx-auto mt-6 h-0.5 w-32 overflow-hidden rounded-full bg-forest/10"
           aria-hidden="true"
         >
           <span
-            className="block h-full w-1/3 rounded-full bg-ink/60 transition-transform duration-200 ease-out"
+            className="block h-full w-1/3 rounded-full bg-forest/60 transition-transform duration-200 ease-out"
             style={{ transform: `translateX(${progress * 200}%)` }}
           />
         </div>

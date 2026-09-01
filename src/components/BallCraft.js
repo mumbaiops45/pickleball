@@ -19,17 +19,6 @@ export default function BallCraft() {
       id="balls"
       className="relative isolate overflow-hidden border-y border-line bg-surface py-14 lg:py-24"
     >
-      {/* ghost type on the same drift as the tech section above it */}
-      <div
-        data-speed="0.9"
-        data-speed-x="-2.2"
-        className="pointer-events-none absolute inset-x-0 top-[6%] -z-20 select-none"
-      >
-        <p className="text-stroke whitespace-nowrap text-center text-[clamp(3rem,11vw,10rem)] font-black leading-none tracking-tighter">
-          ROTOMOLDED &middot; ROTOMOLDED
-        </p>
-      </div>
-
       <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-start gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-20">
         {/* --------------------------------------------------------- copy */}
         <div className="lg:col-span-5">

@@ -10,7 +10,7 @@ export default function AnnouncementBar() {
   if (dismissed) return null;
 
   return (
-    <div className="relative bg-ink text-paper">
+    <div className="relative bg-forest text-paper">
       <div className="mx-auto flex h-9 max-w-350 items-center justify-center gap-3 px-5 sm:px-8">
         <LogoMark size="sm" tone="volt" className="hidden sm:grid" />
         {/* pr-7 reserves the close button's corner — without it the

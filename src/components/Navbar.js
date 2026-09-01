@@ -198,7 +198,7 @@ function AccountMenu() {
                   {entry.href === "/account/wishlist" &&
                   wishlistHydrated &&
                   savedCount ? (
-                    <span className="ml-auto rounded-full bg-ink px-2 py-0.5 font-mono text-[11px] text-paper">
+                    <span className="ml-auto rounded-full bg-forest px-2 py-0.5 font-mono text-[11px] text-paper">
                       {savedCount}
                     </span>
                   ) : null}
@@ -269,7 +269,7 @@ export default function Navbar() {
           <Logo />
 
           <ul
-            className="hidden items-center gap-1 lg:flex lg:h-full"
+            className="hidden items-center gap-1 xl:flex xl:h-full"
             onKeyDown={(event) => {
               if (event.key === "Escape") setOpenMenu(null);
             }}
@@ -341,7 +341,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={openDrawer}
-              className="relative ml-1 flex h-11 items-center gap-2 rounded-full bg-ink pl-3.5 pr-4 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
+              className="relative ml-1 flex h-11 items-center gap-2 rounded-full bg-forest pl-3.5 pr-4 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
             >
               <BagIcon className="size-4.5" />
               <span className="hidden sm:inline">Cart</span>
@@ -357,7 +357,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
-              className="ml-1 grid size-11 place-items-center rounded-full text-ink transition-colors hover:bg-surface-2 lg:hidden"
+              className="ml-1 grid size-11 place-items-center rounded-full text-ink transition-colors hover:bg-surface-2 xl:hidden"
             >
               <MenuIcon className="size-5" />
             </button>
@@ -367,7 +367,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`fixed inset-0 z-60 lg:hidden ${
+        className={`fixed inset-0 z-60 xl:hidden ${
           menuOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
         aria-hidden={!menuOpen}
@@ -377,7 +377,7 @@ export default function Navbar() {
           tabIndex={menuOpen ? 0 : -1}
           aria-label="Close menu"
           onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 bg-ink/45 backdrop-blur-sm transition-opacity duration-500 ${
+          className={`absolute inset-0 bg-forest-deep/45 backdrop-blur-sm transition-opacity duration-500 ${
             menuOpen ? "opacity-100" : "opacity-0"
           }`}
         />
@@ -463,7 +463,7 @@ export default function Navbar() {
                           {entry.href === "/account/wishlist" &&
                           wishlistHydrated &&
                           savedCount ? (
-                            <span className="ml-auto rounded-full bg-ink px-2 py-0.5 font-mono text-[11px] text-paper">
+                            <span className="ml-auto rounded-full bg-forest px-2 py-0.5 font-mono text-[11px] text-paper">
                               {savedCount}
                             </span>
                           ) : null}

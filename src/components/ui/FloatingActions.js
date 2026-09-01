@@ -23,7 +23,7 @@ const bubble =
 
 function Label({ children }) {
   return (
-    <span className="pointer-events-none absolute right-14 hidden whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-xs font-medium text-paper opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">
+    <span className="pointer-events-none absolute right-14 hidden whitespace-nowrap rounded-full bg-forest px-3 py-1.5 text-xs font-medium text-paper opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">
       {children}
     </span>
   );

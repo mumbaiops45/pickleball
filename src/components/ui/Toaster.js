@@ -13,7 +13,7 @@ const TONE = {
 const DOT = {
   success: "bg-volt text-ink",
   error: "bg-clay text-paper",
-  info: "bg-ink text-paper",
+  info: "bg-forest text-paper",
 };
 
 export default function Toaster() {

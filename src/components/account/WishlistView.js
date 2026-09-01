@@ -135,7 +135,7 @@ export default function WishlistView() {
                 <button
                   type="button"
                   onClick={() => moveToCart(product)}
-                  className="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-5 text-xs font-semibold text-paper transition-transform duration-300 hover:-translate-y-0.5"
+                  className="inline-flex h-10 items-center gap-2 rounded-full bg-forest px-5 text-xs font-semibold text-paper transition-transform duration-300 hover:-translate-y-0.5"
                 >
                   <BagIcon className="size-3.5" />
                   Move to cart

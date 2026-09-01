@@ -64,7 +64,7 @@ export default function AboutIntro() {
             />
 
             {/* scrim so the caption stays legible over any crop */}
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-ink/75 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-forest/80 to-transparent" />
 
             <div
               data-speed="2.4"

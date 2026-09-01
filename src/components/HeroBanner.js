@@ -79,7 +79,7 @@ export default function HeroBanner({ slides }) {
     <section
       aria-roledescription="carousel"
       aria-label="Featured campaigns"
-      className="relative isolate bg-ink text-paper"
+      className="relative isolate bg-forest text-paper"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -125,7 +125,7 @@ export default function HeroBanner({ slides }) {
         })}
 
        
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-ink to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-forest to-transparent" />
 
         {count > 1 && (
           <>
@@ -133,7 +133,7 @@ export default function HeroBanner({ slides }) {
               type="button"
               onClick={() => go(index - 1)}
               aria-label="Previous slide"
-              className="absolute left-4 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-paper/25 bg-ink/40 text-paper backdrop-blur transition-colors duration-300 hover:border-volt hover:bg-volt hover:text-ink md:grid"
+              className="absolute left-4 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-paper/25 bg-forest-deep/50 text-paper backdrop-blur transition-colors duration-300 hover:border-volt hover:bg-volt hover:text-ink md:grid"
             >
               <ChevronLeftIcon className="size-5" />
             </button>
@@ -141,7 +141,7 @@ export default function HeroBanner({ slides }) {
               type="button"
               onClick={() => go(index + 1)}
               aria-label="Next slide"
-              className="absolute right-4 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-paper/25 bg-ink/40 text-paper backdrop-blur transition-colors duration-300 hover:border-volt hover:bg-volt hover:text-ink md:grid"
+              className="absolute right-4 top-1/2 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-paper/25 bg-forest-deep/50 text-paper backdrop-blur transition-colors duration-300 hover:border-volt hover:bg-volt hover:text-ink md:grid"
             >
               <ChevronRightIcon className="size-5" />
             </button>

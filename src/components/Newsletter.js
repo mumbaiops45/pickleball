@@ -39,7 +39,7 @@ export default function Newsletter() {
       <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
         <ParallaxScene
           pointer
-          className="grain relative isolate overflow-hidden rounded-4xl bg-ink px-6 py-14 text-paper sm:px-12 lg:py-16"
+          className="grain relative isolate overflow-hidden rounded-4xl bg-forest px-6 py-14 text-paper sm:px-12 lg:py-16"
         >
           <div
             data-speed="-1.4"
@@ -121,7 +121,7 @@ export default function Newsletter() {
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         placeholder="you@example.com"
-                        className="h-14 w-full min-w-0 rounded-full border border-paper/25 bg-ink px-5 text-sm text-paper outline-none transition-colors placeholder:text-paper/30 focus:border-volt sm:flex-1"
+                        className="h-14 w-full min-w-0 rounded-full border border-paper/25 bg-forest-deep px-5 text-sm text-paper outline-none transition-colors placeholder:text-paper/30 focus:border-volt sm:flex-1"
                       />
                       <button
                         type="submit"

@@ -167,7 +167,7 @@ export default function AccountShell({ children }) {
                       {entry.href === "/account/wishlist" &&
                       wishlistHydrated &&
                       savedCount ? (
-                        <span className="ml-auto rounded-full bg-ink px-2 py-0.5 font-mono text-[11px] text-paper">
+                        <span className="ml-auto rounded-full bg-forest px-2 py-0.5 font-mono text-[11px] text-paper">
                           {savedCount}
                         </span>
                       ) : null}

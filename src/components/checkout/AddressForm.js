@@ -254,7 +254,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex h-12 items-center justify-center rounded-full bg-ink px-7 text-sm font-semibold text-paper transition-transform duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 items-center justify-center rounded-full bg-forest px-7 text-sm font-semibold text-paper transition-transform duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? "Saving…" : "Save address"}
         </button>

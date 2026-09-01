@@ -11,7 +11,7 @@ export default function AboutContact() {
     <section id="contact" className="mx-auto w-full max-w-350 px-5 py-20 sm:px-8 lg:py-28">
       <ParallaxScene
         pointer
-        className="grain relative isolate overflow-hidden rounded-[2rem] bg-ink px-6 py-14 text-paper sm:px-12 lg:py-16"
+        className="grain relative isolate overflow-hidden rounded-[2rem] bg-forest px-6 py-14 text-paper sm:px-12 lg:py-16"
       >
         <div
           data-speed="-1.4"

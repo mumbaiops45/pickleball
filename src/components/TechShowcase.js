@@ -21,27 +21,7 @@ export default function TechShowcase() {
         className="pointer-events-none absolute left-1/2 top-0 -z-30 -ml-70 h-140 w-140 rounded-full bg-volt/45 blur-[140px]"
       />
 
-      {/* plane 2 - ghost type drifting on x */}
-      <div
-        data-speed="0.8"
-        data-speed-x="-2.4"
-        className="pointer-events-none absolute inset-x-0 top-[8%] -z-20 select-none"
-      >
-        <p className="text-stroke whitespace-nowrap text-center text-[clamp(4rem,14vw,13rem)] font-black leading-none tracking-tighter">
-          RAW CARBON &middot; RAW CARBON
-        </p>
-      </div>
       <div className="relative mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-16 px-5 sm:px-8 lg:grid-cols-12">
-
-        <div
-          data-speed="1.5"
-          data-speed-x="2.8"
-          className="pointer-events-none absolute inset-x-0 -bottom-4 -z-20 select-none opacity-70"
-        >
-          <p className="text-stroke-volt whitespace-nowrap text-center text-[clamp(3rem,10vw,9rem)] font-black leading-none tracking-tighter">
-            16MM THERMOFORMED CORE
-          </p>
-        </div>
 
         {/* copy */}
         <div className="lg:col-span-5">
@@ -71,9 +51,9 @@ export default function TechShowcase() {
               <Reveal
                 key={spec.label}
                 delay={index * 90}
-                className="group flex gap-6 border-t border-line py-5 last:border-b"
+                className="group flex flex-col gap-1 border-t border-line py-5 last:border-b sm:flex-row sm:gap-6"
               >
-                <dt className="w-32 shrink-0 text-[11px] uppercase tracking-[0.16em] text-mist">
+                <dt className="shrink-0 text-[11px] uppercase tracking-[0.16em] text-mist sm:w-32">
                   {spec.label}
                 </dt>
                 <dd>
@@ -164,11 +144,12 @@ export default function TechShowcase() {
         data-speed="0.3"
         className="relative mx-auto mt-16 w-full max-w-350 px-5 sm:px-8 lg:mt-24"
       >
-        <Reveal className="flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
-          <h3 className="text-[clamp(1.4rem,2.6vw,2rem)] font-semibold tracking-[-0.03em]">
+        <Reveal className="grid gap-4 border-t border-line pt-8 lg:grid-cols-[3.5rem_3.5rem_15rem_1fr] lg:items-end lg:gap-x-8">
+          <h3 className="text-[clamp(1.4rem,2.6vw,2rem)] font-semibold tracking-[-0.03em] lg:col-span-3">
             Five layers, <Accent>outside in</Accent>.
           </h3>
-          <p className="max-w-md text-[13px] leading-relaxed text-mist">
+          {/* max-w-2xl matches the layer rows, so both columns share an edge */}
+          <p className="max-w-2xl text-[13px] leading-relaxed text-mist">
             A paddle is a laminate. What separates ours is what happens between
             the face you can see and the core you cannot.
           </p>

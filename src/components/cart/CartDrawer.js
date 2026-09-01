@@ -35,7 +35,7 @@ export default function CartDrawer() {
         tabIndex={drawerOpen ? 0 : -1}
         aria-label="Close cart"
         onClick={closeDrawer}
-        className={`absolute inset-0 bg-ink/45 backdrop-blur-sm transition-opacity duration-500 ${
+        className={`absolute inset-0 bg-forest-deep/45 backdrop-blur-sm transition-opacity duration-500 ${
           drawerOpen ? "opacity-100" : "opacity-0"
         }`}
       />

@@ -479,7 +479,7 @@ export default function AuthModal() {
         tabIndex={modalOpen ? 0 : -1}
         aria-label="Close login"
         onClick={closeAuth}
-        className={`absolute inset-0 bg-ink/55 backdrop-blur-sm transition-opacity duration-400 ${
+        className={`absolute inset-0 bg-forest-deep/55 backdrop-blur-sm transition-opacity duration-400 ${
           modalOpen
             ? "opacity-100"
             : "opacity-0"
@@ -550,7 +550,7 @@ export default function AuthModal() {
             tabIndex={modalOpen ? 0 : -1}
             onClick={closeAuth}
             aria-label="Close"
-            className="absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full text-ink/60 transition-colors hover:bg-ink/10 hover:text-ink"
+            className="absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full text-ink/60 transition-colors hover:bg-forest/10 hover:text-ink"
           >
             <CloseIcon className="size-4" />
           </button>
@@ -562,7 +562,7 @@ export default function AuthModal() {
           <div className="relative max-w-[68%]">
             <LogoMark
               size="sm"
-              tone="ink"
+              tone="forest"
             />
 
             {authMode === "login" ? (

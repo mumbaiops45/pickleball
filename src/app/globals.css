@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -8,8 +8,24 @@
   --color-surface: #f4f3ec;
   --color-surface-2: #e9e8df;
 
-  /* Text — ink is the primary reading colour (18.9:1 on paper) */
-  --color-ink: #0f1115;
+  /* The dark surface — a deep court green, NOT black. The client asked twice
+     for black backgrounds to go, so the full-bleed sections and inset panels
+     that used to be #0f1115 / #0a0c0e sit on these instead. White clears
+     14.6:1 on forest and volt clears 12.6:1, so nothing lost legibility.
+     `ink` below now resolves to this same green, so text and surface share a
+     value — check any new `bg-forest` carries `text-paper` or `text-volt`,
+     never `text-ink`, or it will be invisible. */
+  --color-forest: #152e20;
+  --color-forest-deep: #10241a;
+  --color-forest-soft: #1b3a29;
+
+  /* Text — ink is the primary reading colour. It was #0f1115, which reads as
+     black; the client asked for black to be replaced wherever it appears, so
+     it now resolves to the same deep court green as the surfaces above.
+     Retuning the token rather than 230 utility classes keeps every heading,
+     body copy and hairline border in step. Contrast is unharmed: 14.6:1 on
+     paper, 13.0:1 on surface, 12.6:1 on volt. */
+  --color-ink: #152e20;
   --color-mist: #5f6672;
 
   /* decorative dividers and card edges */
@@ -26,13 +42,15 @@
   --color-clay: #c2320f;
 
   /* one family across the whole site — the "mono" token keeps its name because
-     44 components spell it, but it now resolves to Jakarta like everything else */
-  --font-sans: "Plus Jakarta Sans", sans-serif;
-  --font-mono: "Plus Jakarta Sans", sans-serif;
+     44 components spell it, but it now resolves to Montserrat like everything
+     else. Montserrat runs wider than the Jakarta it replaced, so fixed-width
+     label columns and the display headings are the places to re-check. */
+  --font-sans: "Montserrat", sans-serif;
+  --font-mono: "Montserrat", sans-serif;
 
   /* Preflight styles `html` and `code, kbd, samp, pre` from its own defaults,
      not from the tokens above — leave these unset and a bare <code> renders in
-     Menlo while the rest of the page is Jakarta. Pointing them at the same
+     Menlo while the rest of the page is Montserrat. Pointing them at the same
      family closes the only route to a second typeface on the site. */
   --default-font-family: var(--font-sans);
   --default-mono-font-family: var(--font-mono);
@@ -166,16 +184,6 @@ input[type="number"] {
   display: none;
 }
 
-.text-stroke {
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in oklab, var(--color-ink) 14%, transparent);
-}
-
-.text-stroke-volt {
-  color: transparent;
-  -webkit-text-stroke: 1.5px color-mix(in oklab, var(--color-volt-deep) 30%, transparent);
-}
-
 /* Fine paper grain so the large flat areas do not look like dead white */
 .grain {
   position: relative;
@@ -290,7 +298,7 @@ input[type="number"] {
     height: 7.5rem;
   }
   .finder-cta {
-    height: 3rem;
+    height: 2.5rem;
   }
 }
 

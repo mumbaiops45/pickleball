@@ -39,7 +39,7 @@ export default function BundleDeal() {
     <section className="bg-paper py-14 lg:py-20">
       <ParallaxScene
         pointer
-        className="grain relative isolate mx-auto w-full max-w-350 overflow-hidden rounded-[2rem] bg-ink px-6 py-14 text-paper sm:px-12 lg:py-16"
+        className="grain relative isolate mx-auto w-full max-w-350 overflow-hidden rounded-[2rem] bg-forest px-6 py-14 text-paper sm:px-12 lg:py-16"
       >
         <div
           data-speed="-1.4"
@@ -60,7 +60,7 @@ export default function BundleDeal() {
           {/* copy */}
           <Reveal>
             <span className="inline-flex items-center gap-2.5 rounded-full bg-volt px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink">
-              <LogoMark size="sm" tone="ink" className="!size-5 rounded-md" />
+              <LogoMark size="sm" tone="forest" className="!size-5 rounded-md" />
               Bundle &middot; save {Math.round(starterBundle.discountRate * 100)}%
             </span>
 

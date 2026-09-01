@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
-import ProductArt, { ART_HEIGHT, ART_MINI } from "@/components/art/ProductArt";
+import ProductArt, { ART_MINI } from "@/components/art/ProductArt";
 import {
   ArrowIcon,
   CheckIcon,
@@ -240,11 +240,11 @@ export default function PaddleFinder({ catalogue }) {
       ref={trackRef}
       id="finder"
       style={{ "--finder-stages": STAGES }}
-      className="finder-track relative bg-[#0a0c0e]"
+      className="finder-track relative bg-forest"
     >
       <ParallaxScene
         as="div"
-        className="finder-stage relative isolate w-full overflow-hidden bg-linear-to-b from-[#0a0c0e] via-[#0d0f13] to-[#0a0c0e] py-16 text-white lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:items-center lg:pb-0 lg:pt-28"
+        className="finder-stage relative isolate w-full overflow-hidden bg-linear-to-b from-forest via-forest-soft to-forest py-16 text-white lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:items-center lg:pb-0 lg:pt-28"
       >
         <div
           data-speed="-1.2"
@@ -453,20 +453,25 @@ export default function PaddleFinder({ catalogue }) {
                     style={at(120)}
                     className="step-item mt-6 flex flex-col gap-6 sm:flex-row sm:items-center"
                   >
-                    <div className="finder-art relative grid h-40 w-full shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 py-5 sm:w-36">
-                      <ProductArt
-                        product={match}
-                        className={`${ART_HEIGHT[match.art.kind]} w-auto`}
-                        sizes="(max-width: 640px) 60vw, 144px"
-                      />
-                      {match.badge ? (
-                        <span className="absolute left-3 top-3 rounded-full bg-volt px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
-                          {match.badge}
-                        </span>
-                      ) : null}
+                    <div className="finder-art relative h-40 w-full shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:w-36">
+                      {/* inset rather than padding on the box itself: a filled
+                          image lays out against the padding box, so padding
+                          there would not hold it off the edges */}
+                      <div className="absolute inset-x-4 inset-y-5">
+                        <ProductArt
+                          product={match}
+                          fill
+                          sizes="(max-width: 640px) 60vw, 144px"
+                        />
+                      </div>
                     </div>
 
                     <div className="min-w-0">
+                      {match.badge ? (
+                        <span className="mb-2.5 inline-block rounded-full bg-volt px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
+                          {match.badge}
+                        </span>
+                      ) : null}
                       <h3 className="text-[22px] font-semibold tracking-tight text-white">
                         {match.name}
                       </h3>
@@ -506,12 +511,12 @@ export default function PaddleFinder({ catalogue }) {
 
                   <div
                     style={at(280)}
-                    className="step-item mt-7 flex flex-col gap-3 sm:flex-row"
+                    className="step-item mt-7 flex flex-col gap-3 sm:flex-row sm:items-center"
                   >
                     <button
                       type="button"
                       onClick={onAdd}
-                      className="finder-cta inline-flex h-14 flex-1 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
+                      className="finder-cta inline-flex h-11 items-center justify-center gap-2 rounded-full bg-volt px-6 text-[13px] font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
                     >
                       {added ? (
                         <>
@@ -524,7 +529,7 @@ export default function PaddleFinder({ catalogue }) {
                     </button>
                     <Link
                       href={`/products/${match.id}`}
-                      className="finder-cta inline-flex h-14 items-center justify-center rounded-full border border-white/20 px-8 text-sm font-medium text-white transition-colors hover:border-volt hover:text-volt"
+                      className="finder-cta inline-flex h-11 items-center justify-center rounded-full border border-white/20 px-6 text-[13px] font-medium text-white transition-colors hover:border-volt hover:text-volt"
                     >
                       See details
                     </Link>

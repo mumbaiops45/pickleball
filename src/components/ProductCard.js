@@ -55,7 +55,7 @@ export default function ProductCard({ product }) {
         <button
           type="button"
           onClick={quickAdd}
-          className="absolute inset-x-4 bottom-4 z-20 flex h-11 translate-y-16 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-paper opacity-0 transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100"
+          className="absolute inset-x-4 bottom-4 z-20 flex h-11 translate-y-16 items-center justify-center gap-2 rounded-full bg-forest text-sm font-semibold text-paper opacity-0 transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100"
         >
           <PlusIcon className="size-4" />
           Quick add

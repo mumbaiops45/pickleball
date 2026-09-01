@@ -187,7 +187,7 @@ function EmailReset() {
                 type="button"
                 onClick={() => {
                   setStep("email");
-                  setOtp("");
+                  setOtp(""); 
                   setProblem("");
                 }}
                 className={quiet}

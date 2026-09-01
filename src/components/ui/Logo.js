@@ -23,7 +23,7 @@ const NAME_SIZE = {
 export function LogoMark({ size = "md", tone = "volt", className = "" }) {
   const tones = {
     volt: "bg-volt text-ink",
-    ink: "bg-ink text-volt",
+    forest: "bg-forest text-volt",
     outline: "border border-line-strong bg-paper text-ink",
   };
 

@@ -253,7 +253,7 @@ export default function ShopBrowser({
           tabIndex={panelOpen ? 0 : -1}
           aria-label="Close filters"
           onClick={() => setPanelOpen(false)}
-          className={`absolute inset-0 bg-ink/45 backdrop-blur-sm transition-opacity duration-500 ${
+          className={`absolute inset-0 bg-forest-deep/45 backdrop-blur-sm transition-opacity duration-500 ${
             panelOpen ? "opacity-100" : "opacity-0"
           }`}
         />
