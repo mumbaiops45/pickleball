@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import { StarIcon } from "@/components/ui/Icons";
 import { productReviews, ratingBreakdown } from "@/lib/data";
@@ -17,7 +20,9 @@ function Stars({ value, className = "size-3.5" }) {
 }
 
 export default function ProductSpecs({ product }) {
+  const [expandedReviews, setExpandedReviews] = useState(false);
   const totalRatings = ratingBreakdown.reduce((sum, row) => sum + row.count, 0);
+  const visibleReviews = expandedReviews ? productReviews : productReviews.slice(0, 1);
 
   return (
     <section
@@ -91,7 +96,7 @@ export default function ProductSpecs({ product }) {
           </Reveal>
 
           <ul className="mt-6 flex flex-col gap-4">
-            {productReviews.map((review, index) => (
+            {visibleReviews.map((review, index) => (
               <Reveal
                 key={review.name}
                 delay={index * 80}
@@ -125,6 +130,26 @@ export default function ProductSpecs({ product }) {
                 </p>
               </Reveal>
             ))}
+
+            {!expandedReviews && productReviews.length > 1 && (
+              <button
+                type="button"
+                onClick={() => setExpandedReviews(true)}
+                className="mt-2 rounded-2xl border border-line bg-paper px-5 py-3 text-sm font-semibold text-ink transition-all hover:border-volt-deep hover:text-volt-deep"
+              >
+                View all {productReviews.length} reviews
+              </button>
+            )}
+
+            {expandedReviews && productReviews.length > 1 && (
+              <button
+                type="button"
+                onClick={() => setExpandedReviews(false)}
+                className="mt-2 rounded-2xl border border-line bg-paper px-5 py-3 text-sm font-semibold text-ink transition-all hover:border-volt-deep hover:text-volt-deep"
+              >
+                Show less
+              </button>
+            )}
           </ul>
         </div>
       </div>

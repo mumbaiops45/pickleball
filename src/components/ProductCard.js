@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductArt from "@/components/art/ProductArt";
 import WishlistButton from "@/components/product/WishlistButton";
@@ -9,6 +10,7 @@ import { useCart } from "@/store/CartProvider";
 import { formatPrice } from "@/lib/format";
 
 export default function ProductCard({ product }) {
+  const router = useRouter();
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const discounted = Boolean(product.compareAt);
@@ -23,6 +25,16 @@ export default function ProductCard({ product }) {
     });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 2000);
+  };
+
+  const buyNow = () => {
+    addItem({
+      productId: product.id,
+      colorway: product.colorways[0]?.name,
+      option: product.options[0],
+      quantity: 1,
+    });
+    router.push("/checkout");
   };
 
   return (
@@ -90,24 +102,34 @@ export default function ProductCard({ product }) {
         {/* Always on, not hover-revealed: a hover-only control is unreachable
             on touch, where most of this grid is read. `relative z-20` lifts it
             over the title's stretched link, which otherwise covers the card. */}
-        <button
-          type="button"
-          onClick={quickAdd}
-          aria-label={`Add ${product.name} to cart`}
-          className="relative z-20 mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-volt text-sm font-semibold text-ink"
-        >
-          {added ? (
-            <>
-              <CheckIcon className="size-4" />
-              Added to cart
-            </>
-          ) : (
-            <>
-              <PlusIcon className="size-4" />
-              Add to cart
-            </>
-          )}
-        </button>
+        <div className="relative z-20 mt-4 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={buyNow}
+            aria-label={`Buy ${product.name} now`}
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-volt text-sm font-semibold text-ink hover:bg-volt-deep transition-colors"
+          >
+            Buy now
+          </button>
+          <button
+            type="button"
+            onClick={quickAdd}
+            aria-label={`Add ${product.name} to cart`}
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-volt bg-transparent text-sm font-semibold text-volt hover:bg-volt/10 transition-colors"
+          >
+            {added ? (
+              <>
+                <CheckIcon className="size-4" />
+                Added to cart
+              </>
+            ) : (
+              <>
+                <PlusIcon className="size-4" />
+                Add to cart
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </article>
   );
