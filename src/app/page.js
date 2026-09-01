@@ -3,7 +3,6 @@ import TickerBar from "@/components/TickerBar";
 import CategoryGrid from "@/components/CategoryGrid";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import PaddleFinder from "@/components/PaddleFinder";
-import TechShowcase from "@/components/TechShowcase";
 import BallCraft from "@/components/BallCraft";
 import BundleDeal from "@/components/BundleDeal";
 import Features from "@/components/Features";
@@ -26,7 +25,11 @@ export default async function Home() {
       <CategoryGrid />
       <FeaturedProducts catalogue={catalogue} />
       <PaddleFinder catalogue={catalogue} />
-      <TechShowcase />
+      {/* TechShowcase ("The technology — Every gram is deliberate") was the
+          paddle build story: a drawn paddle on a spinning dial plus five
+          laminate layers. It read as a bat, and BallCraft below already tells
+          the same manufacturing story for the pickleball line the store leads
+          with. The component file is kept — re-add it here to restore it. */}
       <BallCraft />
       <BundleDeal />
       <Features />

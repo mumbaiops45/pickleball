@@ -1,37 +1,45 @@
 import HeroBanner from "@/components/HeroBanner";
-import bannerElevate from "../../public/Banner.png";
-import bannerProV from "../../public/Banner1.png";
 
+import bannerPickleball1 from "../../public/Banner2.png";
+import bannerPickleball2 from "../../public/Banner3.png";
+import bannerPickleball3 from "../../public/Banner5.png";
 
 const slides = [
   {
-    id: "elevate",
-    image: bannerElevate,
-    alt: "JOOLA Perseus 3S paddle and a volt pickleball resting against the net on a floodlit court, under the headline Engineered to Elevate.",
-    href: "/shop?category=Paddles",
-    cta: "Shop paddles",
-    title: "Engineered to elevate",
+    id: "pickleball-performance",
+    image: bannerPickleball1,
+    alt: "Premium Paddlehaus pickleball on a professional court.",
+    href: "/shop?category=Balls",
+    cta: "Shop pickleballs",
+    title: "Premium pickleballs",
   },
   {
-    id: "pro-v",
-    image: bannerProV,
-    alt: "The full JOOLA Pro V paddle line-up — Graf, Agassi, Perseus, Kosmos, Scorpeus and Hyperion — fanned out against a black background under the headline Built for Champions.",
-    href: "/shop?category=Paddles",
-    cta: "Shop the Pro V line",
-    title: "Built for champions",
+    id: "pickleball-bounce",
+    image: bannerPickleball2,
+    alt: "Paddlehaus pickleball highlighting consistent bounce.",
+    href: "/shop?category=Balls",
+    cta: "Shop pickleballs",
+    title: "Engineered for real game",
+  },
+  {
+    id: "pickleball-game",
+    image: bannerPickleball3,
+    alt: "Paddlehaus pickleballs highlighting performance and durability.",
+    href: "/shop?category=Balls",
+    cta: "Shop pickleballs",
+    title: "Performance you can feel",
   },
 ];
 
 export default function Hero() {
   return (
-    <section id="top" className="relative isolate">
-      {/* Empty by design, and exactly the fixed header's height: announcement
-          h-9 + nav h-18 = 108px = pt-27. No bottom padding — with the claim
-          row gone there is nothing to hold a gap open, so the banner meets the
-          nav and slides under its blur on scroll. */}
-      <div className="grain relative bg-[radial-gradient(120%_140%_at_50%_-40%,#f4ffd6_0%,#fbfaf6_55%,#ffffff_100%)] pt-27" />
-
-      <HeroBanner slides={slides} />
+    <section
+      id="top"
+      className="relative isolate w-full overflow-hidden"
+    >
+      <div className="w-full pt-27">
+        <HeroBanner slides={slides} />
+      </div>
     </section>
   );
 }

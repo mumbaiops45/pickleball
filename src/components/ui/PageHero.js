@@ -1,7 +1,6 @@
 import Link from "next/link";
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import { TwoTone } from "@/components/ui/Heading";
-import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
 
 /** Compact banner used at the top of every inner route. */
@@ -34,28 +33,22 @@ export default function PageHero({
       />
       <div
         data-speed="2.4"
-        data-rotate="-8"
         data-mouse="34"
-        className="pointer-events-none absolute -right-6 -top-2 -z-10 hidden w-48 lg:right-4 lg:block"
+        className="pointer-events-none absolute -right-4 top-2 -z-10 hidden w-44 lg:right-8 lg:block"
       >
-        <div className="rotate-[18deg] drop-shadow-[0_26px_40px_rgba(15,17,21,.18)]">
-          <PaddleArt
-            id="page-hero-paddle"
-            face="#0f1115"
-            edge="#0b0d10"
-            grip="#1b1f26"
-            texture="carbon"
-            className="w-full"
-          />
+        {/* The banner motif is the ball. A paddle used to sit here at 18deg in
+            near-black, which read as a bat rather than pickleball equipment. */}
+        <div className="float-slow drop-shadow-[0_26px_40px_rgba(21,46,32,.18)]">
+          <BallArt id="page-hero-ball" color="#d4ff3f" className="w-full" />
         </div>
       </div>
       <div
         data-speed="3.2"
         data-mouse="-42"
-        className="pointer-events-none absolute right-52 top-16 -z-10 hidden w-12 lg:right-64 lg:block"
+        className="pointer-events-none absolute right-56 top-14 -z-10 hidden w-12 lg:right-72 lg:block"
       >
-        <div className="float-slow">
-          <BallArt id="page-hero-ball" color="#f5f3ed" className="w-full" />
+        <div className="float-slower">
+          <BallArt id="page-hero-ball-small" color="#f5f3ed" className="w-full" />
         </div>
       </div>
 

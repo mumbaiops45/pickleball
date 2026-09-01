@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import OtpInput from "@/components/auth/OtpInput";
 import PasswordToggle from "@/components/auth/PasswordToggle";
-import PaddleArt from "@/components/art/PaddleArt";
 import BallArt from "@/components/art/BallArt";
 import { LogoMark } from "@/components/ui/Logo";
 import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
@@ -513,28 +512,25 @@ export default function AuthModal() {
           <span className="pointer-events-none absolute -right-6 -top-10 size-40 rounded-full bg-paper/25 blur-2xl" />
 
           {/* ==================================================
-              PADDLE
-          =================================================== */}
-
-          <div className="pointer-events-none absolute -right-2 -top-4 w-24 rotate-[18deg] opacity-95 sm:w-28">
-            <PaddleArt
-              id="auth-modal-paddle"
-              face="#0f1115"
-              edge="#0b0d10"
-              grip="#1b1f26"
-              texture="carbon"
-              className="w-full drop-shadow-[0_18px_30px_rgba(15,17,21,.35)]"
-            />
-          </div>
-
-          {/* ==================================================
               BALL
+              A paddle used to sit in the top corner as well; it read as a bat,
+              so the pickleball is the only motif now.
           =================================================== */}
 
-          <div className="pointer-events-none absolute bottom-2 right-24 w-9 opacity-90">
+          <div className="pointer-events-none absolute -right-2 -top-4 w-20 opacity-95 sm:w-24">
             <div className="float-slow">
               <BallArt
                 id="auth-modal-ball"
+                color="#d4ff3f"
+                className="w-full drop-shadow-[0_18px_30px_rgba(21,46,32,.35)]"
+              />
+            </div>
+          </div>
+
+          <div className="pointer-events-none absolute bottom-2 right-24 w-9 opacity-90">
+            <div className="float-slower">
+              <BallArt
+                id="auth-modal-ball-small"
                 color="#f5f3ed"
                 className="w-full"
               />

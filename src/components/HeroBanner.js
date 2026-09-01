@@ -20,6 +20,28 @@ export default function HeroBanner({ slides }) {
   const count = slides.length;
   const slide = slides[index];
 
+  /* The banner artwork is full-bleed: the headline starts ~4% from the left
+     edge and the feature row sits on the bottom margin, so neither axis has a
+     safe area to crop into. The three exports are also not one shape (1.87:1
+     and 1.5:1), so a single fixed container ratio letterboxes at least one of
+     them — which is what put the dark forest gutters down both sides: the box
+     was 2.52:1, `object-contain` fitted the art by height and left the
+     background showing. Following the active slide's own dimensions instead
+     means every banner fills the width with nothing cropped and nothing bare.
+     The statically imported images carry their intrinsic size; a plain string
+     src would not, hence the fallback.
+
+     Every screen gets that natural ratio, so the banner is never cropped or
+     zoomed: height is simply width / ratio. An explicit viewport-height was
+     pinned here before, which did fit the fold but scaled the art up and cut
+     ~18% off the bottom, clipping the feature strip. Showing the artwork
+     whole is worth the extra height — at 1.87:1 a 1900px screen gives a
+     1014px banner. Shortening that is a job for wider artwork, not a crop. */
+  const ratio =
+    slide?.image?.width && slide?.image?.height
+      ? `${slide.image.width} / ${slide.image.height}`
+      : "2.52 / 1";
+
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setAnimate(!query.matches);
@@ -94,7 +116,10 @@ export default function HeroBanner({ slides }) {
       onTouchEnd={onTouchEnd}
     >
   
-      <div className="relative aspect-2/1 w-full overflow-hidden sm:aspect-[2.3/1] lg:aspect-[2.52/1]">
+      <div
+        style={{ aspectRatio: ratio }}
+        className="relative w-full overflow-hidden transition-[aspect-ratio] duration-1000 ease-[cubic-bezier(.16,1,.3,1)]"
+      >
         {slides.map((item, position) => {
           const current = position === index;
 
@@ -116,7 +141,7 @@ export default function HeroBanner({ slides }) {
                 priority={position === 0}
                 placeholder="blur"
                 sizes="100vw"
-                className={`object-contain object-center transition-transform duration-7000 ease-[cubic-bezier(.16,1,.3,1)] ${
+                className={`object-cover object-top transition-transform duration-7000 ease-[cubic-bezier(.16,1,.3,1)] ${
                   current ? "scale-100" : "scale-[1.05]"
                 }`}
               />
@@ -125,7 +150,7 @@ export default function HeroBanner({ slides }) {
         })}
 
        
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-forest to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-forest/70 to-transparent" />
 
         {count > 1 && (
           <>
