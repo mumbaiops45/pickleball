@@ -115,10 +115,13 @@ export default function ProductCard({ product }) {
             type="button"
             onClick={quickAdd}
             aria-label={`Add ${product.name} to cart`}
+            // volt is a fill-only colour: as text on the white card it reads
+            // at 1.3:1 and all but disappears. volt-deep is the palette's
+            // readable accent (6.2:1 on paper) for exactly this outline case.
             className={`flex h-10 w-full items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all ${
               added
                 ? "bg-volt text-ink"
-                : "border border-volt bg-transparent text-volt hover:bg-volt/10"
+                : "border border-volt-deep bg-transparent text-volt-deep hover:bg-volt-deep/10"
             }`}
           >
             {added ? (
