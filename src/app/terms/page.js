@@ -1,12 +1,12 @@
 import Link from "next/link";
 import PageHero from "@/components/ui/PageHero";
 import { Accent } from "@/components/ui/Heading";
-import { contact } from "@/lib/data";
+import { brand, contact } from "@/lib/data";
 
 export const metadata = {
   title: "Terms and conditions",
   description:
-    "The terms you agree to when you buy from PADDLEHAUS — pricing, delivery, the 30-day play test, the warranty and how disputes are handled.",
+    "The terms you agree to when you buy from PICKLEBALL — pricing, delivery, the 30-day play test, the warranty and how disputes are handled.",
 };
 
 /** Shown in the hero and at the foot. Update it whenever the copy changes. */
@@ -112,10 +112,10 @@ export default function TermsPage() {
         <div className="mt-10 flex flex-col gap-10">
           <Section id="who-we-are" title="Who you are buying from">
             <p>
-              PADDLEHAUS sells pickleball paddles, balls, footwear, apparel and
-              accessories in India, from {contact.addressLines.join(", ")}. In
-              these terms, &ldquo;we&rdquo; is PADDLEHAUS and &ldquo;you&rdquo;
-              is the person placing the order.
+              {brand.legalName}, trading as PICKLEBALL, sells pickleballs in
+              India from {contact.addressLines.join(", ")}. In these terms,
+              &ldquo;we&rdquo; is {brand.legalName} and &ldquo;you&rdquo; is the
+              person placing the order.
             </p>
           </Section>
 
@@ -214,24 +214,22 @@ export default function TermsPage() {
               us.
             </p>
             <p>
-              Grit wear from real play does not void this. What does: a product
-              returned without its packaging, deliberate damage, and items that
-              cannot be resold or re-donated for hygiene reasons — socks,
-              innerwear and grips that have been unsealed. Footwear needs to
-              come back with its box.
+              Normal scuffing from real play does not void this. What does: a
+              tube returned without its packaging, and deliberate damage — a
+              ball that has been driven over, stood on or cut open.
             </p>
           </Section>
 
           <Section id="warranty" title="Warranty">
             <p>
-              Edge-guard failure and core delamination on our own paddles are
-              covered for the life of the paddle. Send a photo and we ship a
-              replacement without asking for the old paddle back first.
+              A ball of ours that splits, goes soft or loses its shape inside
+              its first month of normal play is replaced free. Send a photo and
+              we ship the replacement without asking for the old one back first.
             </p>
             <p>
               The warranty covers manufacturing faults, not ordinary wear,
-              stringing of the face from court grit, damage from a dropped or
-              thrown paddle, or a paddle that has been modified. Products from
+              scuffing from coarse court surfaces, or a ball that has been
+              driven over, stood on or modified. Products from
               other brands carry that brand&apos;s own warranty, which we will
               help you claim.
             </p>
@@ -256,7 +254,7 @@ export default function TermsPage() {
 
           <Section id="content" title="Our content">
             <p>
-              The PADDLEHAUS name, the product photography, the copy and the
+              The PICKLEBALL name, the product photography, the copy and the
               site design belong to us. Read them, share a link, quote a line —
               but do not republish them as your own or use our name on your own
               products.
@@ -297,7 +295,7 @@ export default function TermsPage() {
 
           <Section id="contact" title="Contact">
             <div className="rounded-3xl border border-line bg-surface p-6 text-sm text-ink">
-              <p className="font-semibold">PADDLEHAUS</p>
+              <p className="font-semibold">{brand.legalName}</p>
               <p className="mt-2 text-mist">
                 {contact.addressLines.map((line) => (
                   <span key={line} className="block">

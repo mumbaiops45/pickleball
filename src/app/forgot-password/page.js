@@ -4,7 +4,7 @@ import ForgotPasswordView from "@/components/auth/ForgotPasswordView";
 export const metadata = {
   title: "Forgot password",
   description:
-    "Reset your PADDLEHAUS password with a code sent to your email, or sign in with a one-time code to your mobile.",
+    "Reset your PICKLEBALL password with a code sent to your email, or sign in with a one-time code to your mobile.",
 };
 
 export default function ForgotPasswordPage() {

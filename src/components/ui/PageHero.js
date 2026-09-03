@@ -39,7 +39,7 @@ export default function PageHero({
         {/* The banner motif is the ball. A paddle used to sit here at 18deg in
             near-black, which read as a bat rather than pickleball equipment. */}
         <div className="float-slow drop-shadow-[0_26px_40px_rgba(21,46,32,.18)]">
-          <BallArt id="page-hero-ball" color="#d4ff3f" className="w-full" />
+          <BallArt id="page-hero-ball" color="#fecd06" className="w-full" />
         </div>
       </div>
       <div

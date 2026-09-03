@@ -520,35 +520,9 @@ export default function ProductDetail({ product }) {
 
   return (
     <main className="w-full bg-paper">
-      {/* ==================================================================== */}
-      {/* BREADCRUMB                                                           */}
-      {/* ==================================================================== */}
-
-      <section className="mx-auto w-full max-w-350 px-5 pt-6 sm:px-8 lg:pt-8">
-        <div className="flex items-center gap-2 overflow-hidden text-xs text-mist">
-          <Link
-            href="/"
-            className="shrink-0 transition-colors hover:text-ink"
-          >
-            Home
-          </Link>
-
-          <span>/</span>
-
-          <Link
-            href="/shop"
-            className="shrink-0 transition-colors hover:text-ink"
-          >
-            Shop
-          </Link>
-
-          <span>/</span>
-
-          <span className="truncate text-ink">
-            {product.name}
-          </span>
-        </div>
-      </section>
+      {/* The breadcrumb lives in the route (src/app/products/[id]/page.js),
+          which carries the category step and the <nav>/<ol> markup. A second
+          copy here rendered two trails on every product page. */}
 
       {/* ==================================================================== */}
       {/* PRODUCT MAIN SECTION                                                 */}

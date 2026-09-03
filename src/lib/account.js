@@ -29,8 +29,8 @@ export const ACCOUNT_SECTIONS = [
     label: "Wishlist",
     icon: HeartIcon,
     eyebrow: "Wishlist",
-    title: "Saved gear",
-    titleAccent: "gear",
-    copy: "The paddles, shoes and kit you are keeping an eye on.",
+    title: "Saved balls",
+    titleAccent: "balls",
+    copy: "The pickleballs you are keeping an eye on.",
   },
 ];

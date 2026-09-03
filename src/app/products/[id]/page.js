@@ -33,7 +33,7 @@ export default async function ProductPage({ params }) {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mx-auto w-full max-w-350 px-5 pt-32 sm:px-8">
+      <nav aria-label="Breadcrumb" className="mx-auto w-full max-w-350 px-5 pt-28 sm:px-8">
         <ol className="flex flex-wrap items-center gap-2 text-xs text-mist">
           <li>
             <Link href="/" className="transition-colors hover:text-ink">

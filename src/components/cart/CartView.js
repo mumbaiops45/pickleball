@@ -49,14 +49,14 @@ export default function CartView() {
           Your cart is <Accent>empty</Accent>
         </h2>
         <p className="mt-4 max-w-md text-[15px] leading-relaxed text-mist">
-          Nothing in the bag yet. Start with the paddle everyone reorders.
+          Nothing in the bag yet. Start with the ball everyone reorders.
         </p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/shop?category=Paddles"
+            href="/shop?category=Balls"
             className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink"
           >
-            Shop paddles
+            Shop pickleballs
             <ArrowIcon className="size-4" />
           </Link>
           <Link

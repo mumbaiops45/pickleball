@@ -1,110 +1,107 @@
-import ParallaxScene from "@/components/parallax/ParallaxScene";
+import Image from "next/image";
 import Reveal from "@/components/ui/Reveal";
-import BallArt from "@/components/art/BallArt";
-import { Accent, TwoTone } from "@/components/ui/Heading";
+import { TwoTone } from "@/components/ui/Heading";
 import { ballCraft, brand } from "@/lib/data";
 
+import ballsPhoto from "../../public/hero/balls-trio.jpg";
+
 /**
- * The balls answer to <TechShowcase />.
+ * How the ball line is made.
  *
- * That section explains the paddle laminate and never mentions the ball, so a
- * visitor had no way to learn how the ball line is actually made. Same visual
- * grammar — drawn artwork on one side, a numbered build list on the other —
- * deliberately, so the two read as one story rather than two treatments.
+ * Rebuilt from three columns to two. The middle column used to be a "stage":
+ * a dashed ring spinning on a 26s loop behind a drawn SVG ball bobbing on a
+ * float animation, both riding a parallax offset and a mouse tracker. It cost
+ * four moving layers to say nothing the copy either side of it was not already
+ * saying, and it pushed the actual evidence — the specs and the build steps —
+ * into two narrow gutters.
+ *
+ * The client's own product photography sits there now instead, which is both
+ * still and true.
  */
 export default function BallCraft() {
   return (
-    <ParallaxScene
-      as="section"
-      id="balls"
-      className="relative isolate overflow-hidden border-y border-line bg-surface py-14 lg:py-24"
-    >
-      <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-start gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-20">
-        {/* --------------------------------------------------------- copy */}
-        <div className="lg:col-span-5">
-          <Reveal>
-            <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
+    <section id="balls" className="section bg-surface-2">
+      <div className="shell">
+        {/* Heading left, body right, on one row. Run down the page instead,
+            a max-w-2xl heading with a max-w-xl paragraph under it left the
+            right half of a 1400px section empty for 300px of scroll. */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
+          <Reveal className="lg:col-span-6">
+            <span className="mb-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
+              <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
               {ballCraft.eyebrow}
             </span>
-            <h2 className="mt-5 text-[clamp(2rem,4.4vw,3.4rem)] font-semibold leading-[1.04] tracking-[-0.035em]">
+            <h2 className="text-[clamp(1.9rem,3.8vw,3rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
               <TwoTone text={ballCraft.title} accent={ballCraft.titleAccent} />
             </h2>
-            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-mist">
+          </Reveal>
+
+          <Reveal delay={80} className="lg:col-span-5 lg:col-start-8">
+            <p className="text-[15px] leading-relaxed text-mist">
               {ballCraft.body}
             </p>
           </Reveal>
-
-          {/* the numbers a buyer checks before a claim convinces them */}
-          <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-4 lg:grid-cols-2">
-            {ballCraft.specs.map((spec, index) => (
-              <Reveal
-                key={spec.label}
-                delay={index * 80}
-                className="bg-paper px-5 py-6"
-              >
-                <dt className="text-[11px] uppercase tracking-[0.16em] text-mist">
-                  {spec.label}
-                </dt>
-                <dd className="mt-2 font-mono text-2xl tracking-tight text-ink">
-                  {spec.value}
-                </dd>
-              </Reveal>
-            ))}
-          </dl>
         </div>
 
-        {/* -------------------------------------------------------- stage */}
-        <div className="relative flex min-h-70 items-center justify-center lg:col-span-3 lg:min-h-100">
-          <div
-            data-speed="-0.8"
-            data-rotate="8"
-            className="absolute inset-0 -z-10 grid place-items-center"
-          >
-            <div className="spin-slow size-72 rounded-full border border-dashed border-line" />
-          </div>
-
-          <div data-speed="1.7" data-mouse="30" className="w-[58%] max-w-64">
-            <div className="float-slower">
-              <BallArt
-                id="craft-ball"
-                color="#d4ff3f"
-                className="w-full drop-shadow-[0_50px_70px_rgba(15,17,21,.16)]"
+        <div className="mt-12 grid grid-cols-1 gap-10 lg:mt-16 lg:grid-cols-12 lg:gap-16">
+          {/* ------------------------------------------------- the artwork */}
+          <Reveal className="lg:col-span-5">
+            <div className="overflow-hidden rounded-2xl border border-line bg-paper p-6 sm:p-10">
+              <Image
+                src={ballsPhoto}
+                alt={`${brand.name} rotomolded pickleballs`}
+                placeholder="blur"
+                sizes="(max-width: 1024px) 90vw, 40vw"
+                className="h-auto w-full object-contain"
               />
             </div>
+
+            {/* the numbers a buyer checks before a claim convinces them */}
+            <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4 lg:grid-cols-2">
+              {ballCraft.specs.map((spec) => (
+                <div key={spec.label} className="bg-paper px-5 py-5">
+                  <dt className="text-[11px] uppercase tracking-[0.14em] text-mist">
+                    {spec.label}
+                  </dt>
+                  <dd className="mt-1.5 text-2xl font-semibold tracking-tight text-ink">
+                    {spec.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          {/* ----------------------------------------------- the build list */}
+          <div className="lg:col-span-6 lg:col-start-7">
+            <ol className="flex flex-col border-t border-line">
+              {ballCraft.points.map((point, index) => (
+                <Reveal
+                  as="li"
+                  key={point.index}
+                  delay={index * 60}
+                  className="flex gap-6 border-b border-line py-6"
+                >
+                  <span className="pt-0.5 text-[11px] font-semibold tracking-[0.18em] text-volt-deep">
+                    {point.index}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-semibold tracking-tight">
+                      {point.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-mist">
+                      {point.copy}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </ol>
+
+            <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
+              {brand.taglines.manufacturing}
+            </p>
           </div>
         </div>
-
-        {/* -------------------------------------------------- the build */}
-        <ol className="flex flex-col lg:col-span-4">
-          {ballCraft.points.map((point, index) => (
-            <Reveal
-              as="li"
-              key={point.index}
-              delay={index * 70}
-              className="group border-t border-line py-5 first:border-t-0 first:pt-0 lg:first:border-t lg:first:pt-5"
-            >
-              <div className="flex items-baseline gap-4">
-                <span className="font-mono text-[11px] tracking-[0.2em] text-line-strong transition-colors duration-500 group-hover:text-volt-deep">
-                  {point.index}
-                </span>
-                <h3 className="text-[15px] font-semibold tracking-tight">
-                  {point.title}
-                </h3>
-              </div>
-              <p className="mt-2 pl-9 text-[13px] leading-relaxed text-mist">
-                {point.copy}
-              </p>
-            </Reveal>
-          ))}
-
-          <Reveal
-            delay={320}
-            className="mt-6 border-t border-line pt-6 text-[11px] font-semibold uppercase tracking-[0.2em]"
-          >
-            <Accent>{brand.taglines.manufacturing}</Accent>
-          </Reveal>
-        </ol>
       </div>
-    </ParallaxScene>
+    </section>
   );
 }

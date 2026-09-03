@@ -6,14 +6,23 @@ import {
   PhoneIcon,
   WhatsappIcon,
 } from "@/components/ui/Icons";
+import { contact } from "@/lib/data";
 
 const digitsOf = (value) => (value ?? "").replace(/\D/g, "");
 
-const CALL_NUMBER = digitsOf(process.env.NEXT_PUBLIC_CONTACT_PHONE);
-const WHATSAPP_NUMBER = digitsOf(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+/**
+ * The env vars win so a deployment can point the buttons somewhere else
+ * without a rebuild of the catalogue, but they fall back to the published
+ * numbers — before, an unset var left both buttons inert with a "number coming
+ * soon" label on a site that prints the number in its own footer.
+ */
+const CALL_NUMBER =
+  digitsOf(process.env.NEXT_PUBLIC_CONTACT_PHONE) || digitsOf(contact.phone);
+const WHATSAPP_NUMBER =
+  digitsOf(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) || digitsOf(contact.whatsapp);
 
 const WHATSAPP_TEXT = encodeURIComponent(
-  "Hi PADDLEHAUS — I have a question about an order.",
+  "Hi PICKLEBALL — I have a question about an order.",
 );
 
 const SHOW_AFTER = 600;

@@ -1,9 +1,7 @@
 import Link from "next/link";
-import ParallaxScene from "@/components/parallax/ParallaxScene";
-import { LogoMark } from "@/components/ui/Logo";
+import Logo from "@/components/ui/Logo";
 import AuthLink from "@/components/auth/AuthLink";
 import {
-  ArrowIcon,
   ArrowUpRightIcon,
   ClockIcon,
   InstagramIcon,
@@ -35,6 +33,13 @@ const CONTACT_ROWS = [
     value: contact.phone,
     href: `tel:${contact.phone.replace(/\s/g, "")}`,
   },
+  // the brochure publishes two lines; the second is listed rather than hidden
+  {
+    icon: PhoneIcon,
+    label: "Phone (alt)",
+    value: contact.phoneAlt,
+    href: `tel:${contact.phoneAlt.replace(/\s/g, "")}`,
+  },
   {
     icon: MailIcon,
     label: "Email",
@@ -61,70 +66,51 @@ const LEGAL_LINKS = [
 ];
 
 const linkClass =
-  "text-sm text-paper/55 transition-colors duration-300 hover:text-volt";
+  "text-sm text-mist transition-colors duration-300 hover:text-volt-deep";
 
 const headingClass =
-  "text-[11px] font-semibold uppercase tracking-[0.18em] text-paper";
+  "text-[11px] font-semibold uppercase tracking-[0.18em] text-ink";
 
 export default function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden bg-forest text-paper">
-      <ParallaxScene className="relative">
-        <div
-          data-speed="-1.4"
-          data-speed-x="0.8"
-          className="pointer-events-none absolute -left-24 -top-32 -z-10 size-96 rounded-full bg-volt/12 blur-[130px]"
-        />
-
+    <footer className="relative isolate overflow-hidden border-t border-line bg-surface text-ink">
+      {/* A 384px yellow orb blurred to 130px used to drift across the top-left
+          of this on a parallax offset. On a deep-green footer it read as a
+          smudge on the screen rather than as light. */}
+      <div className="relative">
         <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
-          {/* ---------------------------------------------------- sign-up band
-              A full-width band rather than a cramped column: it is the one
-              thing in here we actually want you to do. */}
-          <div className="flex flex-col gap-6 py-12 md:flex-row md:items-center md:justify-between lg:py-14">
-            <div className="max-w-xl">
-              <h2 className="text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold leading-tight tracking-[-0.03em]">
-                Season drops, restocks and the odd deep dive.
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-paper/55">
-                One email a week, never more. New releases, restocks and a ₹500
-                credit on your first order.
-              </p>
-            </div>
-
-            <Link
-              href="/#newsletter"
-              className="group inline-flex h-12 shrink-0 items-center gap-2.5 rounded-full bg-volt px-7 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
-            >
-              Join the list
-              <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+          {/* The sign-up band that used to open the footer is gone. It sat
+              directly under the newsletter section — same headline register,
+              same "Join the list" button, and it promised one email a week
+              where the section above it promised one a month. Asking twice in
+              two hundred pixels reads as a template, and the contradiction is
+              the kind of thing a reader notices. The list link in the Company
+              column still points at #newsletter. */}
 
           {/* --------------------------------------------------- main grid
               Twelve columns that add up to twelve: brand takes four, the four
               link columns take two each. */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12 border-t border-paper/12 py-14 md:grid-cols-4 lg:grid-cols-12 lg:py-16">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-12 py-14 md:grid-cols-4 lg:grid-cols-12 lg:py-16">
             {/* brand and the social marks — contact moved to its own column */}
             <div className="col-span-2 md:col-span-4 lg:col-span-3 lg:pr-8">
-              <Link href="/" className="group inline-flex items-center gap-2.5">
-                <LogoMark
-                  size="md"
-                  tone="volt"
-                  className="transition-transform duration-500 group-hover:rotate-[18deg]"
-                />
-                <span className="text-[15px] font-semibold tracking-[0.24em] text-paper">
-                  {brand.name}
-                </span>
+              {/* The full lockup, not the ball on its own — the footer is
+                  where the brand signs off, and the artwork carries the name.
+                  Its transparent ground is why the white paddle inside "BA"
+                  still reads against the deep green here. */}
+              <Link href="/" className="inline-block">
+                <Logo href={null} size="lg" className="!gap-0" />
               </Link>
 
-              <p className="mt-5 max-w-xs text-sm leading-relaxed text-paper/55">
-                {brand.identity} Paddles pressed and balls rotomolded in
-                Bengaluru, shipped to courts in{" "}
-                {brand.exportMarkets.join(", ")} and across India.
+              <p className="mt-5 max-w-xs text-sm leading-relaxed text-mist">
+                {/* was "rotomolded in Bengaluru", which contradicted both
+                    the address three columns to the right of it and the
+                    brand tagline in the hero, each of which says Mumbai. */}
+                {brand.identity} Pickleballs rotomolded in Mumbai, shipped to
+                courts in {brand.exportMarkets.join(", ")} and across India.
               </p>
 
-              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-volt">
-                {brand.taglines.manufacturing}
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-volt-deep">
+                {brand.taglines.promise}
               </p>
 
               <div className="mt-8 flex gap-2.5">
@@ -137,7 +123,7 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.label}
-                      className="grid size-10 place-items-center rounded-full border border-paper/15 text-paper/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-volt hover:bg-volt hover:text-ink"
+                      className="grid size-10 place-items-center rounded-full border border-line-strong text-mist transition-all duration-300 hover:-translate-y-0.5 hover:border-volt-deep hover:bg-volt hover:text-ink"
                     >
                       <Icon className="size-4.5" />
                     </a>
@@ -185,24 +171,24 @@ export default function Footer() {
 
                   return (
                     <li key={row.label} className="flex gap-3.5">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-paper/12 bg-paper/6 text-volt">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-paper text-volt-deep">
                         <Icon className="size-4.5" />
                       </span>
 
                       <span className="min-w-0 pt-0.5">
-                        <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/40">
+                          <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-mist">
                           {row.label}
                         </span>
 
                         {row.href ? (
                           <a
                             href={row.href}
-                            className="mt-1 block wrap-break-word text-sm text-paper/75 transition-colors hover:text-volt"
+                            className="mt-1 block wrap-break-word text-sm text-mist transition-colors hover:text-volt-deep"
                           >
                             {row.value}
                           </a>
                         ) : (
-                          <span className="mt-1 block text-sm leading-relaxed text-paper/75">
+                          <span className="mt-1 block text-sm leading-relaxed text-mist">
                             {row.value}
                           </span>
                         )}
@@ -217,7 +203,7 @@ export default function Footer() {
           {/* ---------------------------------------------------- legal line
               Copyright left, policy links right. Stacked on a phone, where the
               two would otherwise be squeezed onto one line. */}
-          <div className="flex flex-col gap-4 border-t border-paper/12 py-7 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 border-t border-line py-7 text-xs text-mist sm:flex-row sm:items-center sm:justify-between">
             <p>
               &copy; {new Date().getFullYear()} {brand.name}. All rights
               reserved.
@@ -228,7 +214,7 @@ export default function Footer() {
                 <Link
                   key={entry.label}
                   href={entry.href}
-                  className="underline-offset-4 transition-colors hover:text-paper hover:underline"
+                  className="underline-offset-4 transition-colors hover:text-ink hover:underline"
                 >
                   {entry.label}
                 </Link>
@@ -239,14 +225,14 @@ export default function Footer() {
           {/* ------------------------------------------------- build credit
               `volt` rather than `volt-deep`: this bar is dark, where the deep
               tone drops below a readable contrast. */}
-          <div className="border-t border-paper/12 py-6 text-xs text-paper/45">
+          <div className="border-t border-line py-6 text-xs text-mist">
             <p className="flex flex-wrap items-center justify-center gap-1.5">
               Designed and developed by
               <Link
                 href="https://nakshatranamahacreations.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-1 font-medium text-volt underline-offset-4 transition-colors hover:underline"
+                className="group inline-flex items-center gap-1 font-medium text-volt-deep underline-offset-4 transition-colors hover:underline"
               >
                 Nakshatra Namaha Creations
                 <ArrowUpRightIcon className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -254,7 +240,7 @@ export default function Footer() {
             </p>
           </div>
         </div>
-      </ParallaxScene>
+      </div>
     </footer>
   );
 }

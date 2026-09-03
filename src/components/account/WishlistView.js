@@ -63,7 +63,7 @@ export default function WishlistView() {
             Nothing saved yet
           </p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-mist">
-            Tap the heart on any paddle, shoe or kit and it lands here — ready
+            Tap the heart on any ball and it lands here — ready
             for the next drop or the next payday.
           </p>
           <Link

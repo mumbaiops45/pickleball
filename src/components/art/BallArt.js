@@ -5,7 +5,7 @@ const HOLE_RINGS = [
 ];
 
 /** Regulation 40-hole outdoor ball, drawn rather than photographed. */
-export default function BallArt({ color = "#d4ff3f", id = "ball", className = "" }) {
+export default function BallArt({ color = "#fecd06", id = "ball", className = "" }) {
   const bodyId = `${id}-body`;
 
   return (
@@ -46,7 +46,7 @@ export default function BallArt({ color = "#d4ff3f", id = "ball", className = ""
         cx="60"
         cy="60"
         r="51"
-        stroke="#0f1115"
+        stroke="#1e3d14"
         strokeOpacity="0.22"
         strokeWidth="2"
       />

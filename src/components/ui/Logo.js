@@ -1,83 +1,95 @@
+import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/data";
 
+import lockup from "../../../public/logo/logo-lockup.png";
+import mark from "../../../public/logo/logo-mark.png";
+
+/**
+ * The brand mark, straight from the artwork the client supplied.
+ *
+ * `public/logo/logo.jpeg` is a JPEG on a white ground with a lot of margin, so
+ * two PNGs are derived from it and committed alongside: `logo-lockup.png` is
+ * the whole wordmark trimmed to its ink with the outer white flooded to
+ * transparent, and `logo-mark.png` is the ball alone, clipped to its circle.
+ * Flooding in from the border rather than keying every white pixel is what
+ * keeps the paddle silhouette inside "BA" and the holes in the ball white
+ * instead of punching them through — which matters, because the lockup sits on
+ * the deep green footer as well as on paper.
+ *
+ * Both are imported statically so next/image gets their intrinsic size and
+ * reserves the box before the file lands.
+ */
+
+/** The square ball, for favicons, avatars and tight spaces. */
 const MARK_SIZE = {
   sm: "size-7",
   md: "size-9",
   lg: "size-12",
 };
 
-const GLYPH_SIZE = {
-  sm: "size-4",
-  md: "size-5",
-  lg: "size-7",
+/** The lockup is 2.05:1, so it is sized by height and left to find its width. */
+const LOCKUP_SIZE = {
+  sm: "h-7",
+  md: "h-11",
+  lg: "h-14",
 };
 
-const NAME_SIZE = {
-  sm: "text-[12px] tracking-[0.22em]",
-  md: "text-[15px] tracking-[0.24em]",
-  lg: "text-[19px] tracking-[0.26em]",
-};
-
-/** The paddle glyph on its own — favicons, avatars, tight spaces. */
-export function LogoMark({ size = "md", tone = "volt", className = "" }) {
-  const tones = {
-    volt: "bg-volt text-ink",
-    forest: "bg-forest text-volt",
-    outline: "border border-line-strong bg-paper text-ink",
-  };
-
+export function LogoMark({ size = "md", className = "" }) {
   return (
-    <span
-      className={`grid ${MARK_SIZE[size]} shrink-0 place-items-center rounded-lg ${tones[tone]} ${className}`}
-    >
-      <svg viewBox="0 0 24 24" className={GLYPH_SIZE[size]} aria-hidden="true">
-        <path d="M12 3 19 13 12 17 5 13Z" fill="currentColor" />
-        <rect x="10.6" y="16" width="2.8" height="6" rx="1.4" fill="currentColor" />
-      </svg>
-    </span>
+    <Image
+      src={mark}
+      alt=""
+      aria-hidden="true"
+      className={`${MARK_SIZE[size]} shrink-0 object-contain ${className}`}
+      sizes="48px"
+    />
   );
 }
 
 /**
- * Full lockup: mark + name. `href={null}` renders it as plain content rather
- * than a link, for places that are already inside a link.
+ * Full lockup. `href={null}` renders it as plain content rather than a link,
+ * for places that are already inside a link.
+ *
+ * `showName` is what it always was — false drops back to the ball on its own —
+ * but the name is now part of the artwork rather than type beside it, so there
+ * is no wordmark span to style any more.
  */
 export default function Logo({
   size = "md",
-  tone = "volt",
   href = "/",
   showName = true,
   tagline,
   onClick,
   className = "",
 }) {
-  const content = (
-    <>
-      <LogoMark
-        size={size}
-        tone={tone}
-        className="transition-transform duration-500 group-hover:rotate-[18deg]"
-      />
-      {showName ? (
-        <span className="flex flex-col leading-none">
-          <span className={`font-semibold text-ink ${NAME_SIZE[size]}`}>
-            {brand.name}
-          </span>
-          {tagline ? (
-            <span className="mt-1 text-[10px] uppercase tracking-[0.18em] text-mist">
-              {tagline}
-            </span>
-          ) : null}
-        </span>
-      ) : null}
-    </>
+  const content = showName ? (
+    <Image
+      src={lockup}
+      alt={brand.name}
+      priority
+      className={`${LOCKUP_SIZE[size]} w-auto object-contain`}
+      sizes="240px"
+    />
+  ) : (
+    <LogoMark size={size} />
+  );
+
+  const inner = tagline ? (
+    <span className="flex flex-col gap-1.5">
+      {content}
+      <span className="text-[10px] uppercase tracking-[0.18em] text-mist">
+        {tagline}
+      </span>
+    </span>
+  ) : (
+    content
   );
 
   if (href === null) {
     return (
       <span className={`group flex items-center gap-2.5 ${className}`}>
-        {content}
+        {inner}
       </span>
     );
   }
@@ -89,7 +101,7 @@ export default function Logo({
       aria-label={brand.name}
       className={`group flex items-center gap-2.5 ${className}`}
     >
-      {content}
+      {inner}
     </Link>
   );
 }

@@ -45,7 +45,7 @@ const ownerStore = createPersistentStore("paddlehaus.cart.owner", null);
 const syncingStore = createMemoryStore(false);
 
 /** Cart lines are keyed by product + chosen options, so two colourways of the
- *  same paddle stay separate rows. */
+ *  same product stay separate rows. */
 function lineKey(productId, colorway, option) {
   return [productId, colorway ?? "", option ?? ""].join("::");
 }
@@ -54,7 +54,7 @@ function lineKey(productId, colorway, option) {
  * The cart is local until you sign in.
  *
  * `/api/cart` sits behind authMiddleware, so a signed-out shopper has nowhere
- * to put a paddle but localStorage. On sign-in whatever they collected is
+ * to put a product but localStorage. On sign-in whatever they collected is
  * pushed up and the server's cart becomes the truth; on sign-out the mirror is
  * dropped so the next person on the machine starts empty.
  *
@@ -281,8 +281,14 @@ export function CartProvider({ children }) {
   }, [detailedLines]);
 
   // How many products are in the bag, not how many units: two of the same
-  // paddle is one product. Quantities are shown on the line itself.
-  const count = lines.length;
+  // line is one product. Quantities are shown on the line itself.
+  //
+  // Counted off `detailedLines`, not off the stored `lines`. A line only holds
+  // a slug, and `detailedLines` drops any the catalogue cannot resolve — so
+  // counting the raw list meant the badge could claim eight products while the
+  // drawer rendered none, which is what a cart saved against the old seeded
+  // catalogue does now that the storefront reads the live one.
+  const count = detailedLines.length;
 
   // the existing skeleton covers the first sync as well as hydration
   const hydrated = clientReady && !syncing;

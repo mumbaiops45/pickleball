@@ -1,12 +1,12 @@
 import PageHero from "@/components/ui/PageHero";
 import ShopBrowser from "@/components/shop/ShopBrowser";
-import { SHOE_BRANDS, SHOE_TYPES, productFilters } from "@/lib/data";
+import { productFilters } from "@/lib/data";
 import { loadCatalogue } from "@/lib/services/products";
 
 export const metadata = {
   title: "Shop all",
   description:
-    "Every paddle, ball, apparel piece and accessory in the PADDLEHAUS line. Filter by category, skill level and price.",
+    "Every pickleball in the PICKLEBALL line — 40-hole outdoor, indoor, tubes and club cases. Filter by skill level and price.",
 };
 
 // The grid is whatever the store currently sells, so it is read per request.
@@ -20,22 +20,25 @@ const one = (value) => (Array.isArray(value) ? value[0] : value) ?? null;
 const allow = (value, allowed) => (allowed.includes(value) ? value : null);
 
 export default async function ShopPage({ searchParams }) {
-  // ?category=, ?brand= and ?type= are read here rather than in the browser:
-  // reading them on the client would suspend the grid and paint a catalogue
-  // the store no longer sells while the real one loads.
+  // ?category= is read here rather than in the browser: reading it on the
+  // client would suspend the grid and paint a catalogue the store no longer
+  // sells while the real one loads.
   const [catalogue, query] = await Promise.all([loadCatalogue(), searchParams]);
 
   const category = allow(one(query.category), productFilters) ?? "All";
-  const brand = allow(one(query.brand), SHOE_BRANDS);
-  const type = allow(one(query.type), SHOE_TYPES);
+  // ?brand= and ?type= were the shoe facets. ShopBrowser still reads whatever
+  // brand and fit a product carries, so the plumbing stays, but nothing in the
+  // pickleball line sets them and no link seeds them any more.
+  const brand = null;
+  const type = null;
 
   return (
     <>
       <PageHero
         eyebrow={`${catalogue.length} products`}
-        title="Shop the full line"
-        titleAccent="full line"
-        copy="Filter by what you play, not by what is on promotion. Every item ships with the same 30-day play test."
+        title="Shop every pickleball"
+        titleAccent="pickleball"
+        copy="Indoor, outdoor, tubes and club cases. Every ball ships with the same 30-day play test."
         crumbs={[{ label: "Shop" }]}
       />
 

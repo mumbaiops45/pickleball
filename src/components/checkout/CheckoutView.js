@@ -222,14 +222,14 @@ export default function CheckoutView() {
           order_id: gatewayOrderId,
           amount: Math.round((order?.totalAmount ?? totals.total) * 100),
           currency: payment?.currency ?? "INR",
-          name: "PADDLEHAUS",
+          name: "PICKLEBALL",
           description: order?.orderNumber ?? "Order",
           prefill: {
             name: user?.name ?? "",
             email: user?.email ?? "",
             contact: user?.phone ?? "",
           },
-          theme: { color: "#d4ff3f" },
+          theme: { color: "#fecd06" },
         });
 
         if (!result) {
@@ -391,7 +391,7 @@ export default function CheckoutView() {
         icon={BagIcon}
         title="Your cart is"
         accent="empty"
-        copy="There is nothing to check out yet. Start with the paddle everyone reorders."
+        copy="There is nothing to check out yet. Start with the ball everyone reorders."
       >
         <Link
           href="/shop"

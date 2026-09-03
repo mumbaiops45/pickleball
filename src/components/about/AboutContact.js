@@ -24,7 +24,7 @@ export default function AboutContact() {
           className="pointer-events-none absolute -bottom-6 right-10 -z-10 hidden w-28 opacity-80 md:block"
         >
           <div className="float-slow">
-            <BallArt id="about-contact-ball" color="#d4ff3f" className="w-full" />
+            <BallArt id="about-contact-ball" color="#fecd06" className="w-full" />
           </div>
         </div>
 
@@ -37,7 +37,7 @@ export default function AboutContact() {
               The demo wall is open <Accent dark>six days a week</Accent>.
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-paper/70">
-              Bring your current paddle, hit every model on the wall, and leave
+              Come down and play a tube of every ball we make, and leave
               with the one that actually suits your game. No appointment needed.
             </p>
 

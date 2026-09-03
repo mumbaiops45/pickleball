@@ -1,5 +1,4 @@
 import { api, ApiError } from "@/lib/api";
-import { findProduct } from "@/lib/data";
 import { mergeCatalogue } from "@/lib/services/products";
 
 /**
@@ -87,7 +86,7 @@ export async function resolveProductId(slug) {
   const id = slugToId.get(slug);
   if (id) return id;
 
-  const name = findProduct(slug)?.name ?? slug;
+  const name = slug;
   throw new ApiError(`${name} is not in the store catalogue yet.`, {
     status: 404,
   });

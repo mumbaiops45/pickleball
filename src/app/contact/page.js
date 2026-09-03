@@ -5,7 +5,7 @@ import { contact } from "@/lib/data";
 
 export const metadata = {
   title: "Contact us",
-  description: `Talk to PADDLEHAUS — call ${contact.phone}, write to ${contact.email}, or send an enquiry and we will answer inside a working day.`,
+  description: `Talk to PICKLEBALL — call ${contact.phone}, write to ${contact.email}, or send an enquiry and we will answer inside a working day.`,
 };
 
 export default function ContactPage() {
@@ -15,7 +15,7 @@ export default function ContactPage() {
         eyebrow="We answer in a day"
         title="Contact us"
         titleAccent="us"
-        copy="Whether it is an order that has not moved, a paddle you are not sure about or kit for a whole club — one of us reads every message."
+        copy="Whether it is an order that has not moved, a ball you are not sure about or kit for a whole club — one of us reads every message."
         crumbs={[{ label: "Contact" }]}
       />
 

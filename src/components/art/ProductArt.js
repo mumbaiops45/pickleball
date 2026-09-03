@@ -1,15 +1,18 @@
 import Image from "next/image";
 
 
+/**
+ * The shot a product falls back to when it carries no `image` of its own.
+ *
+ * `-white` rather than the original: the studio backdrop on the source file
+ * is a warm cream, and the five catalogue shots that DO set `image` are cut
+ * out on pure white. The grid therefore mixed two backgrounds side by side,
+ * each reading as a tinted rectangle inside its tile. The backdrop on this
+ * copy is neutralised to white so every ball on the site sits on one ground.
+ * See the note in ProductCard on why the tile behind it is white too.
+ */
 const KIND_PHOTOS = {
-  paddle: "/photos/paddle-product.png",
-  ball: "/photos/pickleball-balls.png",
-  tee: "/photos/court-apparel.png",
-  shorts: "/photos/court-apparel.png",
-  cap: "/photos/court-apparel.png",
-  grip: "/photos/paddle-product.png",
-  bag: "/photos/bags.jpg",
-  shoe: "/photos/shoes.jpg",
+  ball: "/photos/pickleball-balls-white.png",
 };
 
 /**
@@ -21,11 +24,7 @@ const KIND_PHOTOS = {
  * every catalogue shot in /photos/products is square.
  */
 const PHOTO_DIMENSIONS = {
-  "/photos/paddle-product.png": [1122, 1402],
-  "/photos/pickleball-balls.png": [1122, 1402],
-  "/photos/court-apparel.png": [1122, 1402],
-  "/photos/bags.jpg": [1580, 1975],
-  "/photos/shoes.jpg": [1000, 1000],
+  "/photos/pickleball-balls-white.png": [1122, 1402],
 };
 
 // /photos/products/* and the API's /media/products/* are shot on the same
@@ -82,28 +81,14 @@ export default function ProductArt({
 }
 
 /**
- * Per-kind sizing so a ball does not render as tall as a paddle. Both are fixed
+ * Per-kind sizing, keyed on art.kind. Both are fixed
  * heights: a percentage needs a definite parent to resolve against, so boxes
  * that own their size use `fill` above instead.
  */
 export const ART_THUMB = {
-  paddle: "h-14",
   ball: "h-9",
-  tee: "h-12",
-  shorts: "h-12",
-  cap: "h-10",
-  grip: "h-11",
-  bag: "h-11",
-  shoe: "h-10",
 };
 
 export const ART_MINI = {
-  paddle: "h-9",
   ball: "h-6",
-  tee: "h-8",
-  shorts: "h-8",
-  cap: "h-7",
-  grip: "h-7",
-  bag: "h-7",
-  shoe: "h-6",
 };

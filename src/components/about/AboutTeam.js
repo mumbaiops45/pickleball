@@ -31,7 +31,7 @@ export default function AboutTeam() {
           </Reveal>
           <Reveal delay={100}>
             <p className="max-w-xs text-sm leading-relaxed text-mist">
-              Nobody here designs a paddle they would not put in their own bag
+              Nobody here signs off a ball they would not put in their own bag
               on Saturday morning.
             </p>
           </Reveal>

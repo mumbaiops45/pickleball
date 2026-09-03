@@ -10,6 +10,11 @@ import {
 } from "@/components/ui/Icons";
 
 const INTERVAL = 5000;
+// Short enough that the fixed header (4.5rem, now that the announcement
+// bar is gone) plus the banner still leave
+// the next section peeking above the fold, so the page reads as scrollable.
+// The rem cap stops a very tall monitor from turning it into a wall.
+const MAX_HEIGHT = "min(86svh, 40rem)";
 
 export default function HeroBanner({ slides }) {
   const [index, setIndex] = useState(0);
@@ -31,12 +36,15 @@ export default function HeroBanner({ slides }) {
      The statically imported images carry their intrinsic size; a plain string
      src would not, hence the fallback.
 
-     Every screen gets that natural ratio, so the banner is never cropped or
-     zoomed: height is simply width / ratio. An explicit viewport-height was
-     pinned here before, which did fit the fold but scaled the art up and cut
-     ~18% off the bottom, clipping the feature strip. Showing the artwork
-     whole is worth the extra height — at 1.87:1 a 1900px screen gives a
-     1014px banner. Shortening that is a job for wider artwork, not a crop. */
+     The natural ratio drives the height, but only up to MAX_HEIGHT. Left
+     uncapped it overshoots on desktop: the 1.5:1 export across a 1900px
+     screen is a 1267px banner, so most of it sat below the fold and only
+     appeared once you scrolled — and nothing else on the homepage was
+     visible on load. Past the cap the art is cropped rather than
+     letterboxed, centred so the loss is split between the top and the bottom
+     feature strip instead of coming off one end. Phones never reach the cap
+     (400px wide at 1.5:1 is a 267px banner), so small screens still get
+     every export whole. */
   const ratio =
     slide?.image?.width && slide?.image?.height
       ? `${slide.image.width} / ${slide.image.height}`
@@ -117,7 +125,7 @@ export default function HeroBanner({ slides }) {
     >
   
       <div
-        style={{ aspectRatio: ratio }}
+        style={{ aspectRatio: ratio, maxHeight: MAX_HEIGHT }}
         className="relative w-full overflow-hidden transition-[aspect-ratio] duration-1000 ease-[cubic-bezier(.16,1,.3,1)]"
       >
         {slides.map((item, position) => {
@@ -141,7 +149,7 @@ export default function HeroBanner({ slides }) {
                 priority={position === 0}
                 placeholder="blur"
                 sizes="100vw"
-                className={`object-cover object-top transition-transform duration-7000 ease-[cubic-bezier(.16,1,.3,1)] ${
+                className={`object-cover object-center transition-transform duration-7000 ease-[cubic-bezier(.16,1,.3,1)] ${
                   current ? "scale-100" : "scale-[1.05]"
                 }`}
               />

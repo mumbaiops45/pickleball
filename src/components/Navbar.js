@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navLinks } from "@/lib/data";
 import Logo from "@/components/ui/Logo";
-import AnnouncementBar from "@/components/AnnouncementBar";
 import { ACCOUNT_SECTIONS } from "@/lib/account";
 import {
   BagIcon,
@@ -237,9 +236,6 @@ export default function Navbar() {
   const { user, openAuth, signOut } = useAuth();
   const { count: savedCount, hydrated: wishlistHydrated } = useWishlist();
 
-  // only the homepage has a hero to sit over — everywhere else stays solid
-  const overlayRoute = pathname === "/";
-  const solid = scrolled || !overlayRoute;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -257,19 +253,38 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 ${
-          solid
-            ? "border-b border-line bg-paper/85 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent"
-        }`}
-      >
-        <AnnouncementBar />
-        <nav className="mx-auto flex h-18 max-w-350 items-center justify-between gap-8 px-5 sm:px-8">
-          <Logo />
+      {/* A centred pill rather than a full-bleed bar. With three menu items
+          an edge-to-edge header left a long empty run between the logo and the
+          actions; the pill closes that gap and lets the page show past both
+          ends. The outer element stays fixed and full width so it still owns
+          the top of the viewport — only the painted surface is inset. */}
+      {/* The pill hangs in the page's own container — same max-w-350, same
+          px-5/sm:px-8 gutter every section below uses — so its left and right
+          edges sit on the content column at every width. Insetting the header
+          by its own padding instead left the pill 13px narrower than the
+          content on a phone and 20px narrower on a tablet. */}
+      <header className="fixed inset-x-0 top-0 z-50 pt-3 sm:pt-4">
+        <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
+        <nav
+          // The pill only reads as a pill if it is visibly separate from the
+          // page behind it, and both are paper white — so the border and the
+          // shadow are unconditional. Scrolling only deepens the shadow.
+          //
+          // A three-column grid, not justify-between. With three children of
+          // unequal width the links landed wherever the leftover space fell —
+          // 65px left of centre at every desktop width, because the actions
+          // block is 142px wider than the logo. Equal 1fr rails either side of
+          // an auto middle column put them on the pill's centre line.
+          className={`grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full border border-line bg-paper/90 px-4 backdrop-blur-xl transition-shadow duration-500 sm:gap-8 sm:px-6 ${
+            scrolled
+              ? "shadow-[0_22px_50px_-26px_rgba(30,61,20,.55)]"
+              : "shadow-[0_12px_30px_-24px_rgba(30,61,20,.4)]"
+          }`}
+        >
+          <Logo className="justify-self-start" />
 
           <ul
-            className="hidden items-center gap-1 xl:flex xl:h-full"
+            className="col-start-2 hidden items-center gap-1 justify-self-center xl:flex xl:h-full"
             onKeyDown={(event) => {
               if (event.key === "Escape") setOpenMenu(null);
             }}
@@ -291,14 +306,14 @@ export default function Navbar() {
                     className="group relative block px-4 py-2 text-sm text-mist transition-colors hover:text-ink"
                   >
                     {link.label}
-                    <span className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 bg-volt transition-transform duration-400 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100" />
+                    <span className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 bg-sky transition-transform duration-400 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-x-100" />
                   </Link>
                 </li>
               ),
             )}
           </ul>
 
-          <div className="flex items-center gap-1.5">
+          <div className="col-start-3 flex items-center gap-1.5 justify-self-end">
             <Link
               href="/shop"
               aria-label="Search products"
@@ -341,7 +356,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={openDrawer}
-              className="relative ml-1 flex h-11 items-center gap-2 rounded-full bg-forest pl-3.5 pr-4 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
+              className="relative ml-1 flex h-11 items-center gap-2 rounded-full bg-volt-deep pl-3.5 pr-4 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
             >
               <BagIcon className="size-4.5" />
               <span className="hidden sm:inline">Cart</span>
@@ -363,6 +378,7 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
+        </div>
       </header>
 
       {/* Mobile drawer */}
@@ -502,9 +518,12 @@ export default function Navbar() {
               href="/shop"
               tabIndex={menuOpen ? 0 : -1}
               onClick={() => setMenuOpen(false)}
-              className="grid h-14 place-items-center rounded-full bg-volt text-sm font-semibold tracking-wide text-ink"
+              className="grid h-14 place-items-center rounded-full bg-volt-deep text-sm font-semibold tracking-wide text-paper"
             >
-              Shop the Season 04 drop
+              {/* was "Shop the Season 04 drop" — the store runs one ball line,
+                  not seasonal drops, and nothing else on the site sells a
+                  "Season 04" the reader could go and look at */}
+              Shop pickleballs
             </Link>
           </div>
         </div>

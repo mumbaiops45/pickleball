@@ -140,7 +140,17 @@ function FieldError({ id, children }) {
   );
 }
 
-export default function ContactForm() {
+/**
+ * `title` / `intro` are overridable, and `title={null}` drops the header block
+ * altogether — the homepage section that embeds this already carries its own
+ * h2, and two headings stacked on one panel is a broken outline, not a
+ * subtitle. /contact passes nothing and is unchanged.
+ */
+export default function ContactForm({
+  title = "Send us an enquiry",
+  intro = "Orders, sizing, bulk kit for a club — whatever it is, one of us reads it and replies inside a working day. All fields are required.",
+  className = "rounded-2xl border border-line bg-surface p-6 sm:p-8",
+}) {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   // a field only shows its error once it has been left or the form submitted
@@ -216,7 +226,7 @@ export default function ContactForm() {
       <div
         role="status"
         aria-live="polite"
-        className="rounded-3xl border border-line bg-surface p-6 text-center sm:p-8"
+        className="rounded-2xl border border-line bg-surface p-6 text-center sm:p-8"
       >
         <span className="mx-auto grid size-14 place-items-center rounded-full bg-volt text-ink">
           <CheckIcon className="size-6" />
@@ -248,17 +258,20 @@ export default function ContactForm() {
     <form
       onSubmit={submit}
       noValidate
-      className="rounded-3xl border border-line bg-surface p-6 sm:p-8"
+      className={className}
     >
-      <h2 className="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.03em]">
-        Send us an enquiry
-      </h2>
-      <p className="mt-3 text-sm leading-relaxed text-mist">
-        Orders, sizing, bulk kit for a club — whatever it is, one of us reads it
-        and replies inside a working day. All fields are required.
-      </p>
+      {title ? (
+        <>
+          <h2 className="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.03em]">
+            {title}
+          </h2>
+          {intro ? (
+            <p className="mt-3 text-sm leading-relaxed text-mist">{intro}</p>
+          ) : null}
+        </>
+      ) : null}
 
-      <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className={`grid grid-cols-1 gap-5 sm:grid-cols-2 ${title ? "mt-7" : ""}`}>
         <div>
           <label htmlFor="enquiry-name" className={labelStyle}>
             Your name
@@ -398,7 +411,7 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        className="group mt-7 inline-flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto"
+        className="group mt-7 inline-flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-volt-deep px-8 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-forest sm:w-auto"
       >
         Send enquiry
         <ArrowIcon className="size-4 transition-transform duration-400 group-hover:translate-x-1.5" />

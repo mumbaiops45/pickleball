@@ -14,7 +14,7 @@
 
 const NOMINATIM = "https://nominatim.openstreetmap.org/reverse";
 
-const USER_AGENT = "PADDLEHAUS storefront (hello@paddlehaus.in)";
+const USER_AGENT = "PICKLEBALL storefront (nishilandsports@gmail.com)";
 
 
 const PRECISION = 4;

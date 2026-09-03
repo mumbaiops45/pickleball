@@ -2,44 +2,62 @@
 @import "tailwindcss";
 
 @theme {
-  /* Surfaces — light, warm-neutral so product art sits on paper, not glare */
+  /* ------------------------------------------------------------------------
+     The palette is sampled straight out of the logo (public/logo/logo.jpeg):
+     orange #fc8004 on "PICKLE", green #76c643 on "BALL", ball yellow #fecd06
+     and the swoosh cyan #01acf1. Every token below is one of those four or a
+     tint/shade of one, so the site and the mark read as one brand.
+     ------------------------------------------------------------------------ */
+
+  /* Surfaces — light and barely warm, so the logo's saturation carries the page */
   --color-paper: #ffffff;
   /* far enough from paper that a banded section actually reads as a band */
-  --color-surface: #f4f3ec;
-  --color-surface-2: #e9e8df;
+  --color-surface: #f5f5ee;
+  --color-surface-2: #eaebe0;
 
-  /* The dark surface — a deep court green, NOT black. The client asked twice
-     for black backgrounds to go, so the full-bleed sections and inset panels
-     that used to be #0f1115 / #0a0c0e sit on these instead. White clears
-     14.6:1 on forest and volt clears 12.6:1, so nothing lost legibility.
-     `ink` below now resolves to this same green, so text and surface share a
-     value — check any new `bg-forest` carries `text-paper` or `text-volt`,
-     never `text-ink`, or it will be invisible. */
-  --color-forest: #152e20;
-  --color-forest-deep: #10241a;
-  --color-forest-soft: #1b3a29;
+  /* The dark surface — a deep leaf green pulled from the logo's #76c643, NOT
+     black. The client asked twice for black backgrounds to go, so the
+     full-bleed sections and inset panels sit on these. Paper clears 12.1:1 on
+     forest and the ball yellow clears 8.0:1, so nothing lost legibility. */
+  --color-forest: #1e3d14;
+  --color-forest-deep: #16300f;
+  --color-forest-soft: #2a5320;
 
-  /* Text — ink is the primary reading colour. It was #0f1115, which reads as
-     black; the client asked for black to be replaced wherever it appears, so
-     it now resolves to the same deep court green as the surfaces above.
+  /* Text — ink is the primary reading colour, and it resolves to the same deep
+     green as the surfaces above rather than to black, for the same reason.
      Retuning the token rather than 230 utility classes keeps every heading,
-     body copy and hairline border in step. Contrast is unharmed: 14.6:1 on
-     paper, 13.0:1 on surface, 12.6:1 on volt. */
-  --color-ink: #152e20;
-  --color-mist: #5f6672;
+     body copy and hairline border in step. Contrast is unharmed: 12.1:1 on
+     paper, 11.6:1 on surface, 8.0:1 on volt. */
+  --color-ink: #1e3d14;
+  --color-mist: #5c6660;
 
   /* decorative dividers and card edges */
-  --color-line: #d9d8cf;
+  --color-line: #dcded2;
   /* clears 3:1 on paper, surface AND surface-2 — the visible edge of
      interactive controls per WCAG 1.4.11 */
-  --color-line-strong: #7e8379;
+  --color-line-strong: #6f7a6b;
 
-  /* Brand — volt is a FILL colour (16.4:1 with ink on top).
-     volt-deep is the readable version for accent text, icons and borders. */
-  --color-volt: #d4ff3f;
-  --color-volt-deep: #4e6b00;
-  /* commerce urgency: sale prices, low stock. 5.6:1 both as text and as a fill */
-  --color-clay: #c2320f;
+  /* Brand. The names are unchanged because 44 components spell them, but the
+     values moved onto the logo:
+
+     volt      the ball's yellow. A FILL only (8.0:1 with ink on top) — it is
+               far too light to set type in.
+     volt-deep the logo's green, darkened to 5.2:1 on paper. This is the
+               readable accent: link text, icons, borders, focus rings. */
+  --color-volt: #fecd06;
+  --color-volt-deep: #3f7a1e;
+
+  /* The wordmark's orange, in the same fill/text pairing.
+     flame is the logo value, for artwork and large fills only (2.4:1 — never
+     type). clay is the darkened one that clears 4.7:1 both as text on paper
+     and as a fill under white, which is what sale prices and low-stock
+     warnings need. */
+  --color-flame: #fc8004;
+  --color-clay: #b35600;
+
+  /* The swoosh cyan, for drawn artwork accents. Like flame it is a fill, not
+     a text colour. */
+  --color-sky: #01acf1;
 
   /* one family across the whole site — the "mono" token keeps its name because
      44 components spell it, but it now resolves to Montserrat like everything
@@ -65,8 +83,8 @@ html {
      #faq into a long crawl up the page instead of showing the section. */
   scroll-behavior: auto;
   /* clears the fixed header, so a linked section lands below it, not under it
-     — the announcement bar (h-9) plus the nav (h-18) plus its border is 109px */
-  scroll-padding-top: 7.5rem;
+     — the pill is h-16 sitting in pt-4, so the header owns 84px */
+  scroll-padding-top: 6.5rem;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -115,31 +133,40 @@ body {
 
 /* ------------------------------------------------------------ scroll reveal */
 
-[data-reveal] {
+/* A short, single-axis lift. It used to travel 30px behind a 6px blur over
+   0.9s, which read as the page assembling itself in front of the reader —
+   the effect a template uses to look busy. Copy that arrives already legible
+   and settles 14px is the version you stop noticing, which is the point.
+   ---------------------------------------------------------------------------
+   Every rule below is gated on `html[data-reveal-ready]`, which the inline
+   script in the document head sets before first paint. The starting state of a
+   reveal is `opacity: 0`, and it is only ever cleared by an
+   IntersectionObserver callback — so with the rules unconditional, a script
+   that fails to boot (JS off, a blocked bundle, a hydration error) leaves most
+   of the page permanently blank rather than merely unanimated. Gating costs
+   nothing when the script does run and fails visible when it does not. */
+html[data-reveal-ready] [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
-  filter: blur(6px);
+  transform: translate3d(0, 14px, 0);
   transition:
-    opacity 0.9s var(--ease-out-expo),
-    transform 0.9s var(--ease-out-expo),
-    filter 0.9s var(--ease-out-expo);
+    opacity 0.55s var(--ease-out-expo),
+    transform 0.55s var(--ease-out-expo);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
-[data-reveal="left"] {
-  transform: translate3d(-40px, 0, 0);
+html[data-reveal-ready] [data-reveal="left"] {
+  transform: translate3d(-18px, 0, 0);
 }
-[data-reveal="right"] {
-  transform: translate3d(40px, 0, 0);
+html[data-reveal-ready] [data-reveal="right"] {
+  transform: translate3d(18px, 0, 0);
 }
-[data-reveal="zoom"] {
-  transform: scale(0.94);
+html[data-reveal-ready] [data-reveal="zoom"] {
+  transform: scale(0.98);
 }
 
-[data-reveal].is-in {
+html[data-reveal-ready] [data-reveal].is-in {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 
 /* ------------------------------------------------------------------- focus */
@@ -172,6 +199,48 @@ input[type="number"] {
   select,
   textarea {
     font-size: 16px;
+  }
+}
+
+/* ------------------------------------------------------------------ layout
+
+   Two primitives that every section on the site now reaches for instead of
+   respelling the same three utility strings. Before this the container was
+   written out as `mx-auto w-full max-w-350 px-5 sm:px-8` in 40-odd places and
+   the vertical padding was picked per section — py-10, py-12, py-14, lg:py-16,
+   lg:py-24, lg:py-32 — so no two sections sat on the same rhythm and the page
+   read as a stack of unrelated blocks. One scale, declared once. */
+
+.shell {
+  width: 100%;
+  max-width: 87.5rem; /* the same 1400px max-w-350 resolved to */
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .shell {
+    padding-inline: 2rem;
+  }
+}
+
+/* The rhythm: one step for a normal section, one for the quieter strips that
+   sit between them. Nothing else. */
+.section {
+  padding-block: 4.5rem;
+}
+
+.section-tight {
+  padding-block: 2.75rem;
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-block: 7rem;
+  }
+
+  .section-tight {
+    padding-block: 3.5rem;
   }
 }
 
@@ -318,10 +387,9 @@ input[type="number"] {
   html {
     scroll-behavior: auto;
   }
-  [data-reveal] {
+  html[data-reveal-ready] [data-reveal] {
     opacity: 1;
     transform: none;
-    filter: none;
   }
   .marquee-track,
   .float-slow,

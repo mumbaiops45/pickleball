@@ -1,12 +1,12 @@
 import Link from "next/link";
 import PageHero from "@/components/ui/PageHero";
 import { Accent } from "@/components/ui/Heading";
-import { contact } from "@/lib/data";
+import { brand, contact } from "@/lib/data";
 
 export const metadata = {
   title: "Privacy policy",
   description:
-    "What PADDLEHAUS collects when you shop, why we hold it, who we share it with, and how to have it corrected or erased.",
+    "What PICKLEBALL collects when you shop, why we hold it, who we share it with, and how to have it corrected or erased.",
 };
 
 const UPDATED = "19 August 2026";
@@ -86,7 +86,7 @@ export default function PrivacyPolicyPage() {
 
         <p className="mt-10 text-[15px] leading-relaxed text-mist">
           This policy covers {" "}
-          <span className="text-ink">paddlehaus.in</span> and the account,
+          <span className="text-ink">nishilandsports.com</span> and the account,
           checkout and delivery services behind it. We collect what an order
           needs and little else: there are no advertising trackers, no
           analytics scripts and no third-party cookies on this site.
@@ -309,7 +309,7 @@ export default function PrivacyPolicyPage() {
               place, and we aim to answer within a few working days.
             </p>
             <div className="rounded-3xl border border-line bg-surface p-6 text-sm text-ink">
-              <p className="font-semibold">PADDLEHAUS</p>
+              <p className="font-semibold">{brand.legalName}</p>
               <p className="mt-2 text-mist">
                 {contact.addressLines.map((line) => (
                   <span key={line} className="block">

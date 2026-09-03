@@ -48,7 +48,7 @@ export default function CartDrawer() {
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-5">
           <h2 className="flex items-center gap-2.5 text-sm font-semibold uppercase tracking-[0.16em]">
-            <LogoMark size="sm" tone="volt" />
+            <LogoMark size="sm" />
             Your cart
             <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-mist">
               {count}
@@ -72,7 +72,7 @@ export default function CartDrawer() {
             </span>
             <p className="mt-6 text-base font-medium">Your cart is empty</p>
             <p className="mt-2 text-sm text-mist">
-              Paddles, balls and everything else are two taps away.
+              Every ball we make is two taps away.
             </p>
             <Link
               href="/shop"

@@ -9,7 +9,7 @@ export default function NotFound() {
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-5 pb-24 pt-32 text-center sm:px-8 lg:py-32">
       <div className="w-24">
         <div className="float-slow">
-          <BallArt id="404-ball" color="#d4ff3f" className="w-full" />
+          <BallArt id="404-ball" color="#fecd06" className="w-full" />
         </div>
       </div>
       <Logo size="md" className="mt-10 justify-center" />

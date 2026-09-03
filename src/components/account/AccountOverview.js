@@ -83,7 +83,7 @@ export default function AccountOverview() {
           icon={HeartIcon}
           label="Wishlist"
           value={wishlistHydrated ? savedCount : 0}
-          hint="View saved gear"
+          hint="View saved balls"
         />
         <StatCard
           href="/cart"

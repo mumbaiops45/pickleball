@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { products as localCatalogue } from "@/lib/data";
 import { catalogueProducts } from "@/lib/services/catalogue";
 import { createMemoryStore, usePersistentStore } from "@/store/persistent";
 
@@ -20,7 +19,9 @@ import { createMemoryStore, usePersistentStore } from "@/store/persistent";
  * page pays for the product list once at most.
  */
 
-const catalogueStore = createMemoryStore(localCatalogue);
+// starts empty and fills from the API; it used to start from the seeded
+// catalogue, which showed repo products to anyone whose fetch had not landed
+const catalogueStore = createMemoryStore([]);
 
 // module-scoped: one request per page load, however many views ask for it
 let requested = false;
@@ -41,7 +42,7 @@ export function useCatalogue(enabled = true) {
         if (products.length) catalogueStore.set(products);
       })
       .catch(() => {
-        // the store keeps rendering from data.js; let the next mount retry
+        // nothing to fall back on now; let the next mount retry
         requested = false;
       });
   }, [enabled]);

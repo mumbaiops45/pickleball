@@ -33,6 +33,16 @@ import {
   User,
   X,
   Zap,
+  GraduationCap,
+  House,
+  Sun,
+  Trophy,
+  PersonStanding,
+  RotateCw,
+  Swords,
+  Target,
+  Users,
+  Volleyball,
 } from "lucide-react";
 
 const STROKE = 1.75;
@@ -120,4 +130,16 @@ export function WhatsappIcon(props) {
 }
 
 // ratings read as solid, not outlined
+export const TargetIcon = adapt(Target);
+export const UsersIcon = adapt(Users);
+export const ServeIcon = adapt(PersonStanding);
+export const RotateIcon = adapt(RotateCw);
+export const RallyIcon = adapt(Swords);
+export const BallIcon = adapt(Volleyball);
+
+export const SchoolIcon = adapt(GraduationCap);
+export const HomeIcon = adapt(House);
+export const SunIcon = adapt(Sun);
+export const TrophyIcon = adapt(Trophy);
+
 export const StarIcon = adapt(Star, { fill: "currentColor", strokeWidth: 0 });

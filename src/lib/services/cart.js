@@ -11,7 +11,7 @@ import { resolveProductId, slugForId } from "@/lib/services/catalogue";
  *
  * `colorway` and `option` ride along on every write. The current cartItemSchema
  * has no columns for them and `DELETE /cart/:productId` keys on the product
- * alone, so until those fields are added two colourways of the same paddle
+ * alone, so until those fields are added two colourways of the same product
  * collapse into one line. Sending them now costs nothing and makes the client
  * correct the moment the schema catches up.
  */

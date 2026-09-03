@@ -507,7 +507,7 @@ export default function AuthModal() {
             HEADER
         ===================================================== */}
 
-        <div className="relative isolate shrink-0 overflow-hidden bg-[linear-gradient(135deg,#d4ff3f_0%,#a9dd00_55%,#7ba500_100%)] px-6 py-5">
+        <div className="relative isolate shrink-0 overflow-hidden bg-[linear-gradient(135deg,#fecd06_0%,#fc8004_60%,#b35600_100%)] px-6 py-5">
           {/* Decorative glow */}
           <span className="pointer-events-none absolute -right-6 -top-10 size-40 rounded-full bg-paper/25 blur-2xl" />
 
@@ -521,7 +521,7 @@ export default function AuthModal() {
             <div className="float-slow">
               <BallArt
                 id="auth-modal-ball"
-                color="#d4ff3f"
+                color="#fecd06"
                 className="w-full drop-shadow-[0_18px_30px_rgba(21,46,32,.35)]"
               />
             </div>
@@ -556,10 +556,7 @@ export default function AuthModal() {
           =================================================== */}
 
           <div className="relative max-w-[68%]">
-            <LogoMark
-              size="sm"
-              tone="forest"
-            />
+            <LogoMark size="sm" />
 
             {authMode === "login" ? (
               <>
@@ -580,7 +577,7 @@ export default function AuthModal() {
                 </h2>
 
                 <p className="mt-1 text-[12px] leading-relaxed text-ink/75">
-                  Join PaddleHaus and get access to
+                  Join PICKLEBALL and get access to
                   exclusive offers and faster checkout.
                 </p>
               </>

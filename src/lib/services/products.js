@@ -1,14 +1,13 @@
 import { api } from "@/lib/api";
-import { SHOE_BRANDS, findProduct, products as localCatalogue } from "@/lib/data";
+
 
 /**
  * The live catalogue, read from `GET /products`.
  *
- * The storefront keeps owning presentation — the review block, the shop
- * filters, the card sizing — while the API owns what a shopper is actually
- * buying: name, copy, photography, price, stock, badge. `mergeProduct` lays an
- * API row over the local entry of the same slug, so a page renders exactly as
- * it did before but shows whatever the store is selling.
+ * The storefront owns presentation — the shop filters, the card sizing — and
+ * the API owns everything a shopper is buying: name, copy, photography, price,
+ * stock, badge. Nothing is read from the seeded catalogue in data.js: what the
+ * admin holds is what the store shows, and an empty admin is an empty store.
  *
  * Three things about the API shape drive the code below:
  *
@@ -25,33 +24,27 @@ import { SHOE_BRANDS, findProduct, products as localCatalogue } from "@/lib/data
 
 const LIST_PATH = "/products?limit=500";
 
-/** Backend category names against the storefront's filter names. */
+/**
+ * Backend category names against the storefront's filter names.
+ *
+ * Only the ball categories are listed. The admin still holds paddle, shoe,
+ * apparel and bag rows and the API still returns them, but the store sells
+ * pickleballs and nothing else, so a row in a category with no entry here is
+ * dropped by `isVisible` instead of being rendered.
+ */
 const CATEGORY_FILTER = {
-  Paddles: "Paddles",
   Ball: "Balls",
   Balls: "Balls",
-  Apparel: "Apparel",
-  Bags: "Gear",
-  Gear: "Gear",
-  Shoes: "Shoes",
 };
 
 /** Card and gallery sizing is keyed on art.kind, so every product needs one. */
 const CATEGORY_ART = {
-  Paddles: "paddle",
   Balls: "ball",
-  Apparel: "tee",
-  Gear: "bag",
-  Shoes: "shoe",
 };
 
 /** The generic shots ProductArt falls back to, for a row with no photo. */
 const KIND_PHOTO = {
-  paddle: "/photos/paddle-product.png",
-  ball: "/photos/pickleball-balls.png",
-  tee: "/photos/court-apparel.png",
-  bag: "/photos/bags.jpg",
-  shoe: "/photos/shoes.jpg",
+  ball: "/photos/pickleball-balls-white.png",
 };
 
 // ProductDetail reads colorways[0] and options[0] on mount, so neither may
@@ -61,6 +54,20 @@ const DEFAULT_OPTIONS = ["One size"];
 
 /** Placeholders a shopper should never see in a filter or a spec line. */
 const BLANK_BRANDS = new Set(["na", "n/a", "none", "-", "null"]);
+
+/**
+ * The same scrub, for any free-text field the admin leaves as a dash.
+ *
+ * The badge went straight through `text()`, so a row saved with "NA" in that
+ * field printed a yellow "NA" pill across the corner of the product tile on
+ * the home page and the shop grid. A badge is a claim — "Tournament", "New" —
+ * and a placeholder is not one, so it renders as no badge at all.
+ */
+const meaningful = (value, fallback = null) => {
+  const raw = text(value);
+  if (!raw || BLANK_BRANDS.has(raw.toLowerCase())) return fallback;
+  return raw;
+};
 
 const isObjectId = (value) => /^[0-9a-f]{24}$/i.test(String(value ?? ""));
 
@@ -76,9 +83,22 @@ function photoUrl(source, mongoId, index) {
   return `/media/products/${mongoId}/${index}`;
 }
 
-/** A draft or archived row is not for sale, so it is treated as absent. */
+/** A category the storefront no longer carries — paddles, shoes, apparel, bags. */
+const isStocked = (row) =>
+  !row?.category?.name || Boolean(CATEGORY_FILTER[String(row.category.name).trim()]);
+
+/**
+ * `isActive` is the switch, and it has to be explicitly true.
+ *
+ * It used to read `isActive !== false`, which let a row through when the field
+ * was unset. A row still has to be published as well: `isActive` is how the
+ * admin takes a product off sale, `status` is how it holds one back before it
+ * is ready, and neither should reach a shopper.
+ */
 const isVisible = (row) =>
-  row?.isActive !== false && (row?.status ?? "PUBLISHED") === "PUBLISHED";
+  row?.isActive === true &&
+  (row?.status ?? "PUBLISHED") === "PUBLISHED" &&
+  isStocked(row);
 
 const text = (value, fallback = null) =>
   typeof value === "string" && value.trim() ? value.trim() : fallback;
@@ -90,17 +110,14 @@ const positive = (value, fallback) =>
   Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : fallback;
 
 /**
- * Hand-typed brands against the names the shop sidebar filters on, so
- * "babolat" and "Paddlehaus" still land under Babolat and PADDLEHAUS.
+ * Brands are typed by hand in the admin, so "head" and "HEAD" arrive as often
+ * as each other. There is no fixed list to match against now that the shoe
+ * line is gone, so a real value is trimmed and the placeholders fall back.
  */
 function brandName(value, fallback) {
   const raw = text(value);
   if (!raw || BLANK_BRANDS.has(raw.toLowerCase())) return fallback;
-
-  const known = SHOE_BRANDS.find(
-    (brand) => brand.toLowerCase() === raw.toLowerCase(),
-  );
-  return known ?? raw;
+  return raw;
 }
 
 /**
@@ -121,18 +138,19 @@ function pricing(row, local) {
 }
 
 /**
- * One API row plus the local catalogue entry of the same slug, in the shape
- * every product component already expects. Anything the API leaves blank — an
- * unset brand, no colourways, a rating of zero before the first review — falls
- * back to the local entry rather than blanking the page out.
+ * One API row in the shape every product component expects.
+ *
+ * It used to lay the row over the data.js entry of the same slug, so a blank
+ * field in the admin was quietly filled from the seeded catalogue. That is why
+ * copy the store had never typed kept appearing on live products. Nothing is
+ * borrowed now: a field the admin leaves empty falls back to a neutral default
+ * or is simply absent.
  */
-export function mergeProduct(row, base = null) {
-  const slug = text(row?.slug) ?? text(row?._id) ?? base?.id;
-  const local = base ?? findProduct(slug);
+export function mergeProduct(row) {
+  const slug = text(row?.slug) ?? text(row?._id);
 
-  const category =
-    CATEGORY_FILTER[text(row?.category?.name) ?? ""] ?? local?.category ?? "Gear";
-  const art = local?.art ?? { kind: CATEGORY_ART[category] ?? "paddle" };
+  const category = CATEGORY_FILTER[text(row?.category?.name) ?? ""] ?? "Balls";
+  const art = { kind: CATEGORY_ART[category] ?? "ball" };
 
   const mongoId = text(row?._id);
   const images = filled(
@@ -141,54 +159,44 @@ export function mergeProduct(row, base = null) {
       .map((src, index) => photoUrl(src.trim(), mongoId, index)),
     null,
   );
-  const gallery =
-    images ??
-    local?.gallery ?? [local?.image ?? KIND_PHOTO[art.kind] ?? KIND_PHOTO.paddle];
+  const gallery = images ?? [KIND_PHOTO[art.kind] ?? KIND_PHOTO.ball];
 
-  const colorways = filled(
-    row?.colorways,
-    filled(local?.colorways, [DEFAULT_COLORWAY]),
-  );
-  const { price, compareAt } = pricing(row, local);
+  const colorways = filled(row?.colorways, [DEFAULT_COLORWAY]);
+  const { price, compareAt } = pricing(row, null);
 
   return {
-    ...local,
-
     id: slug,
     mongoId,
-    name: text(row?.name, local?.name ?? slug),
-    blurb: text(row?.shortDescription, local?.blurb ?? ""),
-    description: text(row?.description, local?.description ?? local?.blurb ?? ""),
+    name: text(row?.name, slug),
+    blurb: text(row?.shortDescription, ""),
+    description: text(row?.description, text(row?.shortDescription, "")),
 
     category,
     art,
-    brand: brandName(row?.brand, local?.brand ?? null),
-    type: text(row?.type, local?.type ?? null),
-    skill: text(row?.skill, local?.skill ?? null),
-    badge: text(row?.badge, local?.badge ?? null),
-    sku: text(row?.sku, local?.sku ?? ""),
+    brand: brandName(row?.brand, null),
+    type: text(row?.type, null),
+    skill: text(row?.skill, null),
+    badge: meaningful(row?.badge),
+    sku: text(row?.sku, ""),
 
     price,
     compareAt,
-    stock: Number.isFinite(Number(row?.stock))
-      ? Number(row.stock)
-      : (local?.stock ?? 0),
+    stock: Number.isFinite(Number(row?.stock)) ? Number(row.stock) : 0,
 
-    // A store that has not collected its own reviews yet keeps the copy the
-    // catalogue ships with, so the ratings block never drops to a bare zero.
-    rating: positive(row?.rating, local?.rating ?? 0),
-    reviews: positive(row?.reviewCount, local?.reviews ?? 0),
+    // zero until the store collects its own; no borrowed rating
+    rating: positive(row?.rating, 0),
+    reviews: positive(row?.reviewCount, 0),
 
     image: gallery[0],
     gallery,
 
     colorways,
     swatches: filled(row?.swatches, colorways.map((entry) => entry.hex)),
-    optionLabel: text(row?.optionLabel, local?.optionLabel ?? "Size"),
-    options: filled(row?.options, filled(local?.options, DEFAULT_OPTIONS)),
+    optionLabel: text(row?.optionLabel, "Size"),
+    options: filled(row?.options, DEFAULT_OPTIONS),
 
-    highlights: filled(row?.highlights, local?.highlights ?? []),
-    specs: filled(row?.specs, local?.specs ?? []),
+    highlights: filled(row?.highlights, []),
+    specs: filled(row?.specs, []),
   };
 }
 
@@ -214,22 +222,24 @@ export async function fetchProductRows() {
 }
 
 /**
- * The catalogue a page should render. Falls back to `data.js` when the API is
- * unreachable or has nothing published, so an outage costs the store its
- * prices, not its shopfront.
+ * The catalogue a page should render — the live rows, and nothing else.
+ *
+ * It used to fall back to the seeded catalogue in data.js whenever the API was
+ * unreachable or returned nothing sellable. That meant the store quietly
+ * showed products it does not sell: every ball row in the admin is currently
+ * inactive, so the shop was rendering seven demo products from the repo. An
+ * empty catalogue is now an empty shop, which is the truth.
  */
 export async function loadCatalogue() {
   const rows = await fetchProductRows();
-  if (!rows) return localCatalogue;
-
-  const merged = mergeCatalogue(rows);
-  return merged.length ? merged : localCatalogue;
+  return rows ? mergeCatalogue(rows) : [];
 }
 
 /**
- * One product out of a catalogue, by slug (`apex-carbon-16`) or ObjectId. A
- * product the store holds no row for still resolves against `data.js`, so
- * older links keep working instead of 404ing.
+ * One product out of a catalogue, by slug or ObjectId.
+ *
+ * No fallback to data.js: a link to something the store no longer sells should
+ * 404 rather than render a product out of the repo that cannot be bought.
  */
 export function findIn(catalogue, idOrSlug) {
   const key = String(idOrSlug ?? "");
@@ -237,7 +247,7 @@ export function findIn(catalogue, idOrSlug) {
   return (
     catalogue.find((product) =>
       isObjectId(key) ? product.mongoId === key : product.id === key,
-    ) ?? findProduct(key)
+    ) ?? null
   );
 }
 

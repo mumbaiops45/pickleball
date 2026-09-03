@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import ShopFilters from "@/components/shop/ShopFilters";
-import { PRICE_BANDS, SORT_OPTIONS, products as localCatalogue } from "@/lib/data";
+import { PRICE_BANDS, SORT_OPTIONS } from "@/lib/data";
 
 const DEFAULT_FILTERS = {
   category: "All",
@@ -21,7 +21,7 @@ const inBand = (price, bandId) => {
 
 export default function ShopBrowser({
   // the catalogue the page fetched; data.js only stands in if none was passed
-  catalogue = localCatalogue,
+  catalogue = [],
   initialCategory = "All",
   initialBrand = null,
   initialType = null,
@@ -91,7 +91,7 @@ export default function ShopBrowser({
         !filters.priceBands.some((band) => inBand(product.price, band))
       )
         return false;
-      // brand and fit only exist on footwear, so an unbranded item drops out
+      // brand and fit are optional on a row, so an unset one drops out
       // as soon as either is asked for
       if (filters.brands.length && !filters.brands.includes(product.brand))
         return false;

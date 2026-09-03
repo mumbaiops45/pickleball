@@ -71,7 +71,7 @@ export default function AboutIntro() {
               className="absolute bottom-[16%] right-[10%] w-16"
             >
               <div className="float-slow">
-                <BallArt id="about-ball" color="#d4ff3f" className="w-full drop-shadow-[0_10px_24px_rgba(0,0,0,.45)]" />
+                <BallArt id="about-ball" color="#fecd06" className="w-full drop-shadow-[0_10px_24px_rgba(0,0,0,.45)]" />
               </div>
             </div>
 

@@ -23,7 +23,7 @@ const OTP_LENGTH = 6;
  * pressing the same button expecting a different answer.
  */
 const NOT_ENABLED =
-  "Reset by email is not switched on yet. Please write to hello@paddlehaus.in and we will get you back in.";
+  "Reset by email is not switched on yet. Please write to nishilandsports@gmail.com and we will get you back in.";
 
 const field =
   "h-13 w-full rounded-xl border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/70 focus:border-volt-deep";
@@ -288,7 +288,7 @@ export default function ForgotPasswordView() {
       <p className="mt-4 text-center text-xs text-mist">
         Need a hand? Write to{" "}
         <Accent>
-          <a href="mailto:hello@paddlehaus.in">hello@paddlehaus.in</a>
+          <a href="mailto:nishilandsports@gmail.com">nishilandsports@gmail.com</a>
         </Accent>
         .
       </p>

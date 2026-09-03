@@ -1,6 +1,6 @@
 import ParallaxScene from "@/components/parallax/ParallaxScene";
 import Reveal from "@/components/ui/Reveal";
-import { CourtArt } from "@/components/art/GearArt";
+import { CourtArt } from "@/components/art/CourtArt";
 import { values } from "@/lib/data";
 import { Accent } from "@/components/ui/Heading";
 
@@ -15,7 +15,7 @@ export default function AboutValues() {
         data-speed-x="0.6"
         className="pointer-events-none absolute -left-28 top-0 -z-10 hidden h-[110%] opacity-[0.08] lg:block"
       >
-        <CourtArt className="h-full w-auto" stroke="#4e6b00" />
+        <CourtArt className="h-full w-auto" stroke="#3f7a1e" />
       </div>
 
       <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
