@@ -1,6 +1,7 @@
 import PageHero from "@/components/ui/PageHero";
 import ContactDetails from "@/components/contact/ContactDetails";
 import ContactForm from "@/components/contact/ContactForm";
+import Reveal from "@/components/ui/Reveal";
 import { contact } from "@/lib/data";
 
 export const metadata = {
@@ -19,14 +20,21 @@ export default function ContactPage() {
         crumbs={[{ label: "Contact" }]}
       />
 
-      <section className="mx-auto grid w-full max-w-350 grid-cols-1 gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_400px] lg:gap-14 lg:py-16">
-        <div className="min-w-0">
-          <ContactForm />
-        </div>
+      <section className="section bg-surface">
+        <div className="shell grid grid-cols-1 gap-10 lg:grid-cols-[1fr_400px] lg:gap-14">
+          <Reveal variant="left" className="min-w-0">
+            <ContactForm className="rounded-2xl border border-line bg-paper p-6 shadow-[0_1px_2px_rgba(15,17,21,.04)] sm:p-8" />
+          </Reveal>
 
-        <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
-          <ContactDetails />
-        </aside>
+          <Reveal
+            as="aside"
+            variant="right"
+            delay={80}
+            className="min-w-0 lg:sticky lg:top-32 lg:self-start"
+          >
+            <ContactDetails />
+          </Reveal>
+        </div>
       </section>
     </>
   );

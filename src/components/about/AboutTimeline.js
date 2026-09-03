@@ -22,7 +22,7 @@ export default function AboutTimeline() {
           </h2>
         </Reveal>
 
-        <ol className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-9 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {milestones.map((milestone, index) => (
             <Reveal
               as="li"

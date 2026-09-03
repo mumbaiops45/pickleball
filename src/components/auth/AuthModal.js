@@ -497,91 +497,60 @@ export default function AuthModal() {
             ? "Login"
             : "Create account"
         }
-        className={`relative flex w-full max-w-[540px] max-h-[92vh] flex-col overflow-hidden rounded-3xl bg-paper shadow-[0_40px_80px_-20px_rgba(15,17,21,.45)] transition-all duration-400 ease-[cubic-bezier(.16,1,.3,1)] ${
+        className={`relative flex max-h-[92vh] w-full max-w-125 flex-col overflow-hidden rounded-3xl bg-paper shadow-[0_40px_90px_-20px_rgba(15,17,21,.5)] transition-all duration-400 ease-[cubic-bezier(.16,1,.3,1)] ${
           modalOpen
             ? "translate-y-0 scale-100 opacity-100"
             : "translate-y-6 scale-95 opacity-0"
         }`}
       >
         {/* ====================================================
-            HEADER
+            HEADER — a deep court-green band, the ball as the motif
         ===================================================== */}
 
-        <div className="relative isolate shrink-0 overflow-hidden bg-[linear-gradient(135deg,#fecd06_0%,#fc8004_60%,#b35600_100%)] px-6 py-5">
-          {/* Decorative glow */}
-          <span className="pointer-events-none absolute -right-6 -top-10 size-40 rounded-full bg-paper/25 blur-2xl" />
+        <div className="relative isolate shrink-0 overflow-hidden bg-forest px-7 py-6 text-paper">
+          <span className="pointer-events-none absolute -right-10 -top-16 size-48 rounded-full bg-volt/20 blur-3xl" />
+          <span className="pointer-events-none absolute -left-16 bottom-0 size-40 rounded-full bg-sky/15 blur-3xl" />
 
-          {/* ==================================================
-              BALL
-              A paddle used to sit in the top corner as well; it read as a bat,
-              so the pickleball is the only motif now.
-          =================================================== */}
-
-          <div className="pointer-events-none absolute -right-2 -top-4 w-20 opacity-95 sm:w-24">
+          <div className="pointer-events-none absolute -right-3 -top-5 w-24 opacity-90">
             <div className="float-slow">
               <BallArt
                 id="auth-modal-ball"
                 color="#fecd06"
-                className="w-full drop-shadow-[0_18px_30px_rgba(21,46,32,.35)]"
+                className="w-full drop-shadow-[0_18px_30px_rgba(0,0,0,.35)]"
               />
             </div>
           </div>
-
-          <div className="pointer-events-none absolute bottom-2 right-24 w-9 opacity-90">
-            <div className="float-slower">
-              <BallArt
-                id="auth-modal-ball-small"
-                color="#f5f3ed"
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* ==================================================
-              CLOSE
-          =================================================== */}
 
           <button
             type="button"
             tabIndex={modalOpen ? 0 : -1}
             onClick={closeAuth}
             aria-label="Close"
-            className="absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full text-ink/60 transition-colors hover:bg-forest/10 hover:text-ink"
+            className="absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full text-paper/60 transition-colors hover:bg-paper/10 hover:text-paper"
           >
             <CloseIcon className="size-4" />
           </button>
 
-          {/* ==================================================
-              HEADER CONTENT
-          =================================================== */}
-
-          <div className="relative max-w-[68%]">
+          <div className="relative max-w-[72%]">
             <LogoMark size="sm" />
 
-            {authMode === "login" ? (
-              <>
-                <h2 className="mt-2 text-xl font-semibold tracking-tight text-ink">
-                  Welcome back
-                </h2>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-paper">
+              {authMode === "login" ? (
+                <>
+                  Welcome <span className="text-volt">back</span>
+                </>
+              ) : (
+                <>
+                  Join <span className="text-volt">PICKLEBALL</span>
+                </>
+              )}
+            </h2>
 
-                <p className="mt-1 text-[12px] leading-relaxed text-ink/75">
-                  Login to your account for member
-                  pricing, faster checkout and exclusive
-                  drops.
-                </p>
-              </>
-            ) : (
-              <>
-                <h2 className="mt-2 text-xl font-semibold tracking-tight text-ink">
-                  Create your account
-                </h2>
-
-                <p className="mt-1 text-[12px] leading-relaxed text-ink/75">
-                  Join PICKLEBALL and get access to
-                  exclusive offers and faster checkout.
-                </p>
-              </>
-            )}
+            <p className="mt-1.5 text-[13px] leading-relaxed text-paper/70">
+              {authMode === "login"
+                ? "Member pricing, faster checkout and first access to new ball runs."
+                : "Create an account for member pricing and faster checkout."}
+            </p>
           </div>
         </div>
 
@@ -596,37 +565,32 @@ export default function AuthModal() {
 
           {authMode === "login" && (
             <>
-              <h3 className="text-xl font-semibold tracking-tight text-ink">
-                Login to your account
-              </h3>
-
-              {/* =================================================
-                  LOGIN TABS
-              ================================================== */}
-
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              {/* segmented control — password / OTP */}
+              <div className="grid grid-cols-2 gap-1 rounded-full border border-line bg-surface p-1">
                 <button
                   type="button"
                   onClick={selectPasswordLogin}
-                  className={`h-12 rounded-xl border text-sm font-medium transition-all ${
+                  aria-pressed={loginMethod === "password"}
+                  className={`h-10 rounded-full text-sm font-medium transition-all duration-200 ${
                     loginMethod === "password"
-                      ? "border-volt bg-volt/5 text-ink"
-                      : "border-line-strong bg-paper text-ink hover:border-volt"
+                      ? "bg-volt text-ink shadow-sm"
+                      : "text-mist hover:text-ink"
                   }`}
                 >
-                  Login with Password
+                  Password
                 </button>
 
                 <button
                   type="button"
                   onClick={selectOtpLogin}
-                  className={`h-12 rounded-xl border text-sm font-medium transition-all ${
+                  aria-pressed={loginMethod === "otp"}
+                  className={`h-10 rounded-full text-sm font-medium transition-all duration-200 ${
                     loginMethod === "otp"
-                      ? "border-volt bg-volt/5 text-ink"
-                      : "border-line-strong bg-paper text-ink hover:border-volt"
+                      ? "bg-volt text-ink shadow-sm"
+                      : "text-mist hover:text-ink"
                   }`}
                 >
-                  Login with OTP
+                  OTP
                 </button>
               </div>
 
@@ -647,7 +611,7 @@ export default function AuthModal() {
                       className="mb-2 block text-sm font-medium text-ink"
                     >
                       Email Address
-                      <span className="ml-1 text-red-500">
+                      <span className="ml-1 text-clay">
                         *
                       </span>
                     </label>
@@ -680,7 +644,7 @@ export default function AuthModal() {
                       className="mb-2 block text-sm font-medium text-ink"
                     >
                       Password
-                      <span className="ml-1 text-red-500">
+                      <span className="ml-1 text-clay">
                         *
                       </span>
                     </label>
@@ -770,7 +734,7 @@ export default function AuthModal() {
                           className="mb-2 block text-sm font-medium text-ink"
                         >
                           Mobile Number
-                          <span className="ml-1 text-red-500">
+                          <span className="ml-1 text-clay">
                             *
                           </span>
                         </label>
@@ -957,7 +921,7 @@ export default function AuthModal() {
                   className="mb-2 block text-sm font-medium text-ink"
                 >
                   Full Name
-                  <span className="ml-1 text-red-500">
+                  <span className="ml-1 text-clay">
                     *
                   </span>
                 </label>
@@ -986,7 +950,7 @@ export default function AuthModal() {
                   className="mb-2 block text-sm font-medium text-ink"
                 >
                   Email Address
-                  <span className="ml-1 text-red-500">
+                  <span className="ml-1 text-clay">
                     *
                   </span>
                 </label>
@@ -1015,7 +979,7 @@ export default function AuthModal() {
                   className="mb-2 block text-sm font-medium text-ink"
                 >
                   Mobile Number
-                  <span className="ml-1 text-red-500">
+                  <span className="ml-1 text-clay">
                     *
                   </span>
                 </label>
@@ -1055,7 +1019,7 @@ export default function AuthModal() {
                   className="mb-2 block text-sm font-medium text-ink"
                 >
                   Password
-                  <span className="ml-1 text-red-500">
+                  <span className="ml-1 text-clay">
                     *
                   </span>
                 </label>

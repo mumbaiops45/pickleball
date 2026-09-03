@@ -9,11 +9,12 @@
      tint/shade of one, so the site and the mark read as one brand.
      ------------------------------------------------------------------------ */
 
-  /* Surfaces — light and barely warm, so the logo's saturation carries the page */
+  /* Surfaces — the logo's green, tinted light. Kept saturated enough that a
+     banded section reads as a colour, not "off-white", which is what the
+     client meant by wanting it to feel like a shop rather than a brochure. */
   --color-paper: #ffffff;
-  /* far enough from paper that a banded section actually reads as a band */
-  --color-surface: #f5f5ee;
-  --color-surface-2: #eaebe0;
+  --color-surface: #e8f2d7;
+  --color-surface-2: #d6e8c0;
 
   /* The dark surface — a deep leaf green pulled from the logo's #76c643, NOT
      black. The client asked twice for black backgrounds to go, so the
@@ -169,6 +170,112 @@ html[data-reveal-ready] [data-reveal].is-in {
   transform: none;
 }
 
+/* -------------------------------------------------------------- custom cursor
+
+   Only ever in play when <CustomCursor> has added `.has-custom-cursor` to the
+   root — which it does only on a fine pointer with motion allowed. */
+
+.cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cursor-layer.is-active {
+  opacity: 1;
+}
+.cursor-layer[data-mode="native"] {
+  opacity: 0 !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 7px;
+  width: 7px;
+  border-radius: 999px;
+  background: var(--color-volt-deep);
+  transition: opacity 0.25s ease;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-volt-deep);
+  background: transparent;
+  transition:
+    height 0.32s var(--ease-out-expo),
+    width 0.32s var(--ease-out-expo),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    scale 0.18s ease;
+}
+.cursor-ring.is-down {
+  scale: 0.82;
+}
+
+.cursor-ring-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity 0.22s ease,
+    scale 0.22s var(--ease-out-expo);
+}
+
+.cursor-layer[data-mode="link"] .cursor-ring,
+.cursor-layer[data-mode="zoom"] .cursor-ring {
+  height: 62px;
+  width: 62px;
+  background: color-mix(in srgb, var(--color-volt-deep) 14%, transparent);
+}
+.cursor-layer[data-mode="zoom"] .cursor-dot {
+  opacity: 0;
+}
+.cursor-layer[data-mode="media"] .cursor-ring {
+  height: 92px;
+  width: 92px;
+  border-color: transparent;
+  background: var(--color-volt);
+}
+.cursor-layer[data-mode="media"] .cursor-ring-label {
+  opacity: 1;
+  scale: 1;
+}
+.cursor-layer[data-mode="media"] .cursor-dot {
+  opacity: 0;
+}
+
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor label,
+  html.has-custom-cursor [data-cursor] {
+    cursor: none;
+  }
+  html.has-custom-cursor input,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor select,
+  html.has-custom-cursor [data-cursor="native"],
+  html.has-custom-cursor [data-cursor="native"] * {
+    cursor: auto;
+  }
+}
+
 /* ------------------------------------------------------------------- focus */
 
 :focus-visible {
@@ -227,21 +334,37 @@ input[type="number"] {
 /* The rhythm: one step for a normal section, one for the quieter strips that
    sit between them. Nothing else. */
 .section {
-  padding-block: 2.5rem;
+  padding-block: 2rem;
+  background-image:
+    radial-gradient(circle at 92% 8%, rgba(254, 205, 6, 0.2), transparent 22rem),
+    radial-gradient(circle at 2% 92%, rgba(1, 172, 241, 0.12), transparent 20rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 45%);
 }
 
 .section-tight {
-  padding-block: 2.75rem;
+  padding-block: 2rem;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 42%);
 }
 
 @media (min-width: 1024px) {
   .section {
-    padding-block: 4rem;
+    padding-block: 3.25rem;
   }
 
   .section-tight {
-    padding-block: 2.25rem;
+    padding-block: 2.75rem;
   }
+}
+
+/* An oversized number/word set behind a heading as texture. Clipped to its
+   outline, held back in the stack, and never read by a screen reader — the
+   markup that uses it carries aria-hidden. */
+.ghost {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  user-select: none;
 }
 
 /* swipeable rails read cleaner without a visible scrollbar */
@@ -318,6 +441,107 @@ input[type="number"] {
 @keyframes hero-progress {
   to {
     width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------- first-load intro
+
+   A light panel carrying the ball, wiped off the top of the screen. Both
+   keyframes are one-shot and land in a finished (off-screen / invisible) state,
+   so the intro clears itself even with no JS. */
+.load-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  pointer-events: none;
+  animation: load-intro-panel 2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+.load-intro__ball {
+  width: min(34vmin, 9rem);
+  filter: drop-shadow(0 24px 40px rgba(30, 61, 20, 0.22));
+  animation: load-intro-ball 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* spins in fast with a touch of overshoot, keeps turning while it holds, then
+   rushes toward the viewer and fades as the panel lifts away */
+@keyframes load-intro-ball {
+  0% {
+    transform: scale(0.2) rotate(-30deg);
+    opacity: 0;
+  }
+  16% {
+    transform: scale(1.12) rotate(150deg);
+    opacity: 1;
+  }
+  24% {
+    transform: scale(1) rotate(180deg);
+  }
+  58% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+  74%,
+  100% {
+    transform: scale(2.6) rotate(430deg);
+    opacity: 0;
+  }
+}
+
+@keyframes load-intro-panel {
+  0%,
+  60% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-101%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .load-intro {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------- page enter
+
+   Runs once each time a route mounts (see app/template.js) — content arrives
+   already legible and settles a short distance rather than fading up from far. */
+.page-enter {
+  animation: page-enter 0.5s var(--ease-out-expo) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
+/* the typewriter's caret — a hard blink rather than a fade, which is what a
+   terminal cursor does */
+.typewriter-caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
   }
 }
 
@@ -399,6 +623,11 @@ input[type="number"] {
   .step-in,
   .step-item {
     animation: none;
+  }
+  /* keep the caret visible and still rather than blinking */
+  .typewriter-caret {
+    animation: none;
+    opacity: 1;
   }
   /* autoplay is off under reduced motion, so the bar shows a resting state */
   .hero-progress {

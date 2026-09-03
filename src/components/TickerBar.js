@@ -1,4 +1,3 @@
-import ParallaxScene from "@/components/parallax/ParallaxScene";
 import { announcements } from "@/lib/data";
 
 function Row({ items, direction, duration }) {
@@ -26,18 +25,18 @@ function Row({ items, direction, duration }) {
 
 export default function TickerBar() {
   return (
-    <ParallaxScene as="section" className="relative z-10 overflow-hidden py-6">
-      <div data-speed-x="1.4" className="rotate-[-1.6deg]">
+    <section className="relative z-10 overflow-hidden py-6">
+      <div className="rotate-[-1.6deg]">
         <div className="border-y border-volt-deep/30 bg-volt py-3.5 text-ink">
           <Row items={announcements} duration="38s" />
         </div>
       </div>
 
-      <div data-speed-x="-1.9" className="mt-3 rotate-[1.2deg]">
+      <div className="mt-3 rotate-[1.2deg]">
         <div className="border-y border-line bg-surface py-3.5 text-mist">
           <Row items={announcements} direction="reverse" duration="46s" />
         </div>
       </div>
-    </ParallaxScene>
+    </section>
   );
 }

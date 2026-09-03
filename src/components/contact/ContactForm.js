@@ -226,7 +226,7 @@ export default function ContactForm({
       <div
         role="status"
         aria-live="polite"
-        className="rounded-2xl border border-line bg-surface p-6 text-center sm:p-8"
+        className={`text-center ${className}`}
       >
         <span className="mx-auto grid size-14 place-items-center rounded-full bg-volt text-ink">
           <CheckIcon className="size-6" />

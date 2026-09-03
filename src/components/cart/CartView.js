@@ -5,6 +5,7 @@ import Link from "next/link";
 import CartLineItem from "@/components/cart/CartLineItem";
 import FreeShippingMeter from "@/components/cart/FreeShippingMeter";
 import { ArrowIcon, BagIcon, ShieldIcon } from "@/components/ui/Icons";
+import Reveal from "@/components/ui/Reveal";
 import { useCart } from "@/store/CartProvider";
 import { formatPrice } from "@/lib/format";
 import { Accent } from "@/components/ui/Heading";
@@ -73,7 +74,7 @@ export default function CartView() {
   return (
     <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-10 px-5 py-10 sm:px-8 lg:py-14 lg:grid-cols-[1fr_380px] lg:gap-14">
       {/* lines */}
-      <section>
+      <Reveal as="section" variant="left">
         <div className="flex items-center justify-between border-b border-line pb-4">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em]">
             {count} {count === 1 ? "item" : "items"}
@@ -100,10 +101,15 @@ export default function CartView() {
           <ArrowIcon className="size-4 rotate-180" />
           Continue shopping
         </Link>
-      </section>
+      </Reveal>
 
       {/* summary */}
-      <aside className="lg:sticky lg:top-32 lg:self-start">
+      <Reveal
+        as="aside"
+        variant="right"
+        delay={80}
+        className="lg:sticky lg:top-32 lg:self-start"
+      >
         <div className="rounded-3xl border border-line bg-surface p-6">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em]">
             Order summary
@@ -191,7 +197,7 @@ export default function CartView() {
             Secure checkout — pay online or on delivery
           </p>
         </div>
-      </aside>
+      </Reveal>
     </div>
   );
 }

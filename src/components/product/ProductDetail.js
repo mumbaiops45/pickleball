@@ -370,6 +370,7 @@ import { useRouter } from "next/navigation";
 
 import QuantityStepper from "@/components/cart/QuantityStepper";
 import WishlistButton from "@/components/product/WishlistButton";
+import Reveal from "@/components/ui/Reveal";
 
 import {
   ArrowIcon,
@@ -529,7 +530,7 @@ export default function ProductDetail({ product }) {
       {/* ==================================================================== */}
 
       <section className="mx-auto w-full max-w-350 px-5 py-8 sm:px-8 lg:py-12">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] lg:gap-12 xl:gap-16">
+        <Reveal className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] lg:gap-12 xl:gap-16">
           {/* ================================================================= */}
           {/* LEFT - GALLERY                                                    */}
           {/* ================================================================= */}
@@ -893,7 +894,7 @@ export default function ProductDetail({ product }) {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* ==================================================================== */}

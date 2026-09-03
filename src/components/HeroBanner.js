@@ -25,26 +25,7 @@ export default function HeroBanner({ slides }) {
   const count = slides.length;
   const slide = slides[index];
 
-  /* The banner artwork is full-bleed: the headline starts ~4% from the left
-     edge and the feature row sits on the bottom margin, so neither axis has a
-     safe area to crop into. The three exports are also not one shape (1.87:1
-     and 1.5:1), so a single fixed container ratio letterboxes at least one of
-     them — which is what put the dark forest gutters down both sides: the box
-     was 2.52:1, `object-contain` fitted the art by height and left the
-     background showing. Following the active slide's own dimensions instead
-     means every banner fills the width with nothing cropped and nothing bare.
-     The statically imported images carry their intrinsic size; a plain string
-     src would not, hence the fallback.
 
-     The natural ratio drives the height, but only up to MAX_HEIGHT. Left
-     uncapped it overshoots on desktop: the 1.5:1 export across a 1900px
-     screen is a 1267px banner, so most of it sat below the fold and only
-     appeared once you scrolled — and nothing else on the homepage was
-     visible on load. Past the cap the art is cropped rather than
-     letterboxed, centred so the loss is split between the top and the bottom
-     feature strip instead of coming off one end. Phones never reach the cap
-     (400px wide at 1.5:1 is a 267px banner), so small screens still get
-     every export whole. */
   const ratio =
     slide?.image?.width && slide?.image?.height
       ? `${slide.image.width} / ${slide.image.height}`

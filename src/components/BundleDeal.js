@@ -79,116 +79,116 @@ export default function BundleDeal({ catalogue = [] }) {
   return (
     <section className="section bg-surface">
       <div className="shell">
-        <Reveal className="overflow-hidden rounded-2xl border border-line">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            {/* -------------------------------------------------- the offer */}
-            <div className="order-2 flex flex-col justify-center bg-paper p-8 sm:p-12 lg:order-1">
-              <span className="inline-flex w-fit items-center rounded-full bg-volt px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
-                Bundle · save {percent}%
-              </span>
+        <Reveal className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-line bg-paper shadow-[0_40px_80px_-60px_rgba(30,61,20,.55)]">
+          {/* -------------------------------------------------- the header */}
+          <div className="border-b border-line px-7 py-8 text-center sm:px-12 sm:py-10">
+            <span className="inline-flex items-center rounded-full bg-volt px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
+              Bundle · save {percent}%
+            </span>
 
-              <h2 className="mt-6 text-[clamp(1.75rem,3vw,2.5rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
-                <TwoTone
-                  text={starterBundle.title}
-                  accent={starterBundle.titleAccent}
-                />
-              </h2>
-              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-mist">
-                {blurb}
-              </p>
+            <h2 className="mt-5 text-[clamp(1.9rem,3.4vw,2.75rem)] font-semibold leading-[1.04] tracking-[-0.04em]">
+              <TwoTone
+                text={starterBundle.title}
+                accent={starterBundle.titleAccent}
+              />
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-mist">
+              {blurb}
+            </p>
+          </div>
 
-              <ul className="mt-8 flex flex-col border-t border-line">
-                {items.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-baseline justify-between gap-4 border-b border-line py-3 text-sm"
+          {/* --------------------------------------- the products as a sum */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-4 bg-surface-2 px-6 py-8 sm:gap-x-5">
+            {items.map((item, index) => (
+              <div key={item.id} className="flex items-center gap-3 sm:gap-5">
+                {index > 0 ? (
+                  <span
+                    aria-hidden="true"
+                    className="text-2xl font-light text-volt-deep"
                   >
-                    <span className="min-w-0 truncate">{item.name}</span>
-                    <span className="shrink-0 text-mist">
-                      {formatPrice(item.price)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                    +
+                  </span>
+                ) : null}
+                <div className="grid size-20 place-items-center rounded-2xl border border-line bg-paper p-3 sm:size-24">
+                  <ProductArt
+                    product={item}
+                    sizes="120px"
+                    className="h-full w-auto max-w-full"
+                  />
+                </div>
+              </div>
+            ))}
 
-              <div className="mt-7 flex flex-wrap items-end gap-x-4 gap-y-2">
-                <span className="text-4xl font-semibold tracking-tight">
-                  {formatPrice(bundlePrice)}
-                </span>
-                <span className="pb-1 text-lg text-mist line-through">
+            <span
+              aria-hidden="true"
+              className="text-2xl font-light text-volt-deep"
+            >
+              =
+            </span>
+            <div className="text-left">
+              <p className="text-[clamp(2rem,4vw,2.75rem)] font-semibold leading-none tracking-tight">
+                {formatPrice(bundlePrice)}
+              </p>
+              <p className="mt-1.5 flex items-center gap-2 text-sm">
+                <span className="text-mist line-through">
                   {formatPrice(fullPrice)}
                 </span>
-                <span className="mb-1.5 rounded-full bg-clay px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-paper">
+                <span className="rounded-full bg-clay px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-paper">
                   Save {formatPrice(saving)}
                 </span>
-              </div>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={addBundle}
-                  className="inline-flex h-13 items-center justify-center gap-2.5 rounded-full bg-volt-deep px-8 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-forest"
-                >
-                  {added ? (
-                    <>
-                      <CheckIcon className="size-4" />
-                      Bundle added
-                    </>
-                  ) : (
-                    `Add all ${items.length}`
-                  )}
-                </button>
-                <Link
-                  href="/shop"
-                  className="group inline-flex h-13 items-center justify-center gap-2.5 rounded-full border border-line-strong px-8 text-sm font-medium text-ink transition-colors duration-200 hover:border-volt-deep hover:text-volt-deep"
-                >
-                  Build your own
-                  <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              </div>
-
-              <p className="mt-5 text-xs text-mist">
-                Bundle price applies with code{" "}
-                <span className="font-semibold tracking-[0.08em] text-ink">
-                  {starterBundle.code}
-                </span>{" "}
-                at checkout.
               </p>
             </div>
+          </div>
 
-            {/* ------------------------------------------------ what is in it */}
-            <div
-              // one column per item below lg, so a two-product bundle fills the
-              // strip instead of leaving a third of it blank
-              className={`order-1 grid gap-px border-b border-line bg-line lg:order-2 lg:grid-cols-1 lg:border-b-0 lg:border-l ${
-                items.length === 2 ? "grid-cols-2" : "grid-cols-3"
-              }`}
-            >
+          {/* -------------------------------------------- the itemised list */}
+          <div className="px-7 py-7 sm:px-12">
+            <ul className="flex flex-col">
               {items.map((item) => (
-                <div
+                <li
                   key={item.id}
-                  className="flex items-center justify-center bg-paper p-5 lg:justify-start lg:gap-6 lg:px-10"
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-3 text-sm last:border-b-0"
                 >
-                  <div className="flex h-20 w-full items-center justify-center lg:h-24 lg:w-24 lg:shrink-0">
-                    <ProductArt
-                      product={item}
-                      sizes="(max-width: 1024px) 28vw, 120px"
-                      className="h-full w-auto max-w-full"
-                    />
-                  </div>
-                  <div className="hidden min-w-0 lg:block">
-                    <p className="text-sm font-semibold tracking-tight">
-                      {item.name}
-                    </p>
-                    {item.blurb ? (
-                      <p className="mt-1 text-[13px] leading-relaxed text-mist">
-                        {item.blurb}
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
+                  <span className="min-w-0 truncate font-medium text-ink">
+                    {item.name}
+                  </span>
+                  <span className="shrink-0 text-mist">
+                    {formatPrice(item.price)}
+                  </span>
+                </li>
               ))}
+            </ul>
+
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={addBundle}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-volt-deep px-6 text-sm font-semibold text-paper transition-colors duration-200 hover:bg-forest"
+              >
+                {added ? (
+                  <>
+                    <CheckIcon className="size-4" />
+                    Bundle added
+                  </>
+                ) : (
+                  `Add all ${items.length}`
+                )}
+              </button>
+              <Link
+                href="/shop"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-line-strong px-6 text-sm font-medium text-ink transition-colors duration-200 hover:border-volt-deep hover:text-volt-deep"
+              >
+                Build your own
+                <ArrowIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
             </div>
+
+            <p className="mt-5 text-center text-xs text-mist">
+              Bundle price applies with code{" "}
+              <span className="font-semibold tracking-[0.08em] text-ink">
+                {starterBundle.code}
+              </span>{" "}
+              at checkout.
+            </p>
           </div>
         </Reveal>
       </div>

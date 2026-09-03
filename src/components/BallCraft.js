@@ -8,68 +8,78 @@ import ballsPhoto from "../../public/hero/balls-trio.jpg";
 /**
  * How the ball line is made.
  *
- * Rebuilt from three columns to two. The middle column used to be a "stage":
- * a dashed ring spinning on a 26s loop behind a drawn SVG ball bobbing on a
- * float animation, both riding a parallax offset and a mouse tracker. It cost
- * four moving layers to say nothing the copy either side of it was not already
- * saying, and it pushed the actual evidence — the specs and the build steps —
- * into two narrow gutters.
+ * Editorial rather than flat: the client's own product photography drifting on
+ * a ScrollSmoother parallax layer, the specs as oversized figures, an outlined
+ * ghost word behind the heading, the build steps as a big numbered list.
  *
- * The client's own product photography sits there now instead, which is both
- * still and true.
+ * Light ground (the logo's green, tinted right down) — not a dark slab.
  */
 export default function BallCraft() {
   return (
-    <section id="balls" className="section bg-surface-2">
-      <div className="shell">
-        {/* Heading left, body right, on one row. Run down the page instead,
-            a max-w-2xl heading with a max-w-xl paragraph under it left the
-            right half of a 1400px section empty for 300px of scroll. */}
+    <section
+      id="balls"
+      className="section relative isolate overflow-hidden bg-surface-2"
+    >
+      {/* oversized outlined word, held back as texture */}
+      {/* <span
+        aria-hidden="true"
+        className="ghost pointer-events-none absolute -right-4 top-4 z-0 hidden text-[13rem] font-semibold text-volt-deep/15 lg:block"
+      >
+        ONE PIECE
+      </span> */}
+
+      <div className="shell relative">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
-          <Reveal className="lg:col-span-6">
+          <Reveal variant="left" className="lg:col-span-7">
             <span className="mb-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
               <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
               {ballCraft.eyebrow}
             </span>
-            <h2 className="text-[clamp(1.9rem,3.8vw,3rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
+            <h2 className="text-[clamp(2rem,4.4vw,3.4rem)] font-semibold leading-[1.03] tracking-[-0.04em] text-ink">
               <TwoTone text={ballCraft.title} accent={ballCraft.titleAccent} />
             </h2>
           </Reveal>
 
-          <Reveal delay={80} className="lg:col-span-5 lg:col-start-8">
+          <Reveal variant="right" delay={80} className="lg:col-span-5">
             <p className="text-[15px] leading-relaxed text-mist">
               {ballCraft.body}
             </p>
           </Reveal>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-10 lg:mt-16 lg:grid-cols-12 lg:gap-16">
+        <div className="mt-9 grid grid-cols-1 gap-10 lg:mt-12 lg:grid-cols-12 lg:gap-16">
           {/* ------------------------------------------------- the artwork */}
-          <Reveal className="lg:col-span-5">
-            <div className="overflow-hidden rounded-2xl border border-line bg-paper p-6 sm:p-10">
-              <Image
-                src={ballsPhoto}
-                alt={`${brand.name} rotomolded pickleballs`}
-                placeholder="blur"
-                sizes="(max-width: 1024px) 90vw, 40vw"
-                className="h-auto w-full object-contain"
-              />
+          <div className="lg:col-span-5">
+            <div data-sm-speed="1.06" data-cursor="zoom">
+              <Reveal variant="left">
+                <div className="overflow-hidden rounded-3xl border border-line bg-paper p-6 shadow-[0_30px_60px_-45px_rgba(30,61,20,.55)] sm:p-10">
+                  <Image
+                    src={ballsPhoto}
+                    alt={`${brand.name} rotomolded pickleballs`}
+                    placeholder="blur"
+                    sizes="(max-width: 1024px) 90vw, 40vw"
+                    className="h-auto w-full object-contain"
+                  />
+                </div>
+              </Reveal>
             </div>
 
             {/* the numbers a buyer checks before a claim convinces them */}
-            <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4 lg:grid-cols-2">
-              {ballCraft.specs.map((spec) => (
-                <div key={spec.label} className="bg-paper px-5 py-5">
-                  <dt className="text-[11px] uppercase tracking-[0.14em] text-mist">
-                    {spec.label}
-                  </dt>
-                  <dd className="mt-1.5 text-2xl font-semibold tracking-tight text-ink">
-                    {spec.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
+            <Reveal delay={80}>
+              <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-4 lg:grid-cols-2">
+                {ballCraft.specs.map((spec) => (
+                  <div key={spec.label} className="bg-paper px-5 py-5">
+                    <dt className="text-[11px] uppercase tracking-[0.14em] text-mist">
+                      {spec.label}
+                    </dt>
+                    <dd className="mt-1.5 text-[1.75rem] font-semibold tracking-tight text-ink">
+                      {spec.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
 
           {/* ----------------------------------------------- the build list */}
           <div className="lg:col-span-6 lg:col-start-7">
@@ -79,13 +89,13 @@ export default function BallCraft() {
                   as="li"
                   key={point.index}
                   delay={index * 60}
-                  className="flex gap-6 border-b border-line py-6"
+                  className="group flex gap-6 border-b border-line py-6 transition-colors duration-300 hover:bg-paper/60"
                 >
-                  <span className="pt-0.5 text-[11px] font-semibold tracking-[0.18em] text-volt-deep">
+                  <span className="shrink-0 text-2xl font-semibold tracking-tight text-volt-deep">
                     {point.index}
                   </span>
                   <div className="min-w-0">
-                    <h3 className="text-base font-semibold tracking-tight">
+                    <h3 className="text-base font-semibold tracking-tight text-ink">
                       {point.title}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-mist">

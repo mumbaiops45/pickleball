@@ -18,21 +18,23 @@ export default function AboutValues() {
         <CourtArt className="h-full w-auto" stroke="#3f7a1e" />
       </div>
 
-      <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-        <Reveal>
-          <span className="flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
+      <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
+        <Reveal className="mx-auto flex max-w-2xl flex-col items-center text-center">
+          <span className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-volt-deep">
+            <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
             How we build
+            <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
           </span>
           <h2 className="mt-5 text-[clamp(1.9rem,4vw,3rem)] font-semibold leading-[1.04] tracking-[-0.035em]">
             Four rules we <Accent>do not break</Accent>.
           </h2>
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-mist">
+          <p className="mt-5 text-[15px] leading-relaxed text-mist">
             They are the reason some products take a year to reach the shop and
             some never do.
           </p>
         </Reveal>
 
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ul className="mx-auto mt-9 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-12">
           {values.map((value, index) => (
             <Reveal
               as="li"

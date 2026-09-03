@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import AddressForm from "@/components/checkout/AddressForm";
+import Reveal from "@/components/ui/Reveal";
 import { Accent } from "@/components/ui/Heading";
 import {
   ArrowIcon,
@@ -408,7 +409,7 @@ export default function CheckoutView() {
 
   return (
     <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[1fr_380px] lg:gap-14 lg:py-14">
-      <section className="min-w-0">
+      <Reveal as="section" variant="left" className="min-w-0">
         {/* ------------------------------------------------- address */}
         <div className="flex items-center justify-between border-b border-line pb-4">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em]">
@@ -568,10 +569,15 @@ export default function CheckoutView() {
           <ArrowIcon className="size-4 rotate-180" />
           Back to cart
         </Link>
-      </section>
+      </Reveal>
 
       {/* --------------------------------------------------- summary */}
-      <aside className="lg:sticky lg:top-32 lg:self-start">
+      <Reveal
+        as="aside"
+        variant="right"
+        delay={80}
+        className="lg:sticky lg:top-32 lg:self-start"
+      >
         <div className={panel}>
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em]">
             Order summary
@@ -658,7 +664,7 @@ export default function CheckoutView() {
             The final amount is confirmed by the server when the order is created.
           </p>
         </div>
-      </aside>
+      </Reveal>
     </div>
   );
 }

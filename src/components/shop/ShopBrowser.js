@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import ShopFilters from "@/components/shop/ShopFilters";
+import Reveal from "@/components/ui/Reveal";
 import { PRICE_BANDS, SORT_OPTIONS } from "@/lib/data";
 
 const DEFAULT_FILTERS = {
@@ -166,7 +167,7 @@ export default function ShopBrowser({
   return (
     <div className="mx-auto flex w-full max-w-350 gap-10 px-5 pb-16 sm:px-8 lg:pb-24">
       {/* sidebar */}
-      <aside className="hidden w-64 shrink-0 lg:block">
+      <Reveal as="aside" variant="left" className="hidden w-64 shrink-0 lg:block">
         <div className="sticky top-32">
           <ShopFilters
             filters={filters}
@@ -175,11 +176,11 @@ export default function ShopBrowser({
             onReset={reset}
           />
         </div>
-      </aside>
+      </Reveal>
 
       {/* results */}
       <section className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-5">
+        <Reveal className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-5">
           <p className="text-sm text-mist">
             <span className="font-semibold text-ink">{visible.length}</span>{" "}
             {visible.length === 1 ? "product" : "products"}
@@ -209,7 +210,7 @@ export default function ShopBrowser({
               </select>
             </label>
           </div>
-        </div>
+        </Reveal>
 
         {visible.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center lg:py-24">
@@ -226,13 +227,16 @@ export default function ShopBrowser({
             </button>
           </div>
         ) : (
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <Reveal
+            variant="zoom"
+            className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
+          >
             {visible.map((product) => (
               <div key={product.id} className="h-full *:h-full">
                 <ProductCard product={product} />
               </div>
             ))}
-          </div>
+          </Reveal>
         )}
       </section>
 

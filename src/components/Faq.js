@@ -12,16 +12,17 @@ export default function Faq() {
 
   return (
     <section id="faq" className="section bg-surface">
-      <div className="shell grid grid-cols-1 gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-        <Reveal>
+      <div className="shell">
+        <Reveal className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <span className="mb-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt-deep">
             <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
             Questions
+            <span aria-hidden="true" className="h-px w-7 bg-volt-deep/40" />
           </span>
           <h2 className="text-[clamp(1.9rem,3.8vw,3rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
             Before you <Accent>check out</Accent>.
           </h2>
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-mist">
+          <p className="mt-5 text-[15px] leading-relaxed text-mist">
             The six things people email us about most. If yours is not here, a
             human answers the contact form inside a working day.
           </p>
@@ -35,7 +36,7 @@ export default function Faq() {
           </Link>
         </Reveal>
 
-        <Reveal delay={80}>
+        <Reveal delay={80} className="mx-auto mt-9 max-w-3xl lg:mt-12">
           <ul className="flex flex-col border-t border-line">
             {faqs.map((faq, index) => {
               const expanded = open === index;

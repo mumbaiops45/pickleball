@@ -11,17 +11,41 @@ function initialsOf(name) {
     .join("");
 }
 
+function Byline({ testimonial, onAccent = false }) {
+  return (
+    <div
+      className={`mt-7 flex items-center gap-3 border-t pt-5 ${
+        onAccent ? "border-ink/15" : "border-line"
+      }`}
+    >
+      <span
+        className={`grid size-10 shrink-0 place-items-center rounded-full text-xs font-semibold text-ink ${
+          onAccent ? "bg-ink/10" : "bg-volt"
+        }`}
+      >
+        {initialsOf(testimonial.name)}
+      </span>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium text-ink">{testimonial.name}</p>
+        <p
+          className={`truncate text-xs ${onAccent ? "text-ink/65" : "text-mist"}`}
+        >
+          {testimonial.role}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Testimonials() {
+  const [lead, ...rest] = testimonials;
+
   return (
     <section className="section bg-paper">
       <div className="shell">
         <SectionHeading
+          align="center"
           eyebrow="From the courts"
-          /* The heading used to read "12,480 players have already switched",
-             a figure nothing on the site or in the client's brochure
-             supports. A precise invented number is the one claim a buyer can
-             catch you on, and it undercuts the specifications either side of
-             it, which are true. */
           title={
             <>
               What a season on them <Accent>actually looks like</Accent>.
@@ -30,38 +54,43 @@ export default function Testimonials() {
           copy="Collected from verified orders, unedited and unfiltered."
         />
 
-        <div className="mt-12 grid grid-cols-1 gap-5 lg:mt-16 md:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <Reveal
-              key={testimonial.name}
-              delay={index * 70}
-              className="flex h-full flex-col rounded-2xl border border-line bg-surface p-7"
-            >
-              <span className="flex gap-0.5 text-volt-deep">
-                {Array.from({ length: testimonial.rating }, (_, i) => (
-                  <StarIcon key={i} className="size-3.5" />
+        <div className="mt-9 grid grid-cols-1 gap-5 lg:mt-12 lg:grid-cols-12">
+          {/* the lead quote, large, on the ball's yellow */}
+          <Reveal variant="left" className="flex flex-col justify-between rounded-3xl bg-volt p-8 text-ink sm:p-10 lg:col-span-7">
+            <div>
+              <span className="flex gap-0.5 text-ink">
+                {Array.from({ length: lead.rating }, (_, i) => (
+                  <StarIcon key={i} className="size-4" />
                 ))}
               </span>
-
-              <blockquote className="mt-5 flex-1 text-[15px] leading-relaxed text-ink">
-                &ldquo;{testimonial.quote}&rdquo;
+              <blockquote className="mt-6 text-[clamp(1.25rem,2.2vw,1.7rem)] font-medium leading-[1.35] tracking-[-0.02em]">
+                &ldquo;{lead.quote}&rdquo;
               </blockquote>
+            </div>
+            <Byline testimonial={lead} onAccent />
+          </Reveal>
 
-              <div className="mt-7 flex items-center gap-3 border-t border-line pt-5">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-volt text-xs font-semibold text-ink">
-                  {initialsOf(testimonial.name)}
+          {/* the rest, stacked */}
+          <div className="flex flex-col gap-5 lg:col-span-5">
+            {rest.map((testimonial, index) => (
+              <Reveal
+                key={testimonial.name}
+                variant="right"
+                delay={(index + 1) * 80}
+                className="flex flex-1 flex-col rounded-3xl border border-line bg-surface p-7"
+              >
+                <span className="flex gap-0.5 text-volt-deep">
+                  {Array.from({ length: testimonial.rating }, (_, i) => (
+                    <StarIcon key={i} className="size-3.5" />
+                  ))}
                 </span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
-                    {testimonial.name}
-                  </p>
-                  <p className="truncate text-xs text-mist">
-                    {testimonial.role}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+                <blockquote className="mt-4 flex-1 text-[15px] leading-relaxed text-ink">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </blockquote>
+                <Byline testimonial={testimonial} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>

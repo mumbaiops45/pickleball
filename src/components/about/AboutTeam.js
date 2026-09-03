@@ -37,7 +37,7 @@ export default function AboutTeam() {
           </Reveal>
         </div>
 
-        <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((member, index) => (
             <Reveal
               as="li"

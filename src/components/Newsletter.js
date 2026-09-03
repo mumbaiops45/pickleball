@@ -36,7 +36,7 @@ export default function Newsletter() {
         <div className="overflow-hidden rounded-2xl bg-forest px-6 py-12 text-paper sm:px-12 lg:py-16">
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* ----------------------------------------------------- copy */}
-            <Reveal>
+            <Reveal variant="left">
               <span className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-volt">
                 <span aria-hidden="true" className="h-px w-7 bg-volt/50" />
                 The drop list
@@ -70,7 +70,7 @@ export default function Newsletter() {
             </Reveal>
 
             {/* ----------------------------------------------------- form */}
-            <Reveal delay={80}>
+            <Reveal variant="right" delay={80}>
               <div
                 aria-live="polite"
                 className="rounded-2xl border border-paper/15 bg-paper/5 p-6 sm:p-8"

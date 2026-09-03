@@ -55,6 +55,7 @@ export default function HomeContact() {
     <section id="contact" className="section bg-paper">
       <div className="shell">
         <SectionHeading
+          align="center"
           eyebrow="Get in touch"
           title={
             <>
@@ -64,9 +65,9 @@ export default function HomeContact() {
           copy="Case quantities for a club, a spec sheet for a tournament, or a question about an order already on its way — one of us reads it and answers inside a working day."
         />
 
-        <div className="mt-12 grid grid-cols-1 items-stretch gap-8 lg:mt-16 lg:grid-cols-12 lg:gap-12">
+        <div className="mt-9 grid grid-cols-1 items-stretch gap-8 lg:mt-12 lg:grid-cols-12 lg:gap-12">
           {/* ------------------------------------------------- the details */}
-          <Reveal className="lg:col-span-4">
+          <Reveal variant="left" className="lg:col-span-4">
             {/* h-full and a flex-1 row: left to their natural height the four
                 rows ended 200px above the foot of the form beside them, so the
                 two columns of one section closed on different lines. */}
@@ -113,7 +114,7 @@ export default function HomeContact() {
           </Reveal>
 
           {/* ---------------------------------------------------- the form */}
-          <Reveal delay={80} className="lg:col-span-8">
+          <Reveal variant="right" delay={80} className="lg:col-span-8">
             <ContactForm
               title={null}
               className="rounded-2xl border border-line bg-surface p-6 sm:p-8"

@@ -39,7 +39,7 @@ export default function AboutIntro() {
             ))}
           </div>
 
-          <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-4">
+          <dl className="mt-9 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="bg-paper px-5 py-5">
                 <dt className="font-mono text-2xl font-semibold text-ink">

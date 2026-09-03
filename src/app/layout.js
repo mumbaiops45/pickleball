@@ -4,6 +4,10 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import AuthModal from "@/components/auth/AuthModal";
 import Toaster from "@/components/ui/Toaster";
+import CustomCursor from "@/components/ui/CustomCursor";
+import LoadIntro from "@/components/ui/LoadIntro";
+import SmoothScroll from "@/components/SmoothScroll";
+import FloatingActions from "@/components/ui/FloatingActions";
 import { CartProvider } from "@/store/CartProvider";
 import { AuthProvider } from "@/store/AuthProvider";
 import { WishlistProvider } from "@/store/WishlistProvider";
@@ -56,15 +60,31 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-paper text-ink"
       >
+        <LoadIntro />
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
               <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
+              <SmoothScroll />
+
+              {/* ScrollSmoother pins this wrapper and transforms the content,
+                  so both stay plain natural-height divs — no flex sizing, or
+                  the content collapses to one screen and nothing scrolls.
+                  Everything fixed — navbar, floating actions, drawers, modals,
+                  toaster, cursor — stays outside #smooth-content, or a
+                  transformed ancestor demotes its `position: fixed`. */}
+              <div id="smooth-wrapper">
+                <div id="smooth-content">
+                  <main>{children}</main>
+                  <Footer />
+                </div>
+              </div>
+
+              <FloatingActions />
               <CartDrawer />
               <AuthModal />
               <Toaster />
+              <CustomCursor />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

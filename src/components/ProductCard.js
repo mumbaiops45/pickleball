@@ -25,6 +25,9 @@ export default function ProductCard({ product }) {
   const [added, setAdded] = useState(false);
   const discounted = Boolean(product.compareAt);
   const lowStock = product.stock <= 10;
+  const isFortyHole = /40[- ]?hole/i.test(
+    `${product.name} ${product.blurb ?? ""} ${product.description ?? ""}`,
+  );
 
   const selection = {
     productId: product.id,
@@ -56,7 +59,9 @@ export default function ProductCard({ product }) {
         <ProductArt
           product={product}
           sizes="(max-width: 640px) 88vw, (max-width: 1280px) 44vw, 24vw"
-          className="h-auto max-h-full w-auto max-w-full"
+          className={`h-auto max-h-full w-auto max-w-full ${
+            isFortyHole ? "scale-180" : ""
+          }`}
         />
 
         <div className="absolute left-3.5 top-3.5 flex max-w-[calc(100%-4rem)] flex-col items-start gap-1.5">
