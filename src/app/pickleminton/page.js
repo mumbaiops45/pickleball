@@ -109,7 +109,16 @@ function SetupStep({ step, index }) {
  * closing claims. Nothing is written around them.
  */
 export default function PickleMintonPage() {
-  const { tagline, playingArea, setup, setupTips, rules, claims } = pickleminton;
+  const {
+    tagline,
+    playingArea,
+    setup,
+    setupTips,
+    rules,
+    claims,
+    kitImage,
+    kitImageAlt,
+  } = pickleminton;
 
   return (
     <>
@@ -152,6 +161,18 @@ export default function PickleMintonPage() {
         className="w-full scroll-mt-28 border-b border-line bg-surface py-12 lg:py-16"
       >
         <div className="mx-auto w-full max-w-350 px-5 sm:px-8">
+          <Reveal className="mb-10 overflow-hidden rounded-2xl border border-line bg-paper">
+            <div className="relative aspect-[16/7] min-h-56 w-full bg-paper sm:min-h-72">
+              <Image
+                src={kitImage}
+                alt={kitImageAlt}
+                fill
+                sizes="(min-width: 1400px) 1400px, 100vw"
+                className="object-contain"
+              />
+            </div>
+          </Reveal>
+
           <Reveal>
             <h2 className="text-[clamp(1.6rem,3vw,2.2rem)] font-semibold leading-[1.08] tracking-[-0.03em]">
               Setup instructions

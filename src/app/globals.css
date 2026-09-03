@@ -227,7 +227,7 @@ input[type="number"] {
 /* The rhythm: one step for a normal section, one for the quieter strips that
    sit between them. Nothing else. */
 .section {
-  padding-block: 4.5rem;
+  padding-block: 2.5rem;
 }
 
 .section-tight {
@@ -236,11 +236,11 @@ input[type="number"] {
 
 @media (min-width: 1024px) {
   .section {
-    padding-block: 7rem;
+    padding-block: 4rem;
   }
 
   .section-tight {
-    padding-block: 3.5rem;
+    padding-block: 2.25rem;
   }
 }
 

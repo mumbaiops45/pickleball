@@ -74,6 +74,10 @@ const headingClass =
 export default function Footer() {
   return (
     <footer className="relative isolate overflow-hidden border-t border-line bg-surface text-ink">
+      <div
+        aria-hidden="true"
+        className="footer-colour-rail absolute inset-x-0 top-0 h-1"
+      />
       {/* A 384px yellow orb blurred to 130px used to drift across the top-left
           of this on a parallax offset. On a deep-green footer it read as a
           smudge on the screen rather than as light. */}
@@ -98,7 +102,7 @@ export default function Footer() {
                   Its transparent ground is why the white paddle inside "BA"
                   still reads against the deep green here. */}
               <Link href="/" className="inline-block">
-                <Logo href={null} size="lg" className="!gap-0" />
+                <Logo href={null} size="lg" className="gap-0!" />
               </Link>
 
               <p className="mt-5 max-w-xs text-sm leading-relaxed text-mist">
@@ -123,7 +127,7 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.label}
-                      className="grid size-10 place-items-center rounded-full border border-line-strong text-mist transition-all duration-300 hover:-translate-y-0.5 hover:border-volt-deep hover:bg-volt hover:text-ink"
+                      className="grid size-10 place-items-center rounded-full border border-line-strong text-mist transition-all duration-300 hover:-translate-y-1 hover:border-volt-deep hover:bg-volt hover:text-ink hover:shadow-[0_8px_18px_-10px_rgba(63,122,30,.9)]"
                     >
                       <Icon className="size-4.5" />
                     </a>
@@ -170,8 +174,8 @@ export default function Footer() {
                   const Icon = row.icon;
 
                   return (
-                    <li key={row.label} className="flex gap-3.5">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-paper text-volt-deep">
+                    <li key={row.label} className="group flex gap-3.5">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-paper text-volt-deep transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-volt-deep group-hover:bg-volt">
                         <Icon className="size-4.5" />
                       </span>
 

@@ -16,15 +16,6 @@ const ICONS = {
   package: PackageIcon,
 };
 
-/**
- * The four claims off the brochure.
- *
- * The cards used to carry a court blueprint drifting behind them on two
- * parallax axes, a yellow blur that faded in on hover, a lift, a shadow, an
- * icon that slid up on its own transition and a decorative `01`–`04` in the
- * corner. None of it belonged to the claim it was decorating. What is left is
- * the icon, the claim and the sentence backing it.
- */
 export default function Features() {
   return (
     <section className="section bg-paper">

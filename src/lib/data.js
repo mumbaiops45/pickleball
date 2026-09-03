@@ -1150,6 +1150,8 @@ export const pickleminton = {
    */
   nameParts: ["Pickle", "Minton"],
   logo: "/pickleminton/logo.png",
+  kitImage: "/photos/pickleminton-kit.jpeg",
+  kitImageAlt: "Complete PickleMinton net, paddles, balls and carry bag kit",
   tagline: "Play anywhere. Play anytime.",
 
   playingArea: {
