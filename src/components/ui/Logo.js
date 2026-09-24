@@ -78,7 +78,7 @@ export default function Logo({
   const inner = tagline ? (
     <span className="flex flex-col gap-1.5">
       {content}
-      <span className="text-[10px] uppercase tracking-[0.18em] text-mist">
+      <span className="text-[11px] uppercase tracking-[0.18em] text-mist">
         {tagline}
       </span>
     </span>

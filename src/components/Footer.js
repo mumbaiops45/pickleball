@@ -158,7 +158,7 @@ export default function Footer() {
                     </span>
 
                     <span className="min-w-0 pt-0.5">
-                      <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-mist">
+                      <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-mist">
                         {row.label}
                       </span>
 

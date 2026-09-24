@@ -83,7 +83,7 @@ export default function HomeContact() {
                       <Icon className="size-4.5" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-mist">
+                      <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-mist">
                         {row.label}
                       </span>
                       {row.href ? (

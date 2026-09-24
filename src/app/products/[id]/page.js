@@ -36,13 +36,13 @@ export default async function ProductPage({ params }) {
       <nav aria-label="Breadcrumb" className="mx-auto w-full max-w-350 px-5 pt-28 sm:px-8">
         <ol className="flex flex-wrap items-center gap-2 text-xs text-mist">
           <li>
-            <Link href="/" className="transition-colors hover:text-ink">
+            <Link href="/" className="-my-2.5 inline-block py-2.5 transition-colors hover:text-ink">
               Home
             </Link>
           </li>
           <li className="flex items-center gap-2">
             <span aria-hidden="true" className="text-line-strong">/</span>
-            <Link href="/shop" className="transition-colors hover:text-ink">
+            <Link href="/shop" className="-my-2.5 inline-block py-2.5 transition-colors hover:text-ink">
               Shop
             </Link>
           </li>
@@ -50,7 +50,7 @@ export default async function ProductPage({ params }) {
             <span aria-hidden="true" className="text-line-strong">/</span>
             <Link
               href={`/shop?category=${product.category}`}
-              className="transition-colors hover:text-ink"
+              className="-my-2.5 inline-block py-2.5 transition-colors hover:text-ink"
             >
               {product.category}
             </Link>

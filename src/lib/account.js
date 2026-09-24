@@ -13,7 +13,7 @@ export const ACCOUNT_SECTIONS = [
     eyebrow: "Account",
     title: "Your locker",
     titleAccent: "locker",
-    copy: "Profile, credit and everything you have taken to the court.",
+    copy: "Profile, orders and everything you have taken to the court.",
   },
   {
     href: "/account/orders",

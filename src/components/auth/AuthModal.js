@@ -11,6 +11,7 @@ import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
 import { useAuth } from "@/store/AuthProvider";
 import { errorMessage } from "@/lib/api";
 import { toast } from "@/store/toast";
+import { cleanName, emailError, nameError } from "@/lib/validation";
 
 const RESEND_SECONDS = 30;
 
@@ -18,7 +19,6 @@ const RESEND_SECONDS = 30;
 const NO_SESSION =
   "Verified, but the server did not return a login token. Use email and password for now.";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[6-9]\d{9}$/;
 
 export default function AuthModal() {
@@ -77,9 +77,8 @@ export default function AuthModal() {
   // VALIDATION
   // ============================================================
 
-  const loginEmailValid = EMAIL_REGEX.test(
-    loginEmail.trim()
-  );
+  const loginEmailProblem = emailError(loginEmail, { typos: false });
+  const loginEmailValid = !loginEmailProblem;
 
   const loginPasswordValid =
     loginPassword.length >= 6;
@@ -89,11 +88,11 @@ export default function AuthModal() {
   const otpValid =
     otp.replace(/\D/g, "").length === 6;
 
-  const registerNameValid =
-    registerName.trim().length >= 2;
+  const registerNameProblem = nameError(registerName);
+  const registerNameValid = !registerNameProblem;
 
-  const registerEmailValid =
-    EMAIL_REGEX.test(registerEmail.trim());
+  const registerEmailProblem = emailError(registerEmail);
+  const registerEmailValid = !registerEmailProblem;
 
   const registerPhoneValid =
     PHONE_REGEX.test(registerPhone);
@@ -208,9 +207,7 @@ export default function AuthModal() {
     }
 
     if (!loginEmailValid) {
-      setLoginError(
-        "Please enter a valid email address."
-      );
+      setLoginError(loginEmailProblem);
       return;
     }
 
@@ -336,10 +333,8 @@ export default function AuthModal() {
 
     setRegisterError("");
 
-    if (!registerName.trim()) {
-      setRegisterError(
-        "Please enter your full name."
-      );
+    if (!registerNameValid) {
+      setRegisterError(registerNameProblem);
       return;
     }
 
@@ -351,9 +346,7 @@ export default function AuthModal() {
     }
 
     if (!registerEmailValid) {
-      setRegisterError(
-        "Please enter a valid email address."
-      );
+      setRegisterError(registerEmailProblem);
       return;
     }
 
@@ -932,8 +925,9 @@ export default function AuthModal() {
                   autoComplete="name"
                   value={registerName}
                   onChange={(event) => {
+                    // digits and symbols never make it into the box
                     setRegisterName(
-                      event.target.value
+                      cleanName(event.target.value)
                     );
                     setRegisterError("");
                   }}

@@ -82,7 +82,7 @@ export default function CartView() {
           <button
             type="button"
             onClick={clear}
-            className="text-xs text-mist underline-offset-4 transition-colors hover:text-clay hover:underline"
+            className="-mx-2 -my-2.5 px-2 py-2.5 text-xs text-mist underline-offset-4 transition-colors hover:text-clay hover:underline"
           >
             Empty cart
           </button>
@@ -96,7 +96,7 @@ export default function CartView() {
 
         <Link
           href="/shop"
-          className="mt-8 inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-volt-deep"
+          className="mt-5 inline-flex items-center gap-2 py-3 text-sm text-mist transition-colors hover:text-volt-deep"
         >
           <ArrowIcon className="size-4 rotate-180" />
           Continue shopping
@@ -131,7 +131,7 @@ export default function CartView() {
                 id="promo"
                 value={promoInput}
                 onChange={(event) => setPromoInput(event.target.value)}
-                placeholder="SEASON04"
+                placeholder="Enter promo code"
                 className="h-11 min-w-0 flex-1 rounded-full border border-line-strong bg-paper px-4 text-sm text-ink outline-none transition-colors placeholder:text-mist/60 focus:border-volt-deep"
               />
               <button

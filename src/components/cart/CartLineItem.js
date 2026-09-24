@@ -12,11 +12,12 @@ export default function CartLineItem({ line, compact = false }) {
   const colorHex = product.colorways.find((c) => c.name === line.colorway)?.hex;
 
   return (
-    <li className="flex gap-4 py-5">
+    <li className="flex gap-3 py-5 sm:gap-4">
       <Link
         href={`/products/${product.id}`}
         className={`grid shrink-0 place-items-center overflow-hidden rounded-2xl border border-line bg-surface-2 ${
-          compact ? "size-20" : "size-28"
+          // a 112px thumb leaves a 320px phone ~130px for the name and controls
+          compact ? "size-20" : "size-20 sm:size-28"
         }`}
       >
         <ProductArt
@@ -32,7 +33,7 @@ export default function CartLineItem({ line, compact = false }) {
           <div className="min-w-0">
             <Link
               href={`/products/${product.id}`}
-              className="block truncate text-sm font-semibold transition-colors hover:text-volt-deep"
+              className="line-clamp-2 text-sm font-semibold transition-colors hover:text-volt-deep"
             >
               {product.name}
             </Link>
@@ -45,7 +46,8 @@ export default function CartLineItem({ line, compact = false }) {
           </p>
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+        {/* wraps on the narrowest phones instead of pushing Remove off-screen */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pt-4">
           <QuantityStepper
             value={line.quantity}
             compact={compact}
@@ -54,7 +56,8 @@ export default function CartLineItem({ line, compact = false }) {
           <button
             type="button"
             onClick={() => removeItem(line.key)}
-            className="text-xs text-mist underline-offset-4 transition-colors hover:text-clay hover:underline"
+            // padded to a finger-sized target without changing how it looks
+            className="-mx-2 px-2 py-2.5 text-xs text-mist underline-offset-4 transition-colors hover:text-clay hover:underline"
           >
             Remove
           </button>

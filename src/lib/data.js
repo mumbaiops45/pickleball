@@ -514,68 +514,6 @@ export const testimonials = [
   },
 ];
 
-export const productReviews = [
-  {
-    name: "Ananya Rao",
-    rating: 5,
-    date: "3 weeks ago",
-    title: "Exactly the ball I hoped for",
-    body: "Took a tube straight into a 4.5 round robin at Koramangala. Consistent bounce all afternoon and the flight never wobbled. No notes.",
-    verified: true,
-  },
-  {
-    name: "Karthik Iyer",
-    rating: 5,
-    date: "1 month ago",
-    title: "Bounce is dead consistent",
-    body: "Two tubes in and they still bounce true. We rotate them through four courts a week and the shells have not gone soft.",
-    verified: true,
-  },
-  {
-    name: "Sneha Kulkarni",
-    rating: 4,
-    date: "2 months ago",
-    title: "Great, order the case",
-    body: "Fantastic ball. A single tube goes quickly across a club session, so order the case. Four stars only for that.",
-    verified: true,
-  },
-];
-
-export const ratingBreakdown = [
-  { stars: 5, count: 981 },
-  { stars: 4, count: 224 },
-  { stars: 3, count: 52 },
-  { stars: 2, count: 18 },
-  { stars: 1, count: 9 },
-];
-
-export const mockOrders = [
-  {
-    id: "PH-48211",
-    date: "12 July 2026",
-    status: "Delivered",
-    total: 221.4,
-    items: [
-      { productId: "trueflight-outdoor", quantity: 1 },
-      { productId: "head-pro-40-case", quantity: 2 },
-    ],
-  },
-  {
-    id: "PH-47096",
-    date: "28 May 2026",
-    status: "Delivered",
-    total: 148.0,
-    items: [{ productId: "sixx-tour-40", quantity: 1 }],
-  },
-  {
-    id: "PH-46550",
-    date: "3 April 2026",
-    status: "Refunded",
-    total: 32.0,
-    items: [{ productId: "trueflight-indoor", quantity: 1 }],
-  },
-];
-
 /* ------------------------------------------------------------- brand strip */
 
 export const partners = [

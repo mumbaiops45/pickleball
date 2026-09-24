@@ -133,7 +133,7 @@ export default function BundleDeal({ catalogue = [] }) {
                 <span className="text-mist line-through">
                   {formatPrice(fullPrice)}
                 </span>
-                <span className="rounded-full bg-clay px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-paper">
+                <span className="rounded-full bg-clay px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-paper">
                   Save {formatPrice(saving)}
                 </span>
               </p>

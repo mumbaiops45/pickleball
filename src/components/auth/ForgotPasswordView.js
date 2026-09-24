@@ -11,8 +11,7 @@ import { Accent } from "@/components/ui/Heading";
 import { requestPasswordReset, resetPassword } from "@/lib/services/auth";
 import { errorMessage } from "@/lib/api";
 import { toast } from "@/store/toast";
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { emailError } from "@/lib/validation";
 
 const MIN_PASSWORD = 6;
 const OTP_LENGTH = 6;
@@ -73,8 +72,10 @@ function EmailReset() {
   const sendCode = async (event) => {
     event?.preventDefault();
 
-    if (!EMAIL_REGEX.test(email.trim())) {
-      setProblem("Please enter a valid email address.");
+    // an existing account's address, so no misspelt-domain guessing here
+    const badEmail = emailError(email, { typos: false });
+    if (badEmail) {
+      setProblem(badEmail);
       return;
     }
 

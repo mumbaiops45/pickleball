@@ -4,6 +4,7 @@ import { useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
 import { brand } from "@/lib/data";
+import { emailError } from "@/lib/validation";
 
 /** What the list actually gets you — stated plainly, in the order it matters. */
 const PERKS = [
@@ -23,10 +24,17 @@ const PERKS = [
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (!email.trim()) return;
+    // the browser's own type=email check accepts `a@b`, so ours runs instead
+    const problem = emailError(email);
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    setEmail(email.trim());
     setSubmitted(true);
   };
 
@@ -93,7 +101,7 @@ export default function Newsletter() {
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={onSubmit}>
+                  <form onSubmit={onSubmit} noValidate>
                     <label
                       htmlFor="newsletter-email"
                       className="block text-[11px] font-medium uppercase tracking-[0.14em] text-paper/50"
@@ -108,10 +116,22 @@ export default function Newsletter() {
                         required
                         autoComplete="email"
                         value={email}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) => {
+                          setEmail(event.target.value);
+                          setError("");
+                        }}
                         placeholder="you@example.com"
-                        className="h-13 w-full min-w-0 rounded-full border border-paper/25 bg-forest-deep px-5 text-sm text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-volt"
+                        aria-invalid={error ? "true" : undefined}
+                        aria-describedby={error ? "newsletter-error" : undefined}
+                        className={`h-13 w-full min-w-0 rounded-full border bg-forest-deep px-5 text-sm text-paper outline-none transition-colors placeholder:text-paper/35 focus:border-volt ${
+                          error ? "border-clay" : "border-paper/25"
+                        }`}
                       />
+                      {error ? (
+                        <p id="newsletter-error" className="px-2 text-xs text-clay">
+                          {error}
+                        </p>
+                      ) : null}
                       <button
                         type="submit"
                         className="group inline-flex h-13 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper"

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LocateIcon } from "@/components/ui/Icons";
 import { validateAddress } from "@/lib/services/addresses";
+import { cleanName } from "@/lib/validation";
 import { locateAddress } from "@/lib/services/geocode";
 import { errorMessage } from "@/lib/api";
 
@@ -131,9 +132,13 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
           <input
             id="fullName"
             value={form.fullName}
-            onChange={set("fullName")}
+            onChange={(event) => {
+              // digits and symbols never make it into the box
+              setForm((current) => ({ ...current, fullName: cleanName(event.target.value) }));
+              setError("");
+            }}
             autoComplete="name"
-            placeholder="Ananya Rao"
+            placeholder="Recipient's full name"
             className={field}
           />
         </Field>
@@ -146,7 +151,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             inputMode="numeric"
             maxLength={10}
             autoComplete="tel-national"
-            placeholder="9876543210"
+            placeholder="10-digit mobile number"
             className={field}
           />
         </Field>
@@ -157,7 +162,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             value={form.addressLine1}
             onChange={set("addressLine1")}
             autoComplete="address-line1"
-            placeholder="Flat 402, Indiranagar"
+            placeholder="House / flat no., street, area"
             className={field}
           />
         </Field>
@@ -168,7 +173,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             value={form.addressLine2}
             onChange={set("addressLine2")}
             autoComplete="address-line2"
-            placeholder="Near the water tank"
+            placeholder="Nearby landmark"
             className={field}
           />
         </Field>
@@ -179,7 +184,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             value={form.city}
             onChange={set("city")}
             autoComplete="address-level2"
-            placeholder="Bengaluru"
+            placeholder="City"
             className={field}
           />
         </Field>
@@ -190,7 +195,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             value={form.state}
             onChange={set("state")}
             autoComplete="address-level1"
-            placeholder="Karnataka"
+            placeholder="State"
             className={field}
           />
         </Field>
@@ -203,7 +208,7 @@ export default function AddressForm({ initial, onSave, onCancel, saving }) {
             inputMode="numeric"
             maxLength={6}
             autoComplete="postal-code"
-            placeholder="560038"
+            placeholder="6-digit pincode"
             className={field}
           />
         </Field>

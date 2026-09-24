@@ -129,7 +129,7 @@
 //               </div>
 
 //               {product.badge ? (
-//                 <span className="absolute left-4 top-4 rounded-full bg-volt px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
+//                 <span className="absolute left-4 top-4 rounded-full bg-volt px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
 //                   {product.badge}
 //                 </span>
 //               ) : null}
@@ -601,7 +601,7 @@ export default function ProductDetail({ product }) {
 
                   {/* Product badge */}
                   {product.badge ? (
-                    <span className="absolute left-5 top-5 rounded-full bg-volt px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-ink shadow-sm">
+                    <span className="absolute left-5 top-5 rounded-full bg-volt px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-ink shadow-sm">
                       {product.badge}
                     </span>
                   ) : null}
@@ -614,7 +614,7 @@ export default function ProductDetail({ product }) {
 
                   {/* Gallery count */}
                   {gallery.length > 1 ? (
-                    <span className="absolute bottom-5 right-5 rounded-full border border-black/10 bg-white/80 px-3 py-1.5 text-[10px] font-medium text-mist backdrop-blur">
+                    <span className="absolute bottom-5 right-5 rounded-full border border-black/10 bg-white/80 px-3 py-1.5 text-[11px] font-medium text-mist backdrop-blur">
                       {shot + 1} / {gallery.length}
                     </span>
                   ) : null}
@@ -627,7 +627,7 @@ export default function ProductDetail({ product }) {
                   </p>
 
                   {product.sku ? (
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-mist">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-mist">
                       SKU {product.sku}
                     </span>
                   ) : null}
@@ -646,7 +646,7 @@ export default function ProductDetail({ product }) {
               {/* CATEGORY                                                        */}
               {/* ------------------------------------------------------------- */}
 
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mist">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-mist">
                 {[
                   product.brand,
                   product.category,
@@ -677,7 +677,7 @@ export default function ProductDetail({ product }) {
 
                 <a
                   href="#reviews"
-                  className="text-sm font-medium text-mist underline-offset-4 transition-colors hover:text-ink hover:underline"
+                  className="-my-2.5 inline-block py-2.5 text-sm font-medium text-mist underline-offset-4 transition-colors hover:text-ink hover:underline"
                 >
                   {product.reviews?.toLocaleString("en-IN")}{" "}
                   ratings & reviews
@@ -812,7 +812,9 @@ export default function ProductDetail({ product }) {
               {/* ------------------------------------------------------------- */}
 
               <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-surface p-5">
-                <div className="flex items-center gap-4">
+                {/* wraps under the label on a 320px phone rather than
+                    poking the stepper out of the panel */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <p className="text-sm font-semibold">
                     Quantity
                   </p>
@@ -939,7 +941,7 @@ export default function ProductDetail({ product }) {
           {/* ================================================================= */}
 
           <div className="rounded-[28px] border border-line bg-surface p-7 sm:p-8 lg:p-9">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-volt-deep">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-volt-deep">
               Product benefits
             </p>
 
@@ -977,7 +979,7 @@ export default function ProductDetail({ product }) {
           {/* ================================================================= */}
 
           <div className="rounded-[28px] border border-line bg-paper p-7 sm:p-8 lg:p-9">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-volt-deep">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-volt-deep">
               Product story
             </p>
 
@@ -1010,46 +1012,13 @@ export default function ProductDetail({ product }) {
       </section>
 
       {/* ==================================================================== */}
-      {/* CUSTOMER REVIEWS - COMPACT                                           */}
-      {/* ==================================================================== */}
-
-      <section
-        id="reviews"
-        className="border-t border-line bg-surface/50"
-      >
-        <div className="mx-auto flex w-full max-w-350 flex-col gap-6 px-5 py-9 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:py-11">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-volt-deep">
-              Customer feedback
-            </p>
-
-            <h2 className="mt-1 text-xl font-semibold">
-              Customer Reviews
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-xl bg-volt px-3.5 py-2 text-sm font-bold text-ink">
-              {product.rating}
-              <StarIcon className="size-4" />
-            </span>
-
-            <span className="text-sm text-mist">
-              {product.reviews?.toLocaleString("en-IN")}{" "}
-              ratings
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* ==================================================================== */}
       {/* BACK TO SHOP                                                          */}
       {/* ==================================================================== */}
 
       <section className="mx-auto w-full max-w-350 px-5 py-10 sm:px-8 lg:py-12">
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 text-sm font-medium text-mist transition-colors hover:text-ink"
+          className="-my-3 inline-flex items-center gap-2 py-3 text-sm font-medium text-mist transition-colors hover:text-ink"
         >
           <ArrowIcon className="size-4 rotate-180" />
           Back to shop

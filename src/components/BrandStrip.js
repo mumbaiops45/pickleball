@@ -12,7 +12,7 @@ export default function BrandStrip() {
         </Reveal>
 
         <Reveal delay={80} className="flex flex-col items-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-mist">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-mist">
             Approved, played and stocked by
           </p>
           <ul className="mt-5 flex flex-wrap items-start justify-center gap-x-10 gap-y-5">

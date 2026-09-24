@@ -91,7 +91,8 @@ export default function FeaturedProducts({ catalogue = [] }) {
               delay={index * 60}
               className="h-full *:h-full"
             >
-              <ProductCard product={product} />
+              {/* the homepage grid is name and price only; /shop keeps the copy */}
+              <ProductCard product={product} compact />
             </Reveal>
           ))}
 

@@ -25,7 +25,7 @@ function StatCard({ href, icon: Icon, label, value, hint }) {
       href={href}
       className="group flex flex-col rounded-3xl border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-line-strong"
     >
-      <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-mist">
+      <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-mist">
         <Icon className="size-3.5" />
         {label}
       </span>
@@ -182,7 +182,7 @@ export default function AccountOverview() {
           { icon: PhoneIcon, label: "Mobile", value: user.phone || "Not added" },
         ].map((row) => (
           <div key={row.label} className="bg-surface p-5">
-            <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-mist">
+            <dt className="flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-mist">
               <row.icon className="size-3.5" />
               {row.label}
             </dt>

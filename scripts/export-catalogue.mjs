@@ -55,8 +55,16 @@ async function categoryIds() {
 
 const ids = await categoryIds();
 
-const seed = products.map((product) => {
+// The store sells pickleballs only — paddles, shoes, apparel and bags are
+// never exported, so a seed built from this file cannot bring them back.
+const balls = products.filter((product) => product.category === "Balls");
+
+const seed = balls.map((product) => {
   const categoryName = CATEGORY_NAME[product.category] ?? product.category;
+  // data.js keeps the selling price in `price` and the struck-through one in
+  // `compareAt`; the Product model wants the full price in `price` and the
+  // sale price in `discountPrice`. Writing 0 there made every product free.
+  const onOffer = product.compareAt > product.price;
 
   return {
     slug: product.id,
@@ -68,9 +76,8 @@ const seed = products.map((product) => {
     categoryName,
     category: ids.get(categoryName) ?? null,
 
-    price: product.price,
-    compareAt: product.compareAt ?? null,
-    discountPrice: 0,
+    price: onOffer ? product.compareAt : product.price,
+    discountPrice: onOffer ? product.price : null,
     stock: product.stock,
 
     images: product.gallery ?? [product.image],

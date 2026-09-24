@@ -20,7 +20,10 @@ export default function PageHero({
     <ParallaxScene
       as="section"
       pointer
-      className="grain relative isolate overflow-hidden border-b border-line pt-24 pb-8 lg:pt-32 lg:pb-12"
+      // the copy block drifts down with the parallax, so small phones — where
+      // the intro wraps to three or four lines — need more room at the bottom
+      // or its last line is clipped by overflow-hidden
+      className="grain relative isolate overflow-hidden border-b border-line pt-24 pb-14 sm:pb-10 lg:pt-32 lg:pb-12"
     >
       {/* A colour band, not a white one — green off the logo bleeding to a hint
           of the swoosh cyan, with a ball-yellow sun top-right and a cyan wash
@@ -72,7 +75,7 @@ export default function PageHero({
               }`}
             >
               <li>
-                <Link href="/" className="transition-colors hover:text-ink">
+                <Link href="/" className="-my-2.5 inline-block py-2.5 transition-colors hover:text-ink">
                   Home
                 </Link>
               </li>
@@ -84,7 +87,7 @@ export default function PageHero({
                   {crumb.href ? (
                     <Link
                       href={crumb.href}
-                      className="transition-colors hover:text-ink"
+                      className="-my-2.5 inline-block py-2.5 transition-colors hover:text-ink"
                     >
                       {crumb.label}
                     </Link>

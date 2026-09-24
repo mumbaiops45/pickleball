@@ -103,6 +103,19 @@ const isVisible = (row) =>
 const text = (value, fallback = null) =>
   typeof value === "string" && value.trim() ? value.trim() : fallback;
 
+/**
+ * Names typed in the admin with caps lock on ("48 HOLE PICKLEBALL") shout on
+ * every card, cart line and order. A name with no lowercase at all is shown in
+ * title case; one that already mixes case ("HEAD Pro 40 Outdoor") is left as
+ * typed, since its capitals are deliberate.
+ */
+const displayName = (value) => {
+  if (!value || /\p{Ll}/u.test(value)) return value;
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s\-/(·])(\p{L})/gu, (_, gap, letter) => gap + letter.toUpperCase());
+};
+
 const filled = (value, fallback) =>
   Array.isArray(value) && value.length ? value : fallback;
 
@@ -167,7 +180,7 @@ export function mergeProduct(row) {
   return {
     id: slug,
     mongoId,
-    name: text(row?.name, slug),
+    name: displayName(text(row?.name, slug)),
     blurb: text(row?.shortDescription, ""),
     description: text(row?.description, text(row?.shortDescription, "")),
 

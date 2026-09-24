@@ -6,7 +6,6 @@ import PageHero from "@/components/ui/PageHero";
 import { Accent } from "@/components/ui/Heading";
 import { ArrowIcon, LogOutIcon, UserIcon } from "@/components/ui/Icons";
 import { ACCOUNT_SECTIONS } from "@/lib/account";
-import { formatPrice } from "@/lib/format";
 import { useAuth } from "@/store/AuthProvider";
 import { useWishlist } from "@/store/WishlistProvider";
 import { useOrders } from "@/store/OrdersProvider";
@@ -66,8 +65,12 @@ export default function AccountShell({ children }) {
   const { count: savedCount, hydrated: wishlistHydrated } = useWishlist();
   const { orders, loading: ordersLoading } = useOrders();
 
+  // a nested page (/account/orders/<id>) belongs to its parent section
   const section =
     ACCOUNT_SECTIONS.find((entry) => entry.href === pathname) ??
+    ACCOUNT_SECTIONS.find(
+      (entry) => entry.href !== "/account" && pathname.startsWith(`${entry.href}/`),
+    ) ??
     ACCOUNT_SECTIONS[0];
 
   const hero = (
@@ -127,7 +130,7 @@ export default function AccountShell({ children }) {
 
             <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line">
               <div className="bg-surface p-4">
-                <dt className="text-[10px] uppercase tracking-[0.14em] text-mist">
+                <dt className="text-[11px] uppercase tracking-[0.14em] text-mist">
                   Orders
                 </dt>
                 <dd className="mt-1 font-mono text-xl font-semibold">
@@ -135,11 +138,11 @@ export default function AccountShell({ children }) {
                 </dd>
               </div>
               <div className="bg-surface p-4">
-                <dt className="text-[10px] uppercase tracking-[0.14em] text-mist">
-                  Credit
+                <dt className="text-[11px] uppercase tracking-[0.14em] text-mist">
+                  Saved
                 </dt>
                 <dd className="mt-1 font-mono text-xl font-semibold text-volt-deep">
-                  {formatPrice(500)}
+                  {wishlistHydrated ? savedCount : "—"}
                 </dd>
               </div>
             </dl>

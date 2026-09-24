@@ -331,7 +331,7 @@ export default function Navbar() {
               >
                 <HeartIcon className="size-4.5" />
                 {wishlistHydrated && savedCount ? (
-                  <span className="absolute -right-0.5 -top-0.5 grid min-w-4.5 place-items-center rounded-full bg-clay px-1 font-mono text-[10px] font-semibold text-paper">
+                  <span className="absolute -right-0.5 -top-0.5 grid min-w-4.5 place-items-center rounded-full bg-clay px-1 font-mono text-[11px] font-semibold text-paper">
                     {savedCount}
                   </span>
                 ) : null}
@@ -398,7 +398,11 @@ export default function Navbar() {
           }`}
         />
         <div
-          className={`absolute inset-y-0 right-0 flex w-[min(88vw,380px)] flex-col bg-surface px-6 py-6 transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)] ${
+          // The panel scrolls as a whole. The link list used to scroll on its
+          // own while the account block below it stayed fixed, so on a short
+          // phone (568px) the list was squeezed to one row and About, Testing
+          // and Contact vanished under the account buttons.
+          className={`absolute inset-y-0 right-0 flex w-[min(88vw,380px)] flex-col overflow-y-auto overscroll-contain bg-surface px-6 py-6 transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)] ${
             menuOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -415,14 +419,14 @@ export default function Navbar() {
             </button>
           </div>
 
-          <ul className="mt-10 flex flex-col overflow-y-auto">
+          <ul className="mt-6 flex shrink-0 flex-col sm:mt-10">
             {navLinks.map((link, index) => (
               <li key={link.label} className="border-b border-line">
                 <Link
                   href={link.href}
                   tabIndex={menuOpen ? 0 : -1}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-baseline gap-4 py-5 text-2xl font-medium tracking-tight text-ink transition-colors hover:text-volt-deep"
+                  className="flex items-baseline gap-4 py-4 text-2xl font-medium tracking-tight text-ink transition-colors hover:text-volt-deep sm:py-5"
                 >
                   <span className="font-mono text-xs text-mist">
                     0{index + 1}
@@ -457,7 +461,7 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="mt-auto flex flex-col gap-3">
+          <div className="mt-auto flex shrink-0 flex-col gap-3 pt-8">
             {user ? (
               <>
                 <p className="text-[11px] uppercase tracking-[0.16em] text-mist">

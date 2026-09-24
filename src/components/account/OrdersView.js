@@ -14,12 +14,13 @@ export const STATUS_STYLE = {
   Cancelled: "border-line-strong text-mist",
   "In transit": "border-clay/50 text-clay",
   Processing: "border-line-strong text-ink",
+  "Awaiting payment": "border-clay/50 text-clay",
 };
 
 export function OrderStatus({ status }) {
   return (
     <span
-      className={`rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.14em] ${
+      className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.14em] ${
         STATUS_STYLE[status] ?? STATUS_STYLE.Refunded
       }`}
     >
@@ -116,7 +117,22 @@ export default function OrdersView() {
             <ul className="mt-5 flex flex-wrap gap-3">
               {order.items.map((item) => {
                 const product = findProduct(item.productId);
-                if (!product) return null;
+                // the product has left the shop, but the order kept its name
+                if (!product) {
+                  return (
+                    <li
+                      key={item.productId}
+                      className="rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                    >
+                      <span className="block text-sm font-medium">
+                        {item.name ?? "Item"}
+                      </span>
+                      <span className="block text-xs text-mist">
+                        Qty {item.quantity}
+                      </span>
+                    </li>
+                  );
+                }
                 return (
                   <li key={item.productId}>
                     <Link
@@ -145,6 +161,15 @@ export default function OrdersView() {
             </ul>
 
             <div className="mt-5 flex flex-wrap gap-3 border-t border-line pt-5">
+              {order.orderId ? (
+                <Link
+                  href={`/account/orders/${order.orderId}`}
+                  className="inline-flex h-10 items-center gap-2 rounded-full bg-volt px-5 text-xs font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
+                >
+                  <PackageIcon className="size-3.5" />
+                  {order.payable ? "Pay now" : "Track order"}
+                </Link>
+              ) : null}
               <button
                 type="button"
                 onClick={() => reorder(order)}

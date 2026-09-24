@@ -25,7 +25,6 @@ import { useCart } from "@/store/CartProvider";
 import * as addressApi from "@/lib/services/addresses";
 import * as orderApi from "@/lib/services/orders";
 import * as paymentApi from "@/lib/services/payments";
-import { RAZORPAY_KEY, openRazorpay } from "@/lib/gateway";
 
 const PAYMENT_METHODS = [
   {
@@ -197,66 +196,22 @@ export default function CheckoutView() {
       // "Online payment is not required for this order" and the order — which
       // exists by now — would be reported as failed for succeeding.
       if (paymentMethod === "ONLINE") {
-        const payment = await paymentApi.createPayment({
-          orderId,
-          method: "ONLINE",
-        });
+        const paid = await paymentApi.payForOrder({ orderId, user });
 
-        const key = payment?.key ?? payment?.keyId ?? RAZORPAY_KEY;
-        const gatewayOrderId = payment?.gatewayOrderId ?? payment?.orderId ?? null;
-        const paymentId = payment?._id ?? payment?.id ?? null;
-
-        if (!key || !gatewayOrderId) {
-          // the order already exists at this point — leave it marked failed
-          // rather than sitting in PENDING with no payment that can settle it
-          await paymentApi
-            .failPayment({ orderId, paymentId, reason: "Gateway not configured" })
-            .catch(() => {});
-
-          throw new Error(
-            "Online payment is not configured yet. Choose cash on delivery, or set the gateway key.",
-          );
-        }
-
-        const result = await openRazorpay({
-          key,
-          order_id: gatewayOrderId,
-          amount: Math.round((order?.totalAmount ?? totals.total) * 100),
-          currency: payment?.currency ?? "INR",
-          name: "PICKLEBALL",
-          description: order?.orderNumber ?? "Order",
-          prefill: {
-            name: user?.name ?? "",
-            email: user?.email ?? "",
-            contact: user?.phone ?? "",
-          },
-          theme: { color: "#fecd06" },
-        });
-
-        if (!result) {
-          // closed without paying — the order stays PENDING, not FAILED
-          await paymentApi
-            .failPayment({ orderId, paymentId, reason: "Cancelled by user" })
-            .catch(() => {});
+        if (!paid) {
           // the order controller has already emptied the server cart
           await clear().catch(() => {});
-          const message = "Payment was cancelled. Your order is saved as unpaid.";
+          const message =
+            "Payment was cancelled. Your order is saved as unpaid — you can pay for it from My orders.";
           setUnpaidOrder({
             id: order?.orderNumber ?? orderId,
+            orderId,
             message,
           });
           toast.info(message);
           setPlacing(false);
           return;
         }
-
-        await paymentApi.completePayment({
-          orderId,
-          paymentId,
-          gatewayOrderId: result.razorpay_order_id ?? gatewayOrderId,
-          gatewayPaymentId: result.razorpay_payment_id,
-          signature: result.razorpay_signature,
-        });
       }
     } catch (problem) {
       // the order exists and the server cart is already empty, so say what
@@ -268,7 +223,7 @@ export default function CheckoutView() {
         "The payment could not be completed.",
       );
 
-      setUnpaidOrder({ id: order?.orderNumber ?? orderId, message });
+      setUnpaidOrder({ id: order?.orderNumber ?? orderId, orderId, message });
       toast.error(message);
       setPlacing(false);
       return;
@@ -339,7 +294,11 @@ export default function CheckoutView() {
         </p>
         <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
-            href="/account/orders"
+            href={
+              placedOrder.orderId
+                ? `/account/orders/${placedOrder.orderId}`
+                : "/account/orders"
+            }
             className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
           >
             Track your order
@@ -368,10 +327,14 @@ export default function CheckoutView() {
         copy={unpaidOrder.message}
       >
         <Link
-          href="/account/orders"
+          href={
+            unpaidOrder.orderId
+              ? `/account/orders/${unpaidOrder.orderId}`
+              : "/account/orders"
+          }
           className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-volt px-8 text-sm font-semibold text-ink transition-transform duration-300 hover:-translate-y-0.5"
         >
-          {unpaidOrder.id ? `See order ${unpaidOrder.id}` : "See your orders"}
+          {unpaidOrder.id ? `Pay for order ${unpaidOrder.id}` : "See your orders"}
           <ArrowIcon className="size-4" />
         </Link>
         <Link
@@ -422,7 +385,7 @@ export default function CheckoutView() {
                 setEditingId(null);
                 setFormOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 text-xs text-volt-deep underline-offset-4 hover:underline"
+              className="-mx-2 -my-2.5 inline-flex items-center gap-1.5 px-2 py-2.5 text-xs text-volt-deep underline-offset-4 hover:underline"
             >
               <PlusIcon className="size-3.5" />
               Add new
@@ -454,11 +417,11 @@ export default function CheckoutView() {
                           <span className="text-sm font-semibold">
                             {address.fullName}
                           </span>
-                          <span className="rounded-full border border-line px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-mist">
+                          <span className="rounded-full border border-line px-2 py-0.5 text-[11px] uppercase tracking-[0.14em] text-mist">
                             {address.addressType.toLowerCase()}
                           </span>
                           {address.isDefault ? (
-                            <span className="rounded-full bg-forest px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-paper">
+                            <span className="rounded-full bg-forest px-2 py-0.5 text-[11px] uppercase tracking-[0.14em] text-paper">
                               Default
                             </span>
                           ) : null}
@@ -564,7 +527,7 @@ export default function CheckoutView() {
 
         <Link
           href="/cart"
-          className="mt-8 inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-volt-deep"
+          className="mt-5 inline-flex items-center gap-2 py-3 text-sm text-mist transition-colors hover:text-volt-deep"
         >
           <ArrowIcon className="size-4 rotate-180" />
           Back to cart

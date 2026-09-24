@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { nameError } from "@/lib/validation";
 
 /** routes/address.routes.js — all behind authMiddleware. */
 
@@ -51,6 +52,8 @@ export function setDefaultAddress(id) {
 /** Mirrors the required fields on addressSchema so the form can fail fast. */
 export function validateAddress(form) {
   if (!form.fullName?.trim()) return "Please enter the recipient's full name.";
+  const badName = nameError(form.fullName);
+  if (badName) return badName;
   if (!/^[6-9]\d{9}$/.test(form.phone?.trim() ?? ""))
     return "Enter a valid 10-digit Indian mobile number.";
   if (!form.addressLine1?.trim()) return "Please enter the street address.";

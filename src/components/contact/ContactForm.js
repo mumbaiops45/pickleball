@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
 import { contact } from "@/lib/data";
 import { toast } from "@/store/toast";
+import { NAME_MAX, cleanName, emailError, nameError } from "@/lib/validation";
 
 /** Topics the form offers. */
 const ENQUIRY_TOPICS = [
@@ -20,19 +21,9 @@ const THANKS_MS = 4000;
 
 /* ------------------------------------------------------------------ rules */
 
-const NAME_MIN = 2;
-const NAME_MAX = 60;
+// name and email rules are shared with every other form: src/lib/validation.js
 const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 1000;
-
-/** Letters, spaces and the punctuation real names carry. `\p{L}\p{M}` rather
- *  than A-Z, so Devanagari and Telugu names pass — their vowel signs are marks,
- *  not letters, and a letters-only class rejects the whole name. Both
- *  apostrophes are allowed because phones substitute the curly one. Digits are
- *  the tell for a phone number pasted in the wrong box, so they fail. */
-const NAME_REGEX = /^[\p{L}][\p{L}\p{M}\s.'’-]*$/u;
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
 /** Ten digits starting 6-9 — every Indian mobile number. The optional +91 or
  *  leading 0 is stripped before this runs, not matched by it. */
@@ -63,22 +54,13 @@ const digitsOf = (value) => {
  */
 const VALIDATORS = {
   name(value) {
-    const name = value.trim();
-    if (!name) return "Please tell us your name.";
-    if (name.length < NAME_MIN) return "That name looks too short.";
-    if (name.length > NAME_MAX) return `Please keep your name under ${NAME_MAX} characters.`;
-    if (!NAME_REGEX.test(name))
-      return "Use letters only — no numbers or symbols.";
-    return "";
+    if (!value.trim()) return "Please tell us your name.";
+    return nameError(value);
   },
 
   email(value) {
-    const email = value.trim();
-    if (!email) return "We need an email address to reply to.";
-    if (email.length > 254) return "That email address is too long.";
-    if (!EMAIL_REGEX.test(email))
-      return "That does not look like a valid email address.";
-    return "";
+    if (!value.trim()) return "We need an email address to reply to.";
+    return emailError(value);
   },
 
   phone(value) {
@@ -175,7 +157,8 @@ export default function ContactForm({
   const errorFor = (key) => (touched[key] ? errors[key] : "");
 
   const change = (key) => (event) => {
-    const { value } = event.target;
+    // digits and symbols never make it into the name box
+    const value = key === "name" ? cleanName(event.target.value) : event.target.value;
     setForm((current) => ({ ...current, [key]: value }));
     // re-validate as they type only once the field has already been marked
     // wrong, so a correction clears the message the moment it is correct
@@ -289,7 +272,7 @@ export default function ContactForm({
             value={form.name}
             onChange={change("name")}
             onBlur={blur("name")}
-            placeholder="Ananya Rao"
+            placeholder="Your full name"
             className={control(errorFor("name"))}
           />
           <FieldError id="enquiry-name-error">{errorFor("name")}</FieldError>
@@ -339,7 +322,7 @@ export default function ContactForm({
             value={form.phone}
             onChange={change("phone")}
             onBlur={blur("phone")}
-            placeholder="98765 43210"
+            placeholder="10-digit mobile number"
             className={control(errorFor("phone"))}
           />
           <FieldError id="enquiry-phone-error">{errorFor("phone")}</FieldError>

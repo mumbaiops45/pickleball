@@ -19,7 +19,11 @@ import { formatPrice } from "@/lib/format";
  * has asked twice for the product tiles to sit still, so nothing here
  * transforms: hover changes the border and the shadow and that is all.
  */
-export default function ProductCard({ product }) {
+/**
+ * `compact` is the homepage tile: name and price only, centred under the
+ * shot. The shop grid keeps the default, with the one-line description.
+ */
+export default function ProductCard({ product, compact = false }) {
   const router = useRouter();
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
@@ -66,12 +70,12 @@ export default function ProductCard({ product }) {
 
         <div className="absolute left-3.5 top-3.5 flex max-w-[calc(100%-4rem)] flex-col items-start gap-1.5">
           {product.badge ? (
-            <span className="max-w-full truncate rounded-full bg-volt px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink">
+            <span className="max-w-full truncate rounded-full bg-volt px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
               {product.badge}
             </span>
           ) : null}
           {discounted ? (
-            <span className="whitespace-nowrap rounded-full bg-clay px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-paper">
+            <span className="whitespace-nowrap rounded-full bg-clay px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper">
               Save {formatPrice(product.compareAt - product.price)}
             </span>
           ) : null}
@@ -83,12 +87,16 @@ export default function ProductCard({ product }) {
         />
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className={`flex flex-1 flex-col p-5 ${compact ? "items-center text-center" : ""}`}>
         <p className="text-[11px] uppercase tracking-[0.14em] text-mist">
           {product.brand ?? product.category}
         </p>
 
-        <h3 className="mt-2 text-[15px] font-semibold leading-snug tracking-tight">
+        <h3
+          className={`mt-2 font-semibold leading-snug tracking-tight ${
+            compact ? "text-base" : "text-[15px]"
+          }`}
+        >
           {/* stretched link keeps the whole card clickable */}
           <Link
             href={`/products/${product.id}`}
@@ -98,13 +106,17 @@ export default function ProductCard({ product }) {
           </Link>
         </h3>
 
-        {product.blurb ? (
+        {!compact && product.blurb ? (
           <p className="mt-1.5 text-[13px] leading-relaxed text-mist">
             {product.blurb}
           </p>
         ) : null}
 
-        <div className="mt-5 flex items-baseline gap-2">
+        <div
+          className={`flex items-baseline gap-2 ${
+            compact ? "mt-3 flex-wrap justify-center" : "mt-5"
+          }`}
+        >
           <span className="text-lg font-semibold">
             {formatPrice(product.price)}
           </span>
@@ -114,7 +126,11 @@ export default function ProductCard({ product }) {
             </span>
           ) : null}
           {lowStock ? (
-            <span className="ml-auto text-[11px] font-medium uppercase tracking-[0.12em] text-clay">
+            <span
+              className={`text-[11px] font-medium uppercase tracking-[0.12em] text-clay ${
+                compact ? "basis-full" : "ml-auto"
+              }`}
+            >
               Only {product.stock} left
             </span>
           ) : null}
@@ -123,7 +139,9 @@ export default function ProductCard({ product }) {
         {/* Always on, not hover-revealed: a hover-only control is unreachable
             on touch, where most of this grid is read. `relative z-20` lifts it
             over the title's stretched link, which otherwise covers the card. */}
-        <div className="relative z-20 mt-auto flex flex-col gap-1.5 pt-5">
+        {/* self-stretch: the compact card centres its text, which would
+            otherwise shrink the buttons to the width of their label */}
+        <div className="relative z-20 mt-auto flex flex-col gap-1.5 self-stretch pt-5">
           <button
             type="button"
             onClick={quickAdd}

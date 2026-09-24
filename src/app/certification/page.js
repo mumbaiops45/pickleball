@@ -81,7 +81,7 @@ export default function CertificationIndex() {
                         {/* the verdict wording is the lab's, and a conditional
                             approval is not coloured as a pass */}
                         <span
-                          className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${
                             test.passed
                               ? "bg-volt text-ink"
                               : "border border-clay/40 bg-clay/10 text-clay"
